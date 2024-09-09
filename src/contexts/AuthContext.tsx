@@ -45,8 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function signOut() {
-    setUser(null)
     setIsAuthenticated(false)
+    setUser(null)
+    // router.navigate("../app")
   }
 
   return (
