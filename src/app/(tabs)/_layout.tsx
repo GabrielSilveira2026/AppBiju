@@ -10,21 +10,21 @@ export default function AppLayout() {
   }
 
   return (
-    <Tabs>
-      <Tabs.Screen
-        name="produtos"
-        options={{
-          title: "Produtos",
-          href: "./produtos"
-        }}
-      />
-      <Tabs.Screen
-        name="teste"
-        options={{
-          title: "Teste",
-          href: "./teste"
-        }}
-      />
-    </Tabs>
+      <Tabs>
+        <Tabs.Screen
+          name="produtos"
+          options={{
+            title: "Produtos",
+            href: "./produtos"
+          }}
+        />
+        <Tabs.Screen
+          name="teste"
+          options={{
+            title: "Teste",
+            href: "./teste"
+          }}
+        />
+      </Tabs>
   );
 }

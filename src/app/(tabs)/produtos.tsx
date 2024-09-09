@@ -5,7 +5,7 @@ export default function ProdutosScreen() {
   const { signIn, signOut, isAuthenticated } = useAuthContext()
   
   return (
-    <View>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Vc esta esta logado</Text>
       <Button onPress={isAuthenticated ? signOut : signIn} title={isAuthenticated ? "Sign Out" : "Sign in"}></Button>
     </View>

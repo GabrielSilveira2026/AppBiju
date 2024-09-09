@@ -21,6 +21,9 @@ type UserType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+
+  const baseUrl = process.env.EXPO_PUBLIC_BASE_URL  
+
   const [user, setUser] = useState<UserType | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -33,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isAuthenticated]);
 
   async function signIn() {
-    const response = await axios.get(`https://g4673849dbf8477-rp6p6ma0c5ogvr7w.adb.sa-saopaulo-1.oraclecloudapps.com/ords/admin/login/teste@123?senha=teste@123`)
+    const response = await axios.get(`${baseUrl}/login/teste@123?senha=teste@123`)
     if (response.data.items.length) {
       setIsAuthenticated(true)
       setUser(response.data.items[0])
@@ -47,7 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   async function signOut() {
     setIsAuthenticated(false)
     setUser(null)
-    // router.navigate("../app")
   }
 
   return (
