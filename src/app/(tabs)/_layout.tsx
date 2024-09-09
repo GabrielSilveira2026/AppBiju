@@ -1,26 +1,28 @@
 import { useAuthContext } from "../../contexts/AuthContext";
-import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import { Redirect, Tabs } from "expo-router";
+import { StatusBar, Text, View } from "react-native";
 
-export default function Layout() {
+export default function AppLayout() {
   const { isAuthenticated, user } = useAuthContext();
+
+  if (!isAuthenticated) {
+    return <Redirect href="/" />;
+  }
 
   return (
     <Tabs>
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
       <Tabs.Screen
         name="produtos"
         options={{
           title: "Produtos",
-          href: user?.id_perfil === 1 ? null : "./produtos"
-
+          href: "./produtos"
         }}
       />
       <Tabs.Screen
         name="teste"
         options={{
           title: "Teste",
-          href: user?.id_perfil === 1 ? "./teste" : null
+          href: "./teste"
         }}
       />
     </Tabs>

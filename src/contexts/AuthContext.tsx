@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true)
       setUser(response.data.items[0])
       console.log("user:", user);
-      router.navigate("./(tabs)")
+      router.navigate("./(tabs)/produtos")
       return
     }
     setIsAuthenticated(false)
