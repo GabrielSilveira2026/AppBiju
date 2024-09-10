@@ -3,7 +3,7 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { Button, Text, TextInput, View } from "react-native";
 
 export default function HomeScreen() {
-  const { signIn, signOut, isAuthenticated } = useAuthContext()
+  const { signIn } = useAuthContext()
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("")
@@ -11,7 +11,7 @@ export default function HomeScreen() {
 
   async function login() {
     setIsLoading(true)
-    const response = await signIn(email, senha)
+    const response = await signIn(email.trim(), senha)
     setIsLoading(false)
     if (response?.status === 401) {
       setErro("Email ou senha inválidos")
@@ -27,12 +27,16 @@ export default function HomeScreen() {
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        textContentType="emailAddress"
       />
       <TextInput
         placeholder="Senha"
         value={senha}
-        secureTextEntry
         onChangeText={setSenha}
+        secureTextEntry
+        textContentType="password"
+        autoCapitalize="none"
       />
 
       {erro && <Text>{erro}</Text>}

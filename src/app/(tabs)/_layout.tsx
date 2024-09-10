@@ -18,13 +18,6 @@ export default function AppLayout() {
             href: "./produtos"
           }}
         />
-        <Tabs.Screen
-          name="teste"
-          options={{
-            title: "Teste",
-            href: "./teste"
-          }}
-        />
       </Tabs>
   );
 }

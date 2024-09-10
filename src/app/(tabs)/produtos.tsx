@@ -7,7 +7,7 @@ export default function ProdutosScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>Vc esta esta logado</Text>
-      <Button onPress={isAuthenticated ? signOut : signIn} title={isAuthenticated ? "Sign Out" : "Sign in"}></Button>
+      <Button onPress={signOut} title={"Sign Out"}></Button>
     </View>
   );
 }
