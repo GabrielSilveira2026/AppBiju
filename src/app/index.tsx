@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
-import { Button, Text, TextInput, View } from "react-native";
-import Container from "../components/Container";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
 import { colors } from "../constants/color";
+import { Input } from "../components/Input";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
@@ -26,18 +26,20 @@ export default function HomeScreen() {
 
   return (
     <View style={globalStyles.containerContent}>
-      <Container>
+      <View style={styles.container}>
         <Text style={[globalStyles.title, {color: colors.primary}]}>
           Login
         </Text>
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          textContentType="emailAddress"
+
+        <Input
+        label="Email"
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        textContentType="emailAddress"
         />
-        <TextInput
+        <Input
           placeholder="Senha"
           value={senha}
           onChangeText={setSenha}
@@ -51,8 +53,18 @@ export default function HomeScreen() {
           title={isLoading ? "Carregando..." : "Login"}
           onPress={login}
         />
-      </Container>
+      </View>
     </View>
   );
 }
 
+export const styles = StyleSheet.create({
+  container: {
+      backgroundColor: colors.fundo75,
+      borderRadius: 8,
+      padding: 8,
+      gap: 16,
+      height: "auto",
+      width: "100%"
+  }
+});
