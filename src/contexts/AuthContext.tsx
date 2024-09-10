@@ -1,16 +1,16 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import { router } from 'expo-router';
+import { login } from '../httpservices/pessoaApi';
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  user: UserType | null;
+  user: PessoaType | null;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
-  signIn: () => Promise<void>;
+  signIn: (email: string, senha: string) => Promise<any>;
   signOut: () => Promise<void>;
 };
 
-type UserType = {
+type PessoaType = {
   email: string;
   id_perfil: number;
   id_pessoa: number;
@@ -21,30 +21,24 @@ type UserType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-
-  const baseUrl = process.env.EXPO_PUBLIC_BASE_URL  
-
-  const [user, setUser] = useState<UserType | null>(null)
+  const [user, setUser] = useState<PessoaType | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log('Usuário autenticado');
-    } else {
-      console.log('Usuário não autenticado');
-    }
-  }, [isAuthenticated]);
+  async function signIn(email: string, senha: string) {
+    const response = await login(email, senha)
 
-  async function signIn() {
-    const response = await axios.get(`${baseUrl}/login/teste@123?senha=teste@123`)
-    if (response.data.items.length) {
-      setIsAuthenticated(true)
-      setUser(response.data.items[0])
-      console.log("user:", user);
-      router.navigate("./(tabs)/produtos")
-      return
+    if (response.status === 571) {
+      return response
     }
-    setIsAuthenticated(false)
+
+    if (response?.data?.items.length) {
+      setIsAuthenticated(true)
+      setUser(response?.data?.items[0])
+      router.navigate("/(tabs)/produtos")
+    }
+    else{
+      return {status: 401}
+    }
   }
 
   async function signOut() {
@@ -53,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user}}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user }}>
       {children}
     </AuthContext.Provider>
   );
