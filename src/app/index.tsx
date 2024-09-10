@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
 import { colors } from "../constants/color";
 import { Input } from "../components/Input";
+import Button from "../components/Button";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
@@ -27,32 +29,38 @@ export default function HomeScreen() {
   return (
     <View style={globalStyles.containerContent}>
       <View style={styles.container}>
-        <Text style={[globalStyles.title, {color: colors.primary}]}>
+        <Text style={[globalStyles.title, { color: colors.primary }]}>
           Login
         </Text>
+        {erro && <Text style={styles.error}>{erro}</Text>}
 
-        <Input
-        label="Email"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        textContentType="emailAddress"
-        />
-        <Input
-          placeholder="Senha"
-          value={senha}
-          onChangeText={setSenha}
-          secureTextEntry
-          textContentType="password"
-          autoCapitalize="none"
-        />
-
-        {erro && <Text>{erro}</Text>}
+        <View style={styles.inputContainer}>
+          <Input
+            label="Email"
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            textContentType="emailAddress"
+          />
+          <Input
+            label="Senha"
+            placeholder="Senha"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+          />
+        </View>
         <Button
-          title={isLoading ? "Carregando..." : "Login"}
+          title={isLoading ? "Carregando..." : "Entrar"}
           onPress={login}
         />
+        <Text style={styles.semCadastro}>
+          Ainda não tem cadastro?
+          <Link href={"/cadastro"} style={styles.cliqueAqui}> Clique aqui</Link>
+        </Text>
       </View>
     </View>
   );
@@ -60,11 +68,30 @@ export default function HomeScreen() {
 
 export const styles = StyleSheet.create({
   container: {
-      backgroundColor: colors.fundo75,
-      borderRadius: 8,
-      padding: 8,
-      gap: 16,
-      height: "auto",
-      width: "100%"
+    backgroundColor: colors.fundo75,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    height: "auto",
+    width: "100%",
+    gap: 16,
+  },
+  inputContainer: {
+    gap: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: colors.boxEscuro,
+    borderRadius: 8
+  },
+  error: {
+    color: "#e91515"
+  },
+  semCadastro:{
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.corTexto
+  },
+  cliqueAqui:{
+    color: colors.primary
   }
 });
