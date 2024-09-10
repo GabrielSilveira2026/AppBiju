@@ -42,7 +42,7 @@ export const Input: React.FC<InputProps> = ({
         />
         {
           textContentType === "password" &&
-          <Ionicons style={styles.verSenha} size={40} onPress={() =>{setVerSenha(!verSenha)}} name={verSenha ? "eye-outline" : "eye-off-outline"} />
+          <Ionicons style={styles.verSenha} size={35} onPress={() =>{setVerSenha(!verSenha)}} name={verSenha ? "eye-outline" : "eye-off-outline"} />
         }
       </View>
     </View>
