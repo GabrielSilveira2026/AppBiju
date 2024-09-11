@@ -1,6 +1,7 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { login } from '../httpservices/pessoaApi';
+import { PessoaType } from '../types/types';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -8,14 +9,6 @@ type AuthContextType = {
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string, senha: string) => Promise<any>;
   signOut: () => Promise<void>;
-};
-
-type PessoaType = {
-  email: string;
-  id_perfil: number;
-  id_pessoa: number;
-  nome: string;
-  perfil: string;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

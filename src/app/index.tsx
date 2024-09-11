@@ -28,13 +28,13 @@ export default function HomeScreen() {
 
   return (
     <View style={globalStyles.containerContent}>
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <Text style={[globalStyles.title, { color: colors.primary }]}>
           Login
         </Text>
-        {erro && <Text style={styles.error}>{erro}</Text>}
+        {erro && <Text style={globalStyles.error}>{erro}</Text>}
 
-        <View style={styles.inputContainer}>
+        <View style={globalStyles.formContainer}>
           <Input
             label="Email"
             placeholder="Email"
@@ -67,25 +67,6 @@ export default function HomeScreen() {
 }
 
 export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.fundo75,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    height: "auto",
-    width: "100%",
-    gap: 16,
-  },
-  inputContainer: {
-    gap: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    backgroundColor: colors.boxEscuro,
-    borderRadius: 8
-  },
-  error: {
-    color: "#e91515"
-  },
   semCadastro:{
     fontSize: 16,
     textAlign: "center",

@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fundo25,
     borderBottomColor: colors.corTexto,
     borderBottomWidth: 1,
+    borderRadius: 4,
   },
   label: {
     color: colors.corTexto,
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: colors.corTexto,
-    borderRadius: 4,
     fontSize: 16,
     padding: 12
   },
