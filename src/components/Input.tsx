@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, Ref } from 'react';
 import { StyleSheet, TextInput, View, Text, ViewStyle, TextStyle, TextInputProps } from 'react-native';
 import { colors } from '../constants/color';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +23,7 @@ export const Input: React.FC<InputProps> = ({
   inputStyle,
   textContentType,
   ...rest
-}) => {
+}, ref) => {
   const [verSenha, setVerSenha] = useState<boolean>(false)
 
   return (
@@ -32,17 +32,19 @@ export const Input: React.FC<InputProps> = ({
       <View style={styles.inputLine}>
         <TextInput
           style={[styles.input, inputStyle]}
-          value={value.trim()}
+          value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          secureTextEntry={verSenha}
+          secureTextEntry={secureTextEntry && !verSenha}
           textContentType={textContentType}
           placeholderTextColor={colors.corTexto50}
           {...rest}
         />
         {
           textContentType === "password" &&
-          <Ionicons style={styles.verSenha} size={35} onPress={() =>{setVerSenha(!verSenha)}} name={verSenha ? "eye-outline" : "eye-off-outline"} />
+          <Ionicons style={styles.verSenha} size={35} onPress={() => {
+            setVerSenha(!verSenha)
+          }} name={!verSenha ? "eye-off-outline" : "eye-outline"} />
         }
       </View>
     </View>
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fundo25,
     borderBottomColor: colors.corTexto,
     borderBottomWidth: 1,
+    borderRadius: 4,
   },
   label: {
     color: colors.corTexto,
@@ -65,11 +68,10 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: colors.corTexto,
-    borderRadius: 4,
     fontSize: 16,
     padding: 12
   },
-  verSenha:{
+  verSenha: {
     color: colors.corTexto,
     padding: 8,
     textAlignVertical: "center",
