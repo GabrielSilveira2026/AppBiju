@@ -35,7 +35,7 @@ export const Input: React.FC<InputProps> = ({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          secureTextEntry={verSenha}
+          secureTextEntry={secureTextEntry && !verSenha}
           textContentType={textContentType}
           placeholderTextColor={colors.corTexto50}
           {...rest}

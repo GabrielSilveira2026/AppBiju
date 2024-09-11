@@ -37,8 +37,6 @@ export default function Form() {
       }
     )
 
-    console.log(response.data);
-
     if (response?.status === 555) {
       setErro("Email já cadastrado")
     } else if (response?.status === 571) {
