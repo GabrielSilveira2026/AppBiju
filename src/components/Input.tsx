@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, Ref } from 'react';
 import { StyleSheet, TextInput, View, Text, ViewStyle, TextStyle, TextInputProps } from 'react-native';
 import { colors } from '../constants/color';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +23,7 @@ export const Input: React.FC<InputProps> = ({
   inputStyle,
   textContentType,
   ...rest
-}) => {
+}, ref) => {
   const [verSenha, setVerSenha] = useState<boolean>(false)
 
   return (
@@ -43,7 +43,8 @@ export const Input: React.FC<InputProps> = ({
         {
           textContentType === "password" &&
           <Ionicons style={styles.verSenha} size={35} onPress={() => {
-           setVerSenha(!verSenha); console.log(verSenha); }} name={verSenha ? "eye-outline":  "eye-off-outline" } />
+            setVerSenha(!verSenha)
+          }} name={!verSenha ? "eye-off-outline" : "eye-outline"} />
         }
       </View>
     </View>
