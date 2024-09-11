@@ -32,7 +32,7 @@ export const Input: React.FC<InputProps> = ({
       <View style={styles.inputLine}>
         <TextInput
           style={[styles.input, inputStyle]}
-          value={value.trim()}
+          value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
           secureTextEntry={verSenha}
@@ -42,7 +42,8 @@ export const Input: React.FC<InputProps> = ({
         />
         {
           textContentType === "password" &&
-          <Ionicons style={styles.verSenha} size={35} onPress={() =>{setVerSenha(!verSenha)}} name={verSenha ? "eye-outline" : "eye-off-outline"} />
+          <Ionicons style={styles.verSenha} size={35} onPress={() => {
+           setVerSenha(!verSenha); console.log(verSenha); }} name={verSenha ? "eye-outline":  "eye-off-outline" } />
         }
       </View>
     </View>
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 12
   },
-  verSenha:{
+  verSenha: {
     color: colors.corTexto,
     padding: 8,
     textAlignVertical: "center",
