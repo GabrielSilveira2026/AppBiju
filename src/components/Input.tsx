@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   verSenha:{
     color: colors.corTexto,
-    paddingHorizontal: 8,
+    padding: 8,
     textAlignVertical: "center",
   }
 });

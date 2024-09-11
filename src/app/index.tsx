@@ -9,10 +9,10 @@ import { Link } from "expo-router";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("")
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [senha, setSenha] = useState<string>("");
+  const [erro, setErro] = useState<string>("")
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function login() {
     setIsLoading(true)
