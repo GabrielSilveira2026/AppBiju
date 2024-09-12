@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 
 export default function HomeScreen() {
-  const { signIn, isLoadingAuth } = useAuthContext()
+  const { signIn } = useAuthContext()
   const [email, setEmail] = useState<string>("");
   const [senha, setSenha] = useState<string>("");
   const [erro, setErro] = useState<string>("")

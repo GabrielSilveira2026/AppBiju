@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '../components/Input';
 import Button from '../components/Button';
 import { globalStyles } from '@/styles/styles';
-import { styles } from '.';
 import { colors } from '../constants/color';
 import { Link } from 'expo-router';
 import { cadastro } from '../httpservices/pessoaApi';
@@ -156,3 +155,15 @@ export default function Form() {
     </View>
   );
 }
+
+
+export const styles = StyleSheet.create({
+  semCadastro:{
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.corTexto
+  },
+  cliqueAqui:{
+    color: colors.primary
+  }
+});
