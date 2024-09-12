@@ -21,7 +21,6 @@ export function login(email: string, senha: string) {
 
 export async function cadastro(dadosPessoa: Omit<PessoaType, "id_pessoa" | "perfil">) {
   const response = await axios.post(`${baseUrl}/pessoa/?email=${dadosPessoa.email}&id_perfil=${dadosPessoa.id_perfil}&senha=${dadosPessoa.senha}&nome=${dadosPessoa.nome}`).catch(function (error) {
-    // return { status: 571 }
     if (error.response) {
       return error.response
 

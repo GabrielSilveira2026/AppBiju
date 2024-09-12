@@ -4,5 +4,5 @@ export type PessoaType = {
     id_pessoa: number;
     nome: string;
     perfil: string;
-    senha: string
+    senha?: string
 };

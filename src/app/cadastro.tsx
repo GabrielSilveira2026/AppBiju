@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '../components/Input';
 import Button from '../components/Button';
@@ -30,15 +30,21 @@ export default function Form() {
     setIsLoading(true)
     const response = await cadastro(
       {
-        nome: data.nome,
+        nome: data.nome.trim(),
         email: data.email.trim(),
-        senha: data.senha,
-        id_perfil: 1
+        senha: data.senha.trim(),
+        id_perfil: 3
       }
     )
+    console.log(response);
+
 
     if (response?.status === 555) {
-      setErro("Email já cadastrado")
+      if (response.data.cause.includes("ORA-00001")) {
+        setErro("Email já cadastrado")
+      } else if (response.data.cause.includes("ORA-02291")) {
+        setErro("Falha na conexão: Tipo de perfil não encontrado")
+      }
     } else if (response?.status === 571) {
       setErro("Falha na conexão")
     } else if (response?.status === 201) {
@@ -51,7 +57,7 @@ export default function Form() {
 
   return (
     <View style={globalStyles.containerContent}>
-      <ScrollView style={{ width: "100%", flexGrow: 0 }}>
+      <KeyboardAvoidingView  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ width:"100%"}}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro
@@ -90,6 +96,7 @@ export default function Form() {
                   placeholder="Digite seu email"
                   value={value}
                   onChangeText={onChange}
+                  autoCapitalize="none"
                   keyboardType="email-address"
                   textContentType="emailAddress"
                 />
@@ -111,6 +118,7 @@ export default function Form() {
                   value={value}
                   onChangeText={onChange}
                   secureTextEntry
+                  autoCapitalize="none"
                   textContentType="password"
                 />
               )}
@@ -144,7 +152,7 @@ export default function Form() {
             <Link href={"/"} style={styles.cliqueAqui}> Clique aqui</Link>
           </Text>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

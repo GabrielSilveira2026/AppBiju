@@ -1,10 +1,12 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '../httpservices/pessoaApi';
 import { PessoaType } from '../types/types';
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  isLoadingAuth: boolean;
   user: PessoaType | null;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string, senha: string) => Promise<any>;
@@ -14,8 +16,29 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<PessoaType | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<PessoaType | null>(null)
+  const [isLoadingAuth, setLoadingAuth] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function validaUsuario() {
+      setLoadingAuth(true)
+      try {
+        const dataUsuario = await AsyncStorage.getItem('@usuario');
+        if (dataUsuario) {
+          const { usuario } = JSON.parse(dataUsuario);
+          setUser(usuario);
+          setIsAuthenticated(true);
+          router.navigate('/(tabs)/produtos');
+        }
+      } catch (error) {
+        console.log('Erro ao recuperar o usuário:', error);
+      }
+      setLoadingAuth(false)
+    }
+
+    validaUsuario();  // Executa a verificação de usuário ao montar o componente
+  }, []); 
 
   async function signIn(email: string, senha: string) {
     const response = await login(email, senha)
@@ -25,22 +48,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (response?.data?.items.length) {
-      setIsAuthenticated(true)
-      setUser(response?.data?.items[0])
-      router.navigate("/(tabs)/produtos")
+      const userData: PessoaType = response.data.items[0]
+      setUser(userData)
+      setIsAuthenticated(true)      
+      try {
+        await AsyncStorage.setItem("@usuario", JSON.stringify({ usuario: userData}))
+        // if (userData.id_perfil === 1) {
+        //   router.navigate("/(tabs)/produtos")
+        // }
+        // else if(userData.id_perfil === 1){
+        //   console.log("Admin");
+        // }
+
+        router.navigate("/(tabs)/produtos")
+
+      } catch (error) {
+        console.log(error);
+      }  
     }
-    else{
-      return {status: 401}
+    else {
+      return { status: 401 }
     }
   }
 
   async function signOut() {
-    setIsAuthenticated(false)
-    setUser(null)
+    try {
+      await AsyncStorage.removeItem("@usuario")
+      setIsAuthenticated(false)
+      setUser(null)
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user, isLoadingAuth }}>
       {children}
     </AuthContext.Provider>
   );
