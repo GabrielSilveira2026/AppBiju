@@ -3,14 +3,10 @@ import { StatusBar } from "expo-status-bar";
 import { ImageBackground, Text, View } from "react-native";
 import { IMAGE_PATHS } from "../constants/constants";
 import { globalStyles } from "@/styles/styles";
+import Loading from "../components/Loading";
 
-export default function Loading() {
+export default function Index() {
     return (
-        <View style={{ flex: 1 }}>
-            <StatusBar style="light" />
-            <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-                <Text>Index....</Text>
-            </ImageBackground>
-        </View>
+        <Loading/>
     )
 }

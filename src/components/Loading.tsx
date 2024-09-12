@@ -6,11 +6,8 @@ import { globalStyles } from "@/styles/styles";
 
 export default function Loading() {
     return (
-        <View style={{ flex: 1 }}>
-            <StatusBar style="light" />
-            <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-                <Text>Cargando....</Text>
-            </ImageBackground>
+        <View style={globalStyles.containerContent}>
+            <Text>carregando</Text>
         </View>
     )
 }
