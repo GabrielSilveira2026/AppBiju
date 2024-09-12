@@ -9,7 +9,7 @@ export default function Loading() {
         <View style={{ flex: 1 }}>
             <StatusBar style="light" />
             <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-                <Text>Index....</Text>
+                <Text>Cargando....</Text>
             </ImageBackground>
         </View>
     )

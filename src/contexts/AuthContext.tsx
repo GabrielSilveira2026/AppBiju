@@ -3,6 +3,8 @@ import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '../httpservices/pessoaApi';
 import { PessoaType } from '../types/types';
+import { ActivityIndicator, View } from 'react-native';
+import Loading from '../components/Loading';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -18,27 +20,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<PessoaType | null>(null)
-  const [isLoadingAuth, setLoadingAuth] = useState<boolean>(false);
+  const [isLoadingAuth, setLoadingAuth] = useState<boolean>(true);
 
   useEffect(() => {
     async function validaUsuario() {
-      setLoadingAuth(true)
       try {
         const dataUsuario = await AsyncStorage.getItem('@usuario');
         if (dataUsuario) {
           const { usuario } = JSON.parse(dataUsuario);
+          console.log(usuario);
+
           setUser(usuario);
           setIsAuthenticated(true);
-          router.navigate('/(tabs)/produtos');
+          setTimeout(() => router.navigate('/(tabs)/produtos'), 1500)
         }
       } catch (error) {
         console.log('Erro ao recuperar o usuário:', error);
       }
-      setLoadingAuth(false)
     }
 
-    validaUsuario();  // Executa a verificação de usuário ao montar o componente
-  }, []); 
+    validaUsuario();
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => setLoadingAuth(false), 5000); // Simulação de tempo para o layout ser montado
+  }, []);
 
   async function signIn(email: string, senha: string) {
     const response = await login(email, senha)
@@ -50,9 +56,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (response?.data?.items.length) {
       const userData: PessoaType = response.data.items[0]
       setUser(userData)
-      setIsAuthenticated(true)      
+      setIsAuthenticated(true)
       try {
-        await AsyncStorage.setItem("@usuario", JSON.stringify({ usuario: userData}))
+        await AsyncStorage.setItem("@usuario", JSON.stringify({ usuario: userData }))
         // if (userData.id_perfil === 1) {
         //   router.navigate("/(tabs)/produtos")
         // }
@@ -64,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       } catch (error) {
         console.log(error);
-      }  
+      }
     }
     else {
       return { status: 401 }
