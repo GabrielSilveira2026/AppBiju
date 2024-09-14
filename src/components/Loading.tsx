@@ -4,13 +4,9 @@ import { useAuthContext } from "../contexts/AuthContext";
 import Button from "./Button";
 
 export default function Loading() {
-    const authContext = useAuthContext();
-
-
     return (
         <View style={globalStyles.containerContent}>
             <Text>Loading Component.....</Text>
-            <Button title="Carrega" onPress={() => authContext.setIsLoading(false)} />
         </View>
     )
 }

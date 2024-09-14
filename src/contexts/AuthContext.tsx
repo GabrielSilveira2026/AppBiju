@@ -21,26 +21,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<PessoaType | null>(null)
 
-  // useEffect(() => {
-  //   async function validaUsuario() {
-  //     try {
-  //       const dataUsuario = await AsyncStorage.getItem('@usuario');
-  //       if (dataUsuario) {
-  //         const { usuario } = JSON.parse(dataUsuario);
-  //         console.log(usuario);
+  useEffect(() => {
+    async function validaUsuario() {
+      try {
+        const dataUsuario = await AsyncStorage.getItem('@usuario');
+        if (dataUsuario) {
+          const { usuario } = JSON.parse(dataUsuario);
+          console.log(usuario);
 
-  //         setUser(usuario);
-  //         setIsAuthenticated(true);
-  //       }
-  //     } catch (error) {
-  //       console.log('Erro ao recuperar o usuário:', error);
-  //     } finally {
-  //       setIsLoading(false)
-  //     }
-  //   }
+          setUser(usuario);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.log('Erro ao recuperar o usuário:', error);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 1000);
+      }
+    }
 
-  //   validaUsuario();
-  // }, []);
+    validaUsuario();
+  }, []);
 
   async function signIn(email: string, senha: string) {
     const response = await login(email, senha)
@@ -75,6 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function signOut() {
+    setIsLoading(true)
     try {
       setIsAuthenticated(false)
       setUser(null)
@@ -82,6 +85,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.replace('/');
     } catch (error) {
       console.log(error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 1000);
     }
   }
 
