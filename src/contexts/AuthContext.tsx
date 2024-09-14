@@ -6,8 +6,10 @@ import { PessoaType } from '../types/types';
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  isLoading: boolean;
   user: PessoaType | null;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string, senha: string) => Promise<any>;
   signOut: () => Promise<void>;
 };
@@ -16,34 +18,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<PessoaType | null>(null)
 
-  useEffect(() => {
-    async function validaUsuario() {
-      try {
-        const dataUsuario = await AsyncStorage.getItem('@usuario');
-        if (dataUsuario) {
-          const { usuario } = JSON.parse(dataUsuario);
-          console.log(usuario);
+  // useEffect(() => {
+  //   async function validaUsuario() {
+  //     try {
+  //       const dataUsuario = await AsyncStorage.getItem('@usuario');
+  //       if (dataUsuario) {
+  //         const { usuario } = JSON.parse(dataUsuario);
+  //         console.log(usuario);
 
-          setUser(usuario);
-          setIsAuthenticated(true);
-          // setTimeout(() => 
-            router.navigate('/(tabs)/produtos')
-          // , 1000)
-        }
-        else {
-          // setTimeout(() => 
-            router.navigate('/login')
-          // , 1500)
-        }
-      } catch (error) {
-        console.log('Erro ao recuperar o usuário:', error);
-      }
-    }
+  //         setUser(usuario);
+  //         setIsAuthenticated(true);
+  //       }
+  //     } catch (error) {
+  //       console.log('Erro ao recuperar o usuário:', error);
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
 
-    validaUsuario();
-  }, []);
+  //   validaUsuario();
+  // }, []);
 
   async function signIn(email: string, senha: string) {
     const response = await login(email, senha)
@@ -65,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         //   console.log("Admin");
         // }
 
-        router.navigate("/(tabs)/produtos")
+        // router.navigate("/(tabs)/produtos")
 
       } catch (error) {
         console.log(error);
@@ -81,14 +78,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false)
       setUser(null)
       await AsyncStorage.removeItem("@usuario")
-      router.navigate('/login')
+      // router.navigate('/login')
     } catch (error) {
       console.log(error);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user, isLoading, setIsLoading }}>
       {children}
     </AuthContext.Provider>
   );
