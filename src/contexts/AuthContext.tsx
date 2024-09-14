@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (dataUsuario) {
           const { usuario } = JSON.parse(dataUsuario);
           console.log(usuario);
-
           setUser(usuario);
           setIsAuthenticated(true);
         }
@@ -55,17 +54,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userData: PessoaType = response.data.items[0]
       setUser(userData)
       setIsAuthenticated(true)
-      router.replace('/');
       try {
         await AsyncStorage.setItem("@usuario", JSON.stringify({ usuario: userData }))
-        // if (userData.id_perfil === 1) {
-        //   router.navigate("/(tabs)/produtos")
-        // }
-        // else if(userData.id_perfil === 1){
-        //   console.log("Admin");
-        // }
-
-        // router.navigate("/(tabs)/produtos")
+        router.replace("/(tabs)/")
 
       } catch (error) {
         console.log(error);
@@ -82,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false)
       setUser(null)
       await AsyncStorage.removeItem("@usuario")
-      router.replace('/');
+      router.replace('/login');
     } catch (error) {
       console.log(error);
     } finally {
