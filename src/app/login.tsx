@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useAuthContext } from "../../contexts/AuthContext";
+import { useAuthContext } from "../contexts/AuthContext";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
-import { colors } from "../../constants/color";
-import { Input } from "../../components/Input";
-import Button from "../../components/Button";
+import { colors } from "../constants/color";
+import { Input } from "../components/Input";
+import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 
 export default function HomeScreen() {

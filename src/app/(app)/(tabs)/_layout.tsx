@@ -5,10 +5,6 @@ import { StatusBar, Text, View } from "react-native";
 export default function AppLayout() {
   const { isAuthenticated, user } = useAuthContext();
 
-  // if (!isAuthenticated) {
-  //   return <Redirect href="/" />;
-  // }
-
   return (
       <Tabs>
         <Tabs.Screen

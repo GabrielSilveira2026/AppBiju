@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Input } from '../../components/Input';
-import Button from '../../components/Button';
+import { Input } from '../components/Input';
+import Button from '../components/Button';
 import { globalStyles } from '@/styles/styles';
-import { colors } from '../../constants/color';
+import { colors } from '../constants/color';
 import { Link } from 'expo-router';
-import { cadastro } from '../../httpservices/pessoaApi';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { cadastro } from '../httpservices/pessoaApi';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export type FormType = {
   email: string;
