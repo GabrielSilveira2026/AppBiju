@@ -6,7 +6,7 @@ export default function AppLayout() {
   const { isAuthenticated, user } = useAuthContext();
 
   if (!isAuthenticated) {
-    return <Redirect href="../" />;
+    return <Redirect href="/" />;
   }
 
   return (

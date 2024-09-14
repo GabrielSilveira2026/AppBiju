@@ -16,8 +16,7 @@ export default function HomeScreen() {
 
   async function login() {
     setIsLoading(true)
-    // const response = await signIn(email.trim(), senha.trim())
-    const response = await signIn("gabriel.silveira2024@gmail.com", "Tigre@2024")
+    const response = await signIn(email.trim(), senha.trim())
     setIsLoading(false)
     if (response?.status === 401) {
       setErro("Email ou senha inválidos")

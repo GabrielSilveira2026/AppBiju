@@ -28,10 +28,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
           setUser(usuario);
           setIsAuthenticated(true);
-          setTimeout(() => router.navigate('/(tabs)/produtos'), 1000)
+          // setTimeout(() => 
+            router.navigate('/(tabs)/produtos')
+          // , 1000)
         }
         else {
-          setTimeout(() => router.navigate('/login'), 1500)
+          // setTimeout(() => 
+            router.navigate('/login')
+          // , 1500)
         }
       } catch (error) {
         console.log('Erro ao recuperar o usuário:', error);

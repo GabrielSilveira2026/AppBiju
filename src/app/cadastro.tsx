@@ -148,7 +148,7 @@ export default function Form() {
           <Button title={isLoading ? "Carregando..." : "Cadastrar"} onPress={handleSubmit(onSubmit)} />
           <Text style={styles.semCadastro}>
             Já tem cadastro?
-            <Link href={"/"} style={styles.cliqueAqui}> Clique aqui</Link>
+            <Link href={"/login"} style={styles.cliqueAqui}> Clique aqui</Link>
           </Text>
         </View>
       </KeyboardAvoidingView>
