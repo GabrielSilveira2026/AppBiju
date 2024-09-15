@@ -35,8 +35,6 @@ export default function Form() {
         id_perfil: 3
       }
     )
-    console.log(response);
-
 
     if (response?.status === 555) {
       if (response.data.cause.includes("ORA-00001")) {

@@ -27,12 +27,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const dataUsuario = await AsyncStorage.getItem('@usuario');
         if (dataUsuario) {
           const { usuario } = JSON.parse(dataUsuario);
-          console.log(usuario);
           setUser(usuario);
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.log('Erro ao recuperar o usuário:', error);
+        console.warn('Erro ao recuperar o usuário:', error);
       } finally {
         setTimeout(() => {
           setIsLoading(false)
@@ -44,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   async function signIn(email: string, senha: string) {
+    setIsLoading(true)
     const response = await login(email, senha)
 
     if (response.status === 571) {
@@ -59,7 +59,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.replace("/(tabs)/")
 
       } catch (error) {
-        console.log(error);
+        console.warn(error);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 1000);
       }
     }
     else {
@@ -75,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await AsyncStorage.removeItem("@usuario")
       router.replace('/login');
     } catch (error) {
-      console.log(error);
+      console.warn(error);
     } finally {
       setTimeout(() => {
         setIsLoading(false)
