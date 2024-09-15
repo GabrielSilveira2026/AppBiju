@@ -2,12 +2,12 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useState, u
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '../httpservices/pessoaApi';
-import { PessoaType } from '../types/types';
+import { UserType } from '../types/types';
 
 type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: PessoaType | null;
+  user: UserType | null;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string, senha: string) => Promise<any>;
@@ -19,15 +19,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<PessoaType | null>(null)
+  const [user, setUser] = useState<UserType | null>(null)
 
   useEffect(() => {
-    async function validaUsuario() {
+    async function checkUser() {
       try {
-        const dataUsuario = await AsyncStorage.getItem('@usuario');
-        if (dataUsuario) {
-          const { usuario } = JSON.parse(dataUsuario);
-          setUser(usuario);
+        const userDataLocal = await AsyncStorage.getItem('@user');
+        if (userDataLocal) {
+          const { user } = JSON.parse(userDataLocal);
+          setUser(user);
           setIsAuthenticated(true);
         }
       } catch (error) {
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    validaUsuario();
+    checkUser();
   }, []);
 
   async function signIn(email: string, senha: string) {
@@ -51,13 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (response?.data?.items.length) {
-      const userData: PessoaType = response.data.items[0]
+      const userData: UserType = response.data.items[0]
       setUser(userData)
       setIsAuthenticated(true)
       try {
-        await AsyncStorage.setItem("@usuario", JSON.stringify({ usuario: userData }))
+        await AsyncStorage.setItem("@user", JSON.stringify({ user: userData }))
         router.replace("/(tabs)/")
-
       } catch (error) {
         console.warn(error);
       } finally {
@@ -76,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsAuthenticated(false)
       setUser(null)
-      await AsyncStorage.removeItem("@usuario")
+      await AsyncStorage.removeItem("@user")
       router.replace('/login');
     } catch (error) {
       console.warn(error);

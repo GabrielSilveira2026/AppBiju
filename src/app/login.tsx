@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
-import { colors } from "../constants/color";
+import { colors } from "../../styles/color";
 import { Input } from "../components/Input";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
@@ -10,13 +10,13 @@ import { Link, Redirect } from "expo-router";
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
   const [email, setEmail] = useState<string>("");
-  const [senha, setSenha] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [erro, setErro] = useState<string>("")
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function login() {
     setIsLoading(true)
-    const response = await signIn(email.trim(), senha.trim())
+    const response = await signIn(email.trim(), password.trim())
     setIsLoading(false)
     if (response?.status === 401) {
       setErro("Email ou senha inválidos")
@@ -27,7 +27,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={globalStyles.containerContent}>
+    <View style={globalStyles.pageContainer}>
       <View style={globalStyles.container}>
         <Text style={[globalStyles.title, { color: colors.primary }]}>
           Login
@@ -47,8 +47,8 @@ export default function HomeScreen() {
           <Input
             label="Senha"
             placeholder="Senha"
-            value={senha}
-            onChangeText={setSenha}
+            value={password}
+            onChangeText={setPassword}
             secureTextEntry
             textContentType="password"
             autoCapitalize="none"
@@ -59,9 +59,9 @@ export default function HomeScreen() {
           title={isLoading ? "Carregando..." : "Entrar"}
           onPress={login}
         />
-        <Text style={styles.semCadastro}>
+        <Text style={styles.registerRedirect}>
           Ainda não tem cadastro?
-          <Link href={"/cadastro"} style={styles.cliqueAqui}> Clique aqui</Link>
+          <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
         </Text>
       </View>
     </View>
@@ -69,12 +69,12 @@ export default function HomeScreen() {
 }
 
 export const styles = StyleSheet.create({
-  semCadastro:{
+  registerRedirect:{
     fontSize: 16,
     textAlign: "center",
-    color: colors.corTexto
+    color: colors.text
   },
-  cliqueAqui:{
+  registerRedirectLink:{
     color: colors.primary
   }
 });

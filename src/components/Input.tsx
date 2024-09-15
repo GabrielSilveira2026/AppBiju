@@ -1,6 +1,6 @@
 import React, { useState, forwardRef, Ref } from 'react';
 import { StyleSheet, TextInput, View, Text, ViewStyle, TextStyle, TextInputProps } from 'react-native';
-import { colors } from '../constants/color';
+import { colors } from '../../styles/color';
 import { Ionicons } from '@expo/vector-icons';
 
 type InputProps = {
@@ -37,7 +37,7 @@ export const Input: React.FC<InputProps> = ({
           placeholder={placeholder}
           secureTextEntry={secureTextEntry && !verSenha}
           textContentType={textContentType}
-          placeholderTextColor={colors.corTexto50}
+          placeholderTextColor={colors.textInput}
           {...rest}
         />
         {
@@ -54,25 +54,25 @@ export const Input: React.FC<InputProps> = ({
 const styles = StyleSheet.create({
   inputLine: {
     flexDirection: "row",
-    backgroundColor: colors.fundo25,
-    borderBottomColor: colors.corTexto,
+    backgroundColor: colors.backgroundInput,
+    borderBottomColor: colors.text,
     borderBottomWidth: 1,
     borderRadius: 4,
   },
   label: {
-    color: colors.corTexto,
+    color: colors.text,
     fontSize: 14,
     marginBottom: 5,
     fontWeight: "regular"
   },
   input: {
     flex: 1,
-    color: colors.corTexto,
+    color: colors.text,
     fontSize: 16,
     padding: 12
   },
   verSenha: {
-    color: colors.corTexto,
+    color: colors.text,
     padding: 8,
     textAlignVertical: "center",
   }

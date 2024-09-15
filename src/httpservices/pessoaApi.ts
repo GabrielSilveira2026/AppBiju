@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PessoaType } from "../types/types";
+import { UserType } from "../types/types";
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 export function login(email: string, senha: string) {
@@ -19,8 +19,8 @@ export function login(email: string, senha: string) {
   return response
 }
 
-export async function cadastro(dadosPessoa: Omit<PessoaType, "id_pessoa" | "perfil">) {
-  const response = await axios.post(`${baseUrl}/pessoa/?email=${dadosPessoa.email}&id_perfil=${dadosPessoa.id_perfil}&senha=${dadosPessoa.senha}&nome=${dadosPessoa.nome}`).catch(function (error) {
+export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">) {
+  const response = await axios.post(`${baseUrl}/pessoa/?email=${userData.email}&id_perfil=${userData.id_perfil}&senha=${userData.senha}&nome=${userData.nome}`).catch(function (error) {
     if (error.response) {
       return error.response
 
