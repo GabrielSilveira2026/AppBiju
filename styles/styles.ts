@@ -1,15 +1,15 @@
-import { colors } from "@/src/constants/color";
+import { colors } from "@/styles/color";
 import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
-    containerContent: {
+    pageContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         padding: 8
     },
     container: {
-        backgroundColor: colors.fundo75,
+        backgroundColor: colors.backgroundSecundary,
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 8,
@@ -18,7 +18,7 @@ export const globalStyles = StyleSheet.create({
         gap: 16,
     },
     formContainer: {
-        backgroundColor: colors.boxEscuro,
+        backgroundColor: colors.backgroundTertiary,
         paddingVertical: 8,
         paddingHorizontal: 8,
         borderRadius: 8,

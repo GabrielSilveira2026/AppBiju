@@ -1,9 +1,11 @@
-import { Slot, Stack } from "expo-router";
+import { Redirect, router, Slot, Stack } from "expo-router";
 import { AuthProvider } from "../contexts/AuthContext";
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, View } from "react-native";
-import { IMAGE_PATHS } from "../constants/constants";
+import { IMAGE_PATHS } from "../../styles/constants";
 import { globalStyles } from "@/styles/styles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
 export default function RootLayout() {
   return (

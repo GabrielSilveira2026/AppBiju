@@ -1,57 +1,61 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '../components/Input';
 import Button from '../components/Button';
 import { globalStyles } from '@/styles/styles';
-import { styles } from '.';
-import { colors } from '../constants/color';
+import { colors } from '../../styles/color';
 import { Link } from 'expo-router';
-import { cadastro } from '../httpservices/pessoaApi';
+import { register } from '../httpservices/pessoaApi';
 import { useAuthContext } from '../contexts/AuthContext';
 
 export type FormType = {
   email: string;
   id_perfil: number;
-  nome: string;
+  name: string;
   perfil: string;
-  senha: string
-  confirmaSenha: string
+  password: string
+  confirmPassword: string
 };
 
-export default function Form() {
+export default function RegisterForm() {
   const { control, handleSubmit, watch, formState: { errors } } = useForm<FormType>();
   const { signIn } = useAuthContext()
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [erro, setErro] = useState<string>("")
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
     setErro("")
     setIsLoading(true)
-    const response = await cadastro(
+    const response = await register(
       {
-        nome: data.nome,
+        nome: data.name.trim(),
         email: data.email.trim(),
-        senha: data.senha,
-        id_perfil: 1
+        senha: data.password.trim(),
+        id_perfil: 3
       }
     )
 
     if (response?.status === 555) {
-      setErro("Email já cadastrado")
+      if (response.data.cause.includes("ORA-00001")) {
+        setErro("Email já cadastrado")
+      } else if (response.data.cause.includes("ORA-02291")) {
+        setErro("Falha na conexão: Tipo de perfil não encontrado")
+      }
     } else if (response?.status === 571) {
       setErro("Falha na conexão")
     } else if (response?.status === 201) {
-      await signIn(data.email.trim(), senha)
+      await signIn(data.email.trim(), password)
     }
     setIsLoading(false)
   };
 
-  const senha = watch('senha');
+  const password = watch('password');
 
   return (
-    <View style={globalStyles.containerContent}>
-      <ScrollView style={{ width: "100%", flexGrow: 0 }}>
+    <View style={globalStyles.pageContainer}>
+      <KeyboardAvoidingView  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ width:"100%"}}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro
@@ -61,7 +65,7 @@ export default function Form() {
             {erro && <Text style={globalStyles.error}>{erro}</Text>}
             <Controller
               control={control}
-              name="nome"
+              name="name"
               rules={{ required: 'Nome é obrigatório' }}
               render={({ field: { onChange, value } }) => (
                 <Input
@@ -72,7 +76,7 @@ export default function Form() {
                 />
               )}
             />
-            {errors.nome && <Text style={globalStyles.error}>{errors.nome.message}</Text>}
+            {errors.name && <Text style={globalStyles.error}>{errors.name.message}</Text>}
 
             <Controller
               control={control}
@@ -90,6 +94,7 @@ export default function Form() {
                   placeholder="Digite seu email"
                   value={value}
                   onChangeText={onChange}
+                  autoCapitalize="none"
                   keyboardType="email-address"
                   textContentType="emailAddress"
                 />
@@ -99,7 +104,7 @@ export default function Form() {
 
             <Controller
               control={control}
-              name="senha"
+              name="password"
               rules={{
                 required: 'Senha é obrigatória',
                 minLength: { value: 6, message: 'A senha deve ter no mínimo 6 caracteres' }
@@ -111,18 +116,19 @@ export default function Form() {
                   value={value}
                   onChangeText={onChange}
                   secureTextEntry
+                  autoCapitalize="none"
                   textContentType="password"
                 />
               )}
             />
-            {errors.senha && <Text style={globalStyles.error}>{errors.senha.message}</Text>}
+            {errors.password && <Text style={globalStyles.error}>{errors.password.message}</Text>}
 
             <Controller
               control={control}
-              name="confirmaSenha"
+              name="confirmPassword"
               rules={{
                 required: 'Confirmação de senha é obrigatória',
-                validate: value => value === senha || 'As senhas não coincidem'
+                validate: value => value === password || 'As senhas não coincidem'
               }}
               render={({ field: { onChange, value } }) => (
                 <Input
@@ -135,16 +141,28 @@ export default function Form() {
                 />
               )}
             />
-            {errors.confirmaSenha && <Text style={globalStyles.error}>{errors.confirmaSenha.message}</Text>}
+            {errors.confirmPassword && <Text style={globalStyles.error}>{errors.confirmPassword.message}</Text>}
           </View>
 
           <Button title={isLoading ? "Carregando..." : "Cadastrar"} onPress={handleSubmit(onSubmit)} />
           <Text style={styles.semCadastro}>
             Já tem cadastro?
-            <Link href={"/"} style={styles.cliqueAqui}> Clique aqui</Link>
+            <Link href={"/login"} style={styles.cliqueAqui}> Clique aqui</Link>
           </Text>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
+
+
+export const styles = StyleSheet.create({
+  semCadastro:{
+    fontSize: 16,
+    textAlign: "center",
+    color: colors.text
+  },
+  cliqueAqui:{
+    color: colors.primary
+  }
+});
