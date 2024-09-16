@@ -1,7 +1,7 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from '../httpservices/pessoaApi';
+import { consult, login } from '../httpservices/pessoaApi';
 import { UserType } from '../types/types';
 
 type AuthContextType = {
@@ -26,9 +26,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const userDataLocal = await AsyncStorage.getItem('@user');
         if (userDataLocal) {
-          const { user } = JSON.parse(userDataLocal);
-          setUser(user);
-          setIsAuthenticated(true);
+          const userDataLocalJson = JSON.parse(userDataLocal);
+          const response = await consult(userDataLocalJson.user.id_pessoa)
+
+          if (response.status === 571) {
+            console.warn('Erro ao recuperar o usuário nos base remota');
+            return
+          }
+
+          if (response?.data?.items.length) {
+            const userDataRemote = response.data.items[0]
+            setUser(userDataRemote);
+            setIsAuthenticated(true);
+            redirectUser(userDataRemote.id_perfil)
+          }
+
         }
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
@@ -41,6 +53,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkUser();
   }, []);
+
+  function redirectUser(id_perfil: number) {
+    if (id_perfil === 1) {
+      router.replace("/(tabs)/employees")
+    } else if (id_perfil === 2) {
+      router.replace("/(tabs)/employees")
+    } else {
+      router.replace("/(tabs)")
+    }
+  }
 
   async function signIn(email: string, senha: string) {
     setIsLoading(true)
@@ -56,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true)
       try {
         await AsyncStorage.setItem("@user", JSON.stringify({ user: userData }))
-        router.replace("/(tabs)/")
+        redirectUser(userData.id_perfil)
       } catch (error) {
         console.warn(error);
       } finally {
