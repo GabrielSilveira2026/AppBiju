@@ -19,19 +19,21 @@ export default function AppLayout() {
       <Tabs.Screen
         name="employees"
         options={{
-          title: "Funcionarios"
+          title: "Funcionarios",
+          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Perfil",
+          href: user?.perfil === "Funcionario" ? "/" : null
         }}
       />
       <Tabs.Screen
         name="produtos"
         options={{
           title: "Produtos"
-        }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Perfil"
         }}
       />
     </Tabs>

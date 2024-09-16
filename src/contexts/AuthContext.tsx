@@ -38,13 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const userDataRemote = response.data.items[0]
             setUser(userDataRemote);
             setIsAuthenticated(true);
-            if (userDataRemote.id_perfil === 1) {
-              router.replace("/(tabs)/employees")
-            } else if (userDataRemote.id_perfil === 2) {
-              router.replace("/(tabs)/employees")
-            } else {
-              router.replace("/(tabs)")
-            }
+            redirectUser(userDataRemote.id_perfil)
           }
 
         }
@@ -60,6 +54,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkUser();
   }, []);
 
+  function redirectUser(id_perfil: number) {
+    if (id_perfil === 1) {
+      router.replace("/(tabs)/employees")
+    } else if (id_perfil === 2) {
+      router.replace("/(tabs)/employees")
+    } else {
+      router.replace("/(tabs)")
+    }
+  }
+
   async function signIn(email: string, senha: string) {
     setIsLoading(true)
     const response = await login(email, senha)
@@ -74,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true)
       try {
         await AsyncStorage.setItem("@user", JSON.stringify({ user: userData }))
-        router.replace("/(tabs)")
+        redirectUser(userData.id_perfil)
       } catch (error) {
         console.warn(error);
       } finally {
