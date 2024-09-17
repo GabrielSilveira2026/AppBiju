@@ -20,6 +20,7 @@ export default function AppLayout() {
         name="employees"
         options={{
           title: "Funcionarios",
+          headerShown: false,
           href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null
         }}
       />
@@ -27,13 +28,15 @@ export default function AppLayout() {
         name="index"
         options={{
           title: "Perfil",
+          headerShown: false,
           href: user?.perfil === "Funcionario" ? "/" : null
         }}
       />
       <Tabs.Screen
         name="produtos"
         options={{
-          title: "Produtos"
+          title: "Produtos",
+          headerShown: false
         }}
       />
     </Tabs>
