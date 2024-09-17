@@ -2,6 +2,8 @@
 import { useAuthContext } from "../../contexts/AuthContext";
 import { Redirect, router, Tabs } from "expo-router";
 import Loading from "../../components/Loading";
+import { colors } from "@/styles/color";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AppLayout() {
   const { isLoading, isAuthenticated, user } = useAuthContext();
@@ -15,13 +17,24 @@ export default function AppLayout() {
   }
 
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: "black",
+          borderTopColor: colors.primary,
+          borderTopWidth: 1,
+          minHeight: 60,
+          paddingVertical: 8
+        },
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
         name="employees"
         options={{
           title: "Funcionarios",
           headerShown: false,
-          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null
+          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
         }}
       />
       <Tabs.Screen
@@ -29,14 +42,16 @@ export default function AppLayout() {
         options={{
           title: "Perfil",
           headerShown: false,
-          href: user?.perfil === "Funcionario" ? "/" : null
+          href: user?.perfil === "Funcionario" ? "/" : null,
+          tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary}/>
         }}
       />
       <Tabs.Screen
         name="produtos"
         options={{
           title: "Produtos",
-          headerShown: false
+          headerShown: false,
+          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary}/>
         }}
       />
     </Tabs>
