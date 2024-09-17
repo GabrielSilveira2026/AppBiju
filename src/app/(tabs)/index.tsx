@@ -16,7 +16,7 @@ export default function Profile() {
             <View style={styles.firstLineHeader}>
               <View style={styles.nameContainer}>
                 <Text style={styles.textTitle}>
-                  TESTEEEEEEEEEEEE
+                  Gabrielaaaaaaaaaaaaaaaaaaaaa
                 </Text>
                 <Ionicons name={"create-outline"} size={30} color={colors.primary} />
               </View>
@@ -48,14 +48,13 @@ export default function Profile() {
     </ImageBackground>
   );
 }
-
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     paddingHorizontal: 8,
     paddingVertical: 16,
-    gap: 16
+    gap: 32
   },
 
   firstLineHeader: {
@@ -68,14 +67,15 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: "auto",
     alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: 8,
     gap: 8,
   },
 
   valueReciveContainer: {
     flexShrink: 1,
+    minWidth: "40%",
     flexBasis: "auto",
+    alignItems: "center",
     paddingHorizontal: 8,
   },
 
@@ -95,9 +95,9 @@ const styles = StyleSheet.create({
 
   textTitle: {
     fontSize: 20,
-    flexShrink: 1,
     fontWeight: "bold",
     color: colors.text,
+    flexShrink: 1,
   },
 
   textValue: {
