@@ -1,10 +1,11 @@
 import { colors } from "@/styles/color";
+import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 type HeaderProfileProps = {
     name: string,
-    amountToRecive: string,
+    amountToRecive: number,
     lastPayment: String
 }
 
@@ -14,36 +15,39 @@ export default function HeaderProfile({
     lastPayment
 }: HeaderProfileProps) {
     return (
-        <View style={styles.headerContainer}>
+        <View style={globalStyles.container}>
 
-            <View style={styles.firstLineHeader}>
-                <View style={styles.nameContainer}>
-                    <Text style={styles.textTitle}>
-                        {name}
-                    </Text>
-                    <Ionicons name={"create-outline"} size={30} color={colors.primary} />
+            <View style={styles.headerContainer}>
+
+                <View style={styles.firstLineHeader}>
+                    <View style={styles.nameContainer}>
+                        <Text style={styles.textValue}>
+                            {name}
+                        </Text>
+                        <Ionicons name={"create-outline"} size={30} color={colors.primary} />
+                    </View>
+
+                    <View style={styles.amountToReceiveContainer}>
+                        <Text style={styles.textTitle}>
+                            Valor a receber
+                        </Text>
+                        <Text style={styles.textValue}>
+                            R${amountToRecive}
+                        </Text>
+                    </View>
                 </View>
 
-                <View style={styles.amountToReceiveContainer}>
-                    <Text style={styles.textTitle}>
-                        Valor a receber
-                    </Text>
+                <View style={styles.lastPaymentContainer}>
+                    <View style={styles.lastPaymentTextContainer}>
+                        <Text style={styles.textTitle}>
+                            Último Pagamento
+                        </Text>
+                        <Ionicons name={"open-outline"} size={30} color={colors.primary} />
+                    </View>
                     <Text style={styles.textValue}>
-                        R${amountToRecive}
+                        {lastPayment}
                     </Text>
                 </View>
-            </View>
-
-            <View style={styles.lastPaymentContainer}>
-                <View style={styles.lastPaymentTextContainer}>
-                    <Text style={styles.textTitle}>
-                        Último Pagamento
-                    </Text>
-                    <Ionicons name={"open-outline"} size={30} color={colors.primary} />
-                </View>
-                <Text style={styles.textValue}>
-                    {lastPayment}
-                </Text>
             </View>
         </View>
     )
