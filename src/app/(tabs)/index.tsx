@@ -23,7 +23,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (isFocused) {
-      consultAmoutToRecive();
+      getDataHeader();
     }
 
     return () => {
@@ -33,7 +33,7 @@ export default function Profile() {
     };
   }, [isFocused]);
 
-  async function consultAmoutToRecive() {
+  async function getDataHeader() {
     // const response = await consultPending(user?.id_perfil)
     const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
     const response = await consultPending(userId || user?.id_pessoa);

@@ -1,7 +1,9 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import useProductDatabase from '../database/useProductDatabase';
-import { getProduct as getProductRemote, postProduct as postProductRemote} from '../httpservices/products';
+import useDayDatabase from '../database/useDayDatabase';
+import { getProduct as getProductRemote, postProduct as postProductRemote} from '../httpservices/product';
+import { getDay as getDayRemote} from '../httpservices/day';
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
@@ -14,6 +16,7 @@ type SyncContextType = {
   syncData: () => Promise<void>;
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
   getProduct: (name?: String | undefined) => Promise<any>
+  getDay: (id_pessoa?: Number | undefined) => Promise<any>
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -21,7 +24,8 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const productDatabase = useProductDatabase();
-  const pendingOperation = usePendingOperationDatabase()
+  const dayDatabase = useDayDatabase();
+  const pendingOperationDatabase = usePendingOperationDatabase()
 
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isConnected]);
 
   const syncData = async () => {
-    let operacoesPendentes = await pendingOperation.getPendingOperationNotSinc()
+    let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
       try {
@@ -51,7 +55,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
           } catch (error) {
             return;
           }
-          pendingOperation.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+          pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
         } else if (operacaoPendente.metodo === "PUT") {
           try {
@@ -59,7 +63,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
           } catch (error) {
             return;
           }
-          pendingOperation.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+          pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
         } else if (operacaoPendente.metodo === "DELETE") {
 
@@ -72,12 +76,26 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     await getProduct();
   };
 
+  async function getDay(){
+
+    const response = await getDayRemote();
+
+    if (response.status === 571) {
+      const response = await dayDatabase.getDay()
+      return {response: response, origemDados: "Local"}
+    }
+
+    productDatabase.updateProductList(response.data.items)
+
+    return {response: response.data.items, origemDados: "Remoto"};
+  }
+
   async function postProduct(produto: Omit<ProductType, "id_produto">): Promise<ProductType[]> {
     const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
     const response = await postProductRemote(url);
     if (response.status === 571) {
-      pendingOperation.postPendingOperation({ metodo: "POST", url: url });
+      pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
       return await productDatabase.postProduct(produto);
     }
 
@@ -99,7 +117,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct }}>
+    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay }}>
       {children}
     </SyncContext.Provider>
   );

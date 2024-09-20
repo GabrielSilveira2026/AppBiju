@@ -18,3 +18,11 @@ export type ProductType ={
     modificado_por: string | null;
     ultimo_valor: number | null;
 }
+
+export type DayType = {
+    id_dia: number;
+    data_dia_producao: string;
+    id_pessoa: number;
+    pessoa: string;
+    valor_dia: number;
+};
