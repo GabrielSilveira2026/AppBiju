@@ -1,6 +1,6 @@
 import HeaderProfile from "@/src/components/HeaderProfile";
 import { useAuthContext } from "@/src/contexts/AuthContext";
-import { consultPending } from "@/src/httpservices/pagamento";
+import { consultPending } from "@/src/httpservices/payment";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";

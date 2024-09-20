@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import { globalStyles } from '@/styles/styles';
 import { colors } from '../../styles/color';
 import { Link } from 'expo-router';
-import { register } from '../httpservices/pessoaApi';
+import { register } from '../httpservices/user';
 import { useAuthContext } from '../contexts/AuthContext';
 
 export type FormType = {

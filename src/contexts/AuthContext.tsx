@@ -1,7 +1,7 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { consult, login } from '../httpservices/pessoaApi';
+import { consult, login } from '../httpservices/user';
 import { UserType } from '../types/types';
 
 type AuthContextType = {
