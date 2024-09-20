@@ -3,7 +3,7 @@ import NetInfo from '@react-native-community/netinfo';
 import useProductDatabase from '../database/useProductDatabase';
 import { getProduct as getProductRemote, postProduct as postProductRemote} from '../httpservices/products';
 
-import usePendingOperationDatabase from '../database/useOperacaoPendenteDatabase';
+import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
 import { ProductType } from '../types/types';
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
