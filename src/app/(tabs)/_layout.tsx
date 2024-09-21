@@ -43,7 +43,7 @@ export default function AppLayout() {
         options={{
           title: "Perfil",
           headerShown: false,
-          href: user?.perfil === "Funcionario" ? "/" : null,
+          href: user?.perfil === "Funcionario" ? `/?${user?.id_pessoa}` : null,
           tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary}/>
         }}
       />

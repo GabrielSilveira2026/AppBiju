@@ -4,16 +4,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 type HeaderProfileProps = {
-    name: string,
-    amountToRecive: number,
-    lastPayment: String
+    userData: {
+        nome: string,
+        total: number,
+        ultimo_pagamento: string,
+    }
 }
 
-export default function HeaderProfile({
-    name,
-    amountToRecive,
-    lastPayment
-}: HeaderProfileProps) {
+export default function HeaderProfile({userData}: HeaderProfileProps) {
+
     return (
         <View style={globalStyles.container}>
 
@@ -22,7 +21,7 @@ export default function HeaderProfile({
                 <View style={styles.firstLineHeader}>
                     <View style={styles.nameContainer}>
                         <Text style={styles.textValue}>
-                            {name}
+                            {userData ? userData?.nome: "Carregando"}
                         </Text>
                         <Ionicons name={"create-outline"} size={30} color={colors.primary} />
                     </View>
@@ -32,7 +31,7 @@ export default function HeaderProfile({
                             Valor a receber
                         </Text>
                         <Text style={styles.textValue}>
-                            R${amountToRecive}
+                            R${userData ? userData?.total.toFixed(2) : "00,00"}
                         </Text>
                     </View>
                 </View>
@@ -45,7 +44,7 @@ export default function HeaderProfile({
                         <Ionicons name={"open-outline"} size={30} color={colors.primary} />
                     </View>
                     <Text style={styles.textValue}>
-                        {lastPayment}
+                        {userData ? userData?.ultimo_pagamento: "__/__/____"}
                     </Text>
                 </View>
             </View>

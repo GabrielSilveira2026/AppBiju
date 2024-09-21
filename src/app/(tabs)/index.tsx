@@ -10,44 +10,45 @@ import { useEffect, useState } from "react";
 import { Button, FlatList, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+type UserType = {
+  nome: string,
+  total: number,
+  ultimo_pagamento: string,
+}
+
+type ResponseType = {
+  data: {
+    items: UserType[]
+  }
+}
+
 export default function Profile() {
   const { user } = useAuthContext()
   const { id_pessoa } = useLocalSearchParams<string>();
+  const [userData, setUserData] = useState<UserType | undefined>(undefined)
 
   const isFocused = useIsFocused();
 
-  const [amountToRecive, setAmountToRecive] = useState<number>(0)
-  const [userName, setUserName] = useState<string>("")
-  const [lastPayment, setLastPayment] = useState<string>("")
-
 
   useEffect(() => {
-    if (isFocused) {
-      getDataHeader();
-    }
+    getDataHeader();
 
-    return () => {
-      if (!isFocused) {
-        setAmountToRecive(0);
-      }
-    };
   }, [isFocused]);
 
   async function getDataHeader() {
-    // const response = await consultPending(user?.id_perfil)
     const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
-    const response = await consultPending(userId || user?.id_pessoa);
-    
-    const date: Date = new Date(response?.data?.items[0]?.ultimo_pagamento);
-    setUserName(response?.data?.items[0]?.pessoa)
-    setLastPayment(date.toLocaleDateString())
-    setAmountToRecive(response?.data?.items[0]?.total.toFixed(2))
+    const response: ResponseType = await consultPending(userId || user?.id_pessoa);
+    let { nome, total, ultimo_pagamento } = response?.data?.items[0]
+
+    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+
+    setUserData({ nome, total, ultimo_pagamento })
   }
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <HeaderProfile name={userName} amountToRecive={amountToRecive} lastPayment={lastPayment} />
+        {userData && <HeaderProfile userData={userData} />}
         <View style={globalStyles.container}>
           <View style={styles.headerDias}>
             <Text style={[globalStyles.title]}>15 dias</Text>
