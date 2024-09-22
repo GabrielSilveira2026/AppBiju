@@ -1,6 +1,6 @@
 import HeaderProfile from "@/src/components/HeaderProfile";
 import { useAuthContext } from "@/src/contexts/AuthContext";
-import { consultPending } from "@/src/httpservices/payment";
+import { useSync } from "@/src/contexts/SyncContext";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -16,19 +16,14 @@ type UserType = {
   ultimo_pagamento: string,
 }
 
-type ResponseType = {
-  data: {
-    items: UserType[]
-  }
-}
-
 export default function Profile() {
   const { user } = useAuthContext()
+  const sync = useSync()
+
   const { id_pessoa } = useLocalSearchParams<string>();
   const [userData, setUserData] = useState<UserType | undefined>(undefined)
 
   const isFocused = useIsFocused();
-
 
   useEffect(() => {
     getDataHeader();
@@ -37,8 +32,9 @@ export default function Profile() {
 
   async function getDataHeader() {
     const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
-    const response: ResponseType = await consultPending(userId || user?.id_pessoa);
-    let { nome, total, ultimo_pagamento } = response?.data?.items[0]
+
+    const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
+    let { nome, total, ultimo_pagamento } = response.response[0]
 
     ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
 
@@ -74,6 +70,7 @@ const styles = StyleSheet.create({
   headerDias: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 8,
     gap: 8
   },
   showMore: {

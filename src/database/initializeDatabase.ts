@@ -40,7 +40,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         CREATE TABLE IF NOT EXISTS pagamento_pendente (
             id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
             id_pessoa INTEGER NOT NULL,
-            pessoa TEXT NOT NULL,
+            nome TEXT NOT NULL,
             ultimo_pagamento TEXT NOT NULL,
             total REAL NOT NULL
         );

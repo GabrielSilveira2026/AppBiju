@@ -36,7 +36,7 @@ export default function HeaderProfile({userData}: HeaderProfileProps) {
                     </View>
                 </View>
 
-                <View style={styles.lastPaymentContainer}>
+                <View>
                     <View style={styles.lastPaymentTextContainer}>
                         <Text style={styles.textTitle}>
                             Último Pagamento
@@ -53,8 +53,8 @@ export default function HeaderProfile({userData}: HeaderProfileProps) {
 }
 const styles = StyleSheet.create({
     headerContainer: {
-        paddingHorizontal: 8,
         paddingVertical: 16,
+        paddingHorizontal: 8,
         gap: 32
     },
 
@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         flexBasis: "auto",
         alignItems: "center",
-        paddingHorizontal: 8,
         gap: 8,
     },
 
@@ -78,11 +77,6 @@ const styles = StyleSheet.create({
         minWidth: "40%",
         flexBasis: "auto",
         alignItems: "center",
-        paddingHorizontal: 8,
-    },
-
-    lastPaymentContainer: {
-        paddingHorizontal: 8,
     },
 
     lastPaymentTextContainer: {
