@@ -89,7 +89,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    pendingPaymentDatabase.updatePendingPaymentList(response.data.items)
+    pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
@@ -102,8 +102,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await dayDatabase.getDay()
       return { response: response, origemDados: "Local" }
     }
-
-    productDatabase.updateProductList(response.data.items)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }

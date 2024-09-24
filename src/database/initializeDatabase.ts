@@ -41,7 +41,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
             id_pessoa INTEGER NOT NULL,
             nome TEXT NOT NULL,
-            ultimo_pagamento TEXT NOT NULL,
+            ultimo_pagamento TEXT,
             total REAL NOT NULL
         );
     `);

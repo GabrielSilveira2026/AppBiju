@@ -26,3 +26,10 @@ export type DayType = {
     pessoa: string;
     valor_dia: number;
 };
+
+export type PaymentType = {
+    id_pessoa: number;
+    nome: string;
+    ultimo_pagamento: string;
+    total: number;
+};

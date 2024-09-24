@@ -20,7 +20,7 @@ export default function Profile() {
   const { user } = useAuthContext()
   const sync = useSync()
 
-  const { id_pessoa } = useLocalSearchParams<string>();
+  const { id_pessoa } = useLocalSearchParams();
   const [userData, setUserData] = useState<UserType | undefined>(undefined)
 
   const isFocused = useIsFocused();
