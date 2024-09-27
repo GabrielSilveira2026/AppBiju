@@ -6,6 +6,7 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+        gap: 12,
         padding: 8
     },
     container: {
@@ -30,8 +31,9 @@ export const globalStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     title: {
-        fontSize: 24,
-        fontWeight: "regular"
+        fontSize: 20,
+        fontWeight: "regular",
+        color: colors.text
     },
     error: {
         color: "#e91515"
