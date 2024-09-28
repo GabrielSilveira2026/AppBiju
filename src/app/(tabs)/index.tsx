@@ -58,7 +58,9 @@ export default function Profile() {
         {userData && <HeaderProfile userData={userData} />}
         <View style={[globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
-            <Text style={[globalStyles.title]}>15 dias</Text>
+            <Text style={[globalStyles.title]}>{
+              dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : "Nenhum dia produzido"
+            }</Text>
             <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
           </View>
           <FlatList
