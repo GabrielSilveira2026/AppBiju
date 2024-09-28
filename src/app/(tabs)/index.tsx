@@ -28,29 +28,38 @@ export default function Profile() {
   const [userData, setUserData] = useState<UserType | undefined>(undefined)
   const [dayList, setDayList] = useState<DayType[] | undefined>([])
 
-  const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
-
   const isFocused = useIsFocused();
-
+  const controller = new AbortController()
+  
+  const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
+  
   useEffect(() => {
-    getDataHeader();
-    getDataDays()
+    async function getDataHeader() {
+
+      const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
+      let { nome, total, ultimo_pagamento } = response.response[0]
+
+      ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+
+      setUserData({ nome, total, ultimo_pagamento })
+    }
+
+    async function getDataDays() {
+      const response = await sync.getDay(parseInt(userId) || user?.id_pessoa)
+      setDayList(response.response)
+    }
+    
+    if (isFocused) {
+      getDataHeader();
+      getDataDays()
+    }
+
+    return () => {
+      controller.abort()
+    }
   }, [isFocused]);
 
-  async function getDataHeader() {
 
-    const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
-    let { nome, total, ultimo_pagamento } = response.response[0]
-
-    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
-
-    setUserData({ nome, total, ultimo_pagamento })
-  }
-
-  async function getDataDays() {
-    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa)
-    setDayList(response.response)
-  }
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>

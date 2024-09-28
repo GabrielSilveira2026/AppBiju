@@ -13,7 +13,7 @@ export default function Funcionarios() {
     const sync = useSync()
 
     const [listPendingPayment, setListPendingPayment] = useState<PaymentType[]>([])
-    
+
     async function getTablePendingPayment() {
         const response = await sync.getPendingPayment()
         setListPendingPayment(response.response)
@@ -22,19 +22,21 @@ export default function Funcionarios() {
     const isFocused = useIsFocused();
 
     useEffect(() => {
-        getTablePendingPayment()
+        if (isFocused) {
+            getTablePendingPayment()
+        }
     }, [isFocused])
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <View style={{ flexGrow: 0, justifyContent: 'center', alignItems: 'center' }}>
                 <FlatList
-                style={{backgroundColor: "white"}}
+                    style={{ backgroundColor: "white" }}
                     data={listPendingPayment}
-                    keyExtractor={item => item.id_pessoa}
+                    keyExtractor={item => item.id_pessoa.toString()}
                     renderItem={
                         ({ item }) => (
-                            <View style={{ marginTop: 30}}>
+                            <View style={{ marginTop: 30 }}>
                                 <Text>id_pagamento {item.id_pagamento}</Text>
                                 <Text>id_pessoa {item.id_pessoa}</Text>
                                 <Text>nome {item.nome}</Text>

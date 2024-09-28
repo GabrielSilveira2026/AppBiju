@@ -12,7 +12,6 @@ export default function usePendingPayment() {
                 ? `SELECT * FROM pagamento_pendente WHERE id_pessoa = $id_pessoa`
                 : `SELECT * FROM pagamento_pendente`;
 
-            // Prepara a execução da query com ou sem o id_pessoa
             const response = id_pessoa
                 ? await database.getAllAsync<PaymentType>(result, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<PaymentType>(result);
