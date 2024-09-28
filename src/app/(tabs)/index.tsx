@@ -1,7 +1,9 @@
 import HeaderProfile from "@/src/components/HeaderProfile";
-import DiaListItem from "@/src/components/Index/DiaListItem";
+import DayListItem from "@/src/components/Index/DayListItem";
+import DiaListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
+import { DayType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -23,16 +25,18 @@ export default function Profile() {
 
   const { id_pessoa } = useLocalSearchParams();
   const [userData, setUserData] = useState<UserType | undefined>(undefined)
+  const [dayList, setDayList] = useState<DayType[] | undefined>([])
+
+  const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     getDataHeader();
-
+    getDataDays()
   }, [isFocused]);
 
   async function getDataHeader() {
-    const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
     const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
     let { nome, total, ultimo_pagamento } = response.response[0]
@@ -40,6 +44,11 @@ export default function Profile() {
     ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
 
     setUserData({ nome, total, ultimo_pagamento })
+  }
+
+  async function getDataDays() {
+    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa)
+    setDayList(response.response)
   }
 
   return (
@@ -51,18 +60,15 @@ export default function Profile() {
             <Text style={[globalStyles.title]}>15 dias</Text>
             <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
           </View>
-          <DiaListItem></DiaListItem>
-          {/* <FlatList
-            data={ }
-            keyExtractor={item => item.id}
+          <FlatList
+            data={dayList}
+            // keyExtractor={day => day.id_dia}
             renderItem={
               ({ item }) => (
-                <View>
-                  <Text>{item.data}</Text>
-                </View>
+                <DayListItem day={item} />
               )
             }
-          /> */}
+          />
         </View>
       </SafeAreaView>
     </ImageBackground>

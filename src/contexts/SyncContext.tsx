@@ -18,7 +18,7 @@ type SyncContextType = {
   syncData: () => Promise<void>;
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
   getProduct: (name?: String | undefined) => Promise<any>
-  getDay: (id_pessoa?: Number | undefined) => Promise<any>
+  getDay: (id_pessoa?: number | undefined) => Promise<any>
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
 };
 
@@ -94,14 +94,16 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
-  async function getDay() {
+  async function getDay(id_pessoa?: number) {
 
-    const response = await getDayRemote();
+    const response = await getDayRemote(id_pessoa);
 
     if (response.status === 571) {
-      const response = await dayDatabase.getDay()
+      const response = await dayDatabase.getDay(id_pessoa)
       return { response: response, origemDados: "Local" }
     }
+
+    dayDatabase.updateDiaList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
