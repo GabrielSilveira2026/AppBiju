@@ -1,5 +1,9 @@
 import { colors } from "@/styles/color";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+import { StatusBar } from "react-native";
+
+const { height } = Dimensions.get('window');
+const statusBarHeight = StatusBar.currentHeight || 0;
 
 export const globalStyles = StyleSheet.create({
     pageContainer: {
@@ -7,7 +11,7 @@ export const globalStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
-        padding: 8
+        padding: 8,
     },
     container: {
         backgroundColor: colors.backgroundSecundary,
@@ -27,8 +31,9 @@ export const globalStyles = StyleSheet.create({
     },
     backgroundImage: {
         flex: 1,
-        resizeMode: 'cover',
-        justifyContent: 'center',
+        height: height + statusBarHeight + 2,
+        resizeMode: "cover",
+        justifyContent: 'center'
     },
     title: {
         fontSize: 20,

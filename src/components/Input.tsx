@@ -27,7 +27,9 @@ export const Input: React.FC<InputProps> = ({
   const [verSenha, setVerSenha] = useState<boolean>(false)
 
   return (
-    <View>
+    <View style={{
+      flexGrow: 1
+    }}>
       {label && <Text style={styles.label}>{label}</Text>}
       <View style={styles.inputLine}>
         <TextInput

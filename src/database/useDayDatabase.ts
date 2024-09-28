@@ -6,17 +6,72 @@ export default function useDayDatabase() {
 
     const database = useSQLiteContext()
 
-    async function getDay() {
+    async function getDay(id_pessoa?: number) {
         try {
-            const result = "SELECT * FROM dia ORDER BY data_dia_producao DESC"
-
-            const response = await database.getAllAsync<DayType>(result)
-
-            return response
+            const result = id_pessoa
+                ? `SELECT * FROM dia WHERE id_pessoa = $id_pessoa ORDER BY data_dia_producao DESC`
+                : `SELECT * FROM dia ORDER BY data_dia_producao DESC`;
+    
+            const response = id_pessoa
+                ? await database.getAllAsync<DayType>(result, { $id_pessoa: id_pessoa })
+                : await database.getAllAsync<DayType>(result);
+    
+            return response;
         } catch (error) {
-            throw error
+            throw error;
+        }
+    }
+    
+
+    async function updateDiaList(diaList: DayType[], id_pessoa?: number) {
+
+        const statementDelete = id_pessoa
+            ? await database.prepareAsync(`DELETE FROM dia WHERE id_pessoa = $id_pessoa`)
+            : await database.prepareAsync(`DELETE FROM dia`);
+
+        try {
+            if (id_pessoa) {
+                await statementDelete.executeAsync({ $id_pessoa: id_pessoa });
+            } else {
+                await statementDelete.executeAsync();
+            }
+        } catch (error) {
+            throw error;
+        } finally {
+            await statementDelete.finalizeAsync();
+        }
+
+        const statementInsert = await database.prepareAsync(`
+            INSERT INTO dia (
+                id_pessoa,
+                pessoa,
+                data_dia_producao,
+                valor_dia
+            )
+            VALUES (
+                $id_pessoa,
+                $pessoa,
+                $data_dia_producao,
+                $valor_dia
+            )
+        `);
+
+        try {
+            for await (const dia of diaList) {                
+                await statementInsert.executeAsync({
+                    $id_pessoa: dia.id_pessoa,
+                    $pessoa: dia.pessoa,
+                    $data_dia_producao: dia.data_dia_producao,
+                    $valor_dia: dia.valor_dia
+                });
+            }
+        } catch (error) {
+            throw error;
+        } finally {
+            await statementInsert.finalizeAsync();
         }
     }
 
-    return { getDay }
+
+    return { getDay, updateDiaList }
 }

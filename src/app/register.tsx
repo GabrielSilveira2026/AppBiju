@@ -8,6 +8,7 @@ import { colors } from '../../styles/color';
 import { Link } from 'expo-router';
 import { register } from '../httpservices/user';
 import { useAuthContext } from '../contexts/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export type FormType = {
   email: string;
@@ -54,8 +55,8 @@ export default function RegisterForm() {
   const password = watch('password');
 
   return (
-    <View style={globalStyles.pageContainer}>
-      <KeyboardAvoidingView  behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ width:"100%"}}>
+    <SafeAreaView style={globalStyles.pageContainer}>
+      <ScrollView style={{ flexGrow: 0, width: "100%"}}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro
@@ -150,19 +151,20 @@ export default function RegisterForm() {
             <Link href={"/login"} style={styles.cliqueAqui}> Clique aqui</Link>
           </Text>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 
 export const styles = StyleSheet.create({
-  semCadastro:{
+  semCadastro: {
     fontSize: 16,
     textAlign: "center",
     color: colors.text
   },
-  cliqueAqui:{
+  cliqueAqui: {
     color: colors.primary
   }
 });
