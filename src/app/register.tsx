@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Input } from '../components/Input';
 import Button from '../components/Button';
@@ -8,6 +8,7 @@ import { colors } from '../../styles/color';
 import { Link } from 'expo-router';
 import { register } from '../httpservices/user';
 import { useAuthContext } from '../contexts/AuthContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export type FormType = {
   email: string;
@@ -55,7 +56,7 @@ export default function RegisterForm() {
 
   return (
     <SafeAreaView style={globalStyles.pageContainer}>
-      <ScrollView style={{ flexGrow: 0, width: "100%" }}>
+      <ScrollView style={{ flexGrow: 0, width: "100%"}}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro

@@ -34,7 +34,7 @@ export default function AppLayout() {
         options={{
           title: "Funcionarios",
           headerShown: false,
-          // href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
           tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary}/>
         }}
       />

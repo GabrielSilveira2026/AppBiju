@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -104,7 +104,7 @@ export default function Profile() {
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           <View style={styles.bottomDias}>
-            <Ionicons onPress={() => { router.navigate("../(screens)/log") }} name="add-circle-outline" color={colors.primary} size={50} />
+            <Ionicons onPress={() => { router.navigate("../(screens)/dayDetails") }} name="add-circle-outline" color={colors.primary} size={50} />
           </View>
         </View>
       </SafeAreaView>
