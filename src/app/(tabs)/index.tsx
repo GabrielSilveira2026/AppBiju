@@ -1,4 +1,5 @@
 import HeaderProfile from "@/src/components/HeaderProfile";
+import DiaListItem from "@/src/components/Index/DiaListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
 import { colors } from "@/styles/color";
@@ -50,6 +51,7 @@ export default function Profile() {
             <Text style={[globalStyles.title]}>15 dias</Text>
             <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
           </View>
+          <DiaListItem></DiaListItem>
           {/* <FlatList
             data={ }
             keyExtractor={item => item.id}
