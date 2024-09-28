@@ -3,7 +3,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native'
 
-
 export default function log() {
     const pendingPaymentDatabase = usePendingPayment();
 

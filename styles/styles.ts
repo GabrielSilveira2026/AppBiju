@@ -5,11 +5,12 @@ const { height } = Dimensions.get('window');
 
 export const globalStyles = StyleSheet.create({
     pageContainer: {
-        height: height,
+        flex: 1,
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
-        padding: 8
+        paddingHorizontal: 8,
+        paddingBottom: 8
     },
     container: {
         backgroundColor: colors.backgroundSecundary,
