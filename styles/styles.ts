@@ -11,7 +11,7 @@ export const globalStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
-        padding: 8
+        padding: 8,
     },
     container: {
         backgroundColor: colors.backgroundSecundary,
@@ -32,9 +32,8 @@ export const globalStyles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
         height: height + statusBarHeight + 2,
-        paddingTop: statusBarHeight,
         resizeMode: "cover",
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     title: {
         fontSize: 20,

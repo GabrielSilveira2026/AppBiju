@@ -55,7 +55,7 @@ export default function RegisterForm() {
 
   return (
     <SafeAreaView style={globalStyles.pageContainer}>
-      <ScrollView style={{flexGrow: 0, width: "100%"}}>
+      <ScrollView style={{ flexGrow: 0, width: "100%" }}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro

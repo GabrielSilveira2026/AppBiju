@@ -99,7 +99,6 @@ export default function Profile() {
           </View>
           <FlatList
             data={isSearch? dayList: dayList?.slice(0, 5)}
-            style={styles.dayList}
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day.id_dia.toString()}
             renderItem={({ item }) => <DayListItem day={item} />}
@@ -114,19 +113,9 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  bottomDias: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    borderTopWidth: 1,
-    borderTopColor: colors.primary,
-    paddingTop: 8,
-  },
   containerDias: {
-    flexGrow: 1,
-    flex: 1
-  },
-  dayList: {
-    gap: 12,
+    flex: 1,
+    flexGrow: 1
   },
   headerDias: {
     flexDirection: "row",
@@ -137,5 +126,12 @@ const styles = StyleSheet.create({
   showMore: {
     fontSize: 16,
     color: colors.primary,
+  },
+  bottomDias: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    borderTopWidth: 1,
+    borderTopColor: colors.primary,
+    paddingTop: 8,
   },
 });
