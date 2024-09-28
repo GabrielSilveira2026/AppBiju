@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
 import { colors } from "../../styles/color";
 import { Input } from "../components/Input";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
@@ -27,54 +28,54 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={globalStyles.pageContainer}>
-      <View style={globalStyles.container}>
-        <Text style={[globalStyles.title, { color: colors.primary }]}>
-          Login
-        </Text>
-        {erro && <Text style={globalStyles.error}>{erro}</Text>}
+    <SafeAreaView style={globalStyles.pageContainer}>
+        <View style={globalStyles.container}>
+          <Text style={[globalStyles.title, { color: colors.primary }]}>
+            Login
+          </Text>
+          {erro && <Text style={globalStyles.error}>{erro}</Text>}
 
-        <View style={globalStyles.formContainer}>
-          <Input
-            label="Email"
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            textContentType="emailAddress"
+          <View style={globalStyles.formContainer}>
+            <Input
+              label="Email"
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+            />
+            <Input
+              label="Senha"
+              placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              textContentType="password"
+              autoCapitalize="none"
+              onSubmitEditing={login}
+            />
+          </View>
+          <Button
+            title={isLoading ? "Carregando..." : "Entrar"}
+            onPress={login}
           />
-          <Input
-            label="Senha"
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            textContentType="password"
-            autoCapitalize="none"
-            onSubmitEditing={login}
-          />
+          <Text style={styles.registerRedirect}>
+            Ainda não tem cadastro?
+            <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
+          </Text>
         </View>
-        <Button
-          title={isLoading ? "Carregando..." : "Entrar"}
-          onPress={login}
-        />
-        <Text style={styles.registerRedirect}>
-          Ainda não tem cadastro?
-          <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
-        </Text>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 export const styles = StyleSheet.create({
-  registerRedirect:{
+  registerRedirect: {
     fontSize: 16,
     textAlign: "center",
     color: colors.text
   },
-  registerRedirectLink:{
+  registerRedirectLink: {
     color: colors.primary
   }
 });

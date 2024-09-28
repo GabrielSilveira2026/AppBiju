@@ -28,6 +28,8 @@ export default function Profile() {
   const { id_pessoa } = useLocalSearchParams();
   const [userData, setUserData] = useState<UserType | undefined>(undefined);
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
+  const [searchDay, setSearchDay] = useState<string>("");
+  const [isSearch, setIsSearch] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
   const controller = new AbortController();
@@ -54,6 +56,7 @@ export default function Profile() {
       getDataDays();
     }
 
+
     return () => {
       controller.abort();
     };
@@ -62,22 +65,40 @@ export default function Profile() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        {userData && <HeaderProfile userData={userData} />}
+        {!isSearch && userData && <HeaderProfile userData={userData} />}
         <View style={[globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
+            {
+              isSearch && 
+              <Ionicons 
+              onPress={() => {
+                setIsSearch(!isSearch)
+              }} 
+              name="arrow-back-outline" 
+              size={35} 
+              color={colors.primary} />
+            }
             <Text style={[globalStyles.title]}>
               {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : "Nenhum dia produzido"}
             </Text>
-            <Pressable
-              onPress={() => {
-                console.log("PERTOU");
-              }}
-            >
-              <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
-            </Pressable>
+            {
+              isSearch ?
+                <Input
+                  value={searchDay}
+                  onChangeText={setSearchDay}
+                  placeholder="Pesquisar"
+                /> :
+                <Pressable
+                  onPress={() => {
+                    setIsSearch(!isSearch)
+                  }}
+                >
+                  <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
+                </Pressable>
+            }
           </View>
           <FlatList
-            data={dayList?.slice(0, 5)}
+            data={isSearch? dayList: dayList?.slice(0, 5)}
             style={styles.dayList}
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day.id_dia.toString()}

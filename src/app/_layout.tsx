@@ -13,12 +13,10 @@ export default function RootLayout() {
     <SQLiteProvider databaseName="myDataBase.db" onInit={initializeDatabase}>
       <SyncProvider>
         <AuthProvider>
-          <View style={{ flex: 1 }}>
-            <StatusBar style="light" />
-            <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-              <Slot />
-            </ImageBackground>
-          </View>
+          <StatusBar style="light" />
+          <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+            <Slot />
+          </ImageBackground>
         </AuthProvider>
       </SyncProvider>
     </SQLiteProvider>
