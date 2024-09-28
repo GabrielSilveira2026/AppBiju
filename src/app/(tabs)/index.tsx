@@ -30,9 +30,9 @@ export default function Profile() {
 
   const isFocused = useIsFocused();
   const controller = new AbortController()
-  
+
   const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
-  
+
   useEffect(() => {
     async function getDataHeader() {
 
@@ -48,7 +48,7 @@ export default function Profile() {
       const response = await sync.getDay(parseInt(userId) || user?.id_pessoa)
       setDayList(response.response)
     }
-    
+
     if (isFocused) {
       getDataHeader();
       getDataDays()
