@@ -55,14 +55,16 @@ export default function Profile() {
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
         {userData && <HeaderProfile userData={userData} />}
-        <View style={globalStyles.container}>
+        <View style={[globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
             <Text style={[globalStyles.title]}>15 dias</Text>
             <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
           </View>
           <FlatList
             data={dayList}
-            // keyExtractor={day => day.id_dia}
+            style={styles.dayList}
+            contentContainerStyle={{ gap: 12 }}
+            keyExtractor={day => day.id_dia.toString()}
             renderItem={
               ({ item }) => (
                 <DayListItem day={item} />
@@ -80,6 +82,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
     gap: 8
+  },
+  containerDias:{
+    flexGrow: 1
+  },
+  dayList:{
+    gap: 12
   },
   showMore: {
     fontSize: 16,

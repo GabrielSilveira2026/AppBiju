@@ -2,6 +2,7 @@ import { useSync } from "@/src/contexts/SyncContext";
 import { PaymentType } from "@/src/types/types";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, FlatList, ImageBackground, Text, View } from "react-native";
@@ -12,15 +13,17 @@ export default function Funcionarios() {
     const sync = useSync()
 
     const [listPendingPayment, setListPendingPayment] = useState<PaymentType[]>([])
-
+    
     async function getTablePendingPayment() {
         const response = await sync.getPendingPayment()
         setListPendingPayment(response.response)
     }
 
+    const isFocused = useIsFocused();
+
     useEffect(() => {
         getTablePendingPayment()
-    }, [])
+    }, [isFocused])
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
