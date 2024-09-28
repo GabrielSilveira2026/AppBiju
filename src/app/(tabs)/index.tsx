@@ -7,6 +7,7 @@ import { DayType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
+import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -71,6 +72,9 @@ export default function Profile() {
               )
             }
           />
+          <View style={styles.bottomDias}>
+            <Ionicons name="add-circle-outline" color={colors.primary} size={50} />
+          </View>
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -83,14 +87,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     gap: 8
   },
-  containerDias:{
-    flexGrow: 1
-  },
-  dayList:{
-    gap: 12
-  },
   showMore: {
     fontSize: 16,
     color: colors.primary
+  },
+  containerDias: {
+    flexGrow: 1,
+    maxHeight: "65%"
+  },
+  dayList: {
+    gap: 12,
+  },
+  bottomDias: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    borderTopWidth: 1,
+    borderTopColor: colors.primary,
+    paddingTop: 8
   }
 });

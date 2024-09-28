@@ -1,9 +1,11 @@
 import { colors } from "@/styles/color";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { height } = Dimensions.get('window');
 
 export const globalStyles = StyleSheet.create({
     pageContainer: {
-        flex: 1,
+        height: height,
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
