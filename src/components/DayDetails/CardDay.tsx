@@ -84,16 +84,17 @@ export default function CardDay({ dayData, onSubmit }: CardDayProps) {
                 onPress={() => setShowPicker(true)}
               >
                 <Input
-                  value={selectedDate ? selectedDate.toLocaleDateString() : ""}
+                  value={selectedDate ? selectedDate.toLocaleDateString() : "__/__/__"}
                   onChangeText={() => { }}
-                  placeholder="__/__/__"
                   editable={false}
                 />
               </TouchableOpacity>
               :
-              <Text style={styles.textValue}>
-                {selectedDate ? selectedDate.toLocaleDateString() : "Data não disponível"}
-              </Text>
+              <View style={styles.dataText}>
+                <Text style={styles.textValue}>
+                  {selectedDate ? selectedDate.toLocaleDateString() : "Data não disponível"}
+                </Text>
+              </View>
           }
           {
             mode !== "create"
@@ -146,6 +147,11 @@ const styles = StyleSheet.create({
   },
   dataButton: {
     flexGrow: 1
+  },
+  dataText:{
+    flex: 1,
+    paddingLeft: 8,
+    justifyContent: "flex-start",
   },
   secondLine: {
     flexDirection: 'row',
