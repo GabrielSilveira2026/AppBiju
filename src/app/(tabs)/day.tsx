@@ -73,7 +73,6 @@ export default function DayDetails() {
                                 {
                                     mode !== "view" ?
                                         <Pressable
-                                            style={styles.dataButton}
                                             onPress={() => setShowPicker(!showPicker)}
                                         >
                                             <View style={styles.dataContainer}>
@@ -130,31 +129,30 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     backAndData: {
-        flex: 1,
+        flexGrow: 0, 
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8
     },
-    dataButton: {
-        flexGrow: 1
-    },
     dataContainer: {
+        padding: 12,
         backgroundColor: colors.backgroundInput,
         borderBottomColor: colors.text,
         borderBottomWidth: 1,
-        alignItems: 'flex-start',
+        borderRadius: 4,
+        alignItems: "center",
     },
     dataText: {
-        color: "red",
-        backgroundColor: "blue",
+        fontSize: 20,
+        color: colors.text,
     },
     secondLine: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: "space-between"
     },
     textValue: {
-        fontSize: 18,
+        fontSize: 24,
         color: colors.text,
     }
 });
