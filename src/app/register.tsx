@@ -63,7 +63,7 @@ export default function RegisterForm() {
           </Text>
           <View style={globalStyles.formContainer}
           >
-            {erro && <Text style={globalStyles.error}>{erro}</Text>}
+            {erro && <Text style={{color: colors.error}}>{erro}</Text>}
             <Controller
               control={control}
               name="name"
@@ -77,7 +77,7 @@ export default function RegisterForm() {
                 />
               )}
             />
-            {errors.name && <Text style={globalStyles.error}>{errors.name.message}</Text>}
+            {errors.name && <Text style={{color: colors.error}}>{errors.name.message}</Text>}
 
             <Controller
               control={control}
@@ -101,7 +101,7 @@ export default function RegisterForm() {
                 />
               )}
             />
-            {errors.email && <Text style={globalStyles.error}>{errors.email.message}</Text>}
+            {errors.email && <Text style={{color: colors.error}}>{errors.email.message}</Text>}
 
             <Controller
               control={control}
@@ -122,7 +122,7 @@ export default function RegisterForm() {
                 />
               )}
             />
-            {errors.password && <Text style={globalStyles.error}>{errors.password.message}</Text>}
+            {errors.password && <Text style={{color: colors.error}}>{errors.password.message}</Text>}
 
             <Controller
               control={control}
@@ -142,7 +142,7 @@ export default function RegisterForm() {
                 />
               )}
             />
-            {errors.confirmPassword && <Text style={globalStyles.error}>{errors.confirmPassword.message}</Text>}
+            {errors.confirmPassword && <Text style={{color: colors.error}}>{errors.confirmPassword.message}</Text>}
           </View>
 
           <Button title={isLoading ? "Carregando..." : "Cadastrar"} onPress={handleSubmit(onSubmit)} />

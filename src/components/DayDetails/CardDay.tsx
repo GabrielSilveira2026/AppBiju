@@ -16,17 +16,17 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 };
 
 interface CardDayProps {
-  mode: 'view' | 'edit' | 'create';
   dayData: CardDayData;
   onSubmit: (data: CardDayData) => void;
 }
 
-export default function CardDay({ mode, dayData, onSubmit }: CardDayProps) {
-  const { control, handleSubmit, watch, setValue } = useForm<CardDayData>({
+export default function CardDay({ dayData, onSubmit }: CardDayProps) {
+  const { handleSubmit, setValue } = useForm<CardDayData>({
     defaultValues: dayData
   });
 
   const [showPicker, setShowPicker] = useState(false);
+  const [mode, setMode] = useState<'view' | 'edit' | 'create'>();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     dayData?.data_dia_producao ? new Date(dayData.data_dia_producao) : undefined
   );
@@ -36,10 +36,17 @@ export default function CardDay({ mode, dayData, onSubmit }: CardDayProps) {
       if (dayData.data_dia_producao) {
         setValue("data_dia_producao", dayData.data_dia_producao);
         setSelectedDate(new Date(dayData.data_dia_producao));
+        setMode("view")
+      }
+      else {
+        setMode("create")
       }
       if (dayData.valor_dia) setValue("valor_dia", dayData.valor_dia);
       setValue("pessoa", dayData.pessoa);
       setValue("id_pessoa", dayData.id_pessoa);
+    }
+    return () => {
+      setSelectedDate(undefined)
     }
   }, [dayData, setValue]);
 
@@ -58,47 +65,70 @@ export default function CardDay({ mode, dayData, onSubmit }: CardDayProps) {
         <View style={styles.firstLine}>
           <Ionicons
             onPress={() => {
-              router.navigate("/");
+              if (mode === "edit") {
+                setMode("view")
+              }
+              else {
+                router.navigate("/");
+              }
             }}
             name="arrow-back-outline"
             size={35}
             color={colors.primary}
           />
 
-          {mode !== 'view' ? (
-            <TouchableOpacity
-              style={styles.dataButton}
-              onPress={() => setShowPicker(true)}
-            >
-              <Input
-                value={selectedDate ? selectedDate.toLocaleDateString() : ""}
-                onChangeText={() => { }}
-                placeholder="__/__/__"
-                editable={false}
-              />
-            </TouchableOpacity>
-          ) : (
-            <Text>{selectedDate ? selectedDate.toLocaleDateString() : "Data não disponível"}</Text>
-          )}
+          {
+            mode !== 'view' ?
+              <TouchableOpacity
+                style={styles.dataButton}
+                onPress={() => setShowPicker(true)}
+              >
+                <Input
+                  value={selectedDate ? selectedDate.toLocaleDateString() : ""}
+                  onChangeText={() => { }}
+                  placeholder="__/__/__"
+                  editable={false}
+                />
+              </TouchableOpacity>
+              :
+              <Text style={styles.textValue}>
+                {selectedDate ? selectedDate.toLocaleDateString() : "Data não disponível"}
+              </Text>
+          }
+          {
+            mode !== "create"
+            &&
+            <Ionicons
+              onPress={() => setMode("edit")}
+              name={mode === "view" ? "create-outline" : "trash-outline"}
+              size={35}
+              color={mode === "view" ? colors.primary : colors.error}
+            />
+          }
+
         </View>
 
-        {showPicker && (
+        {
+          showPicker
+          &&
           <DateTimePicker
             value={selectedDate || new Date()}
             mode="date"
             display="default"
             onChange={handleDateChange}
           />
-        )}
+        }
 
         <View style={styles.secondLine}>
           <Text style={styles.textValue}>Total: R${dayData.valor_dia || '0,00'}</Text>
-          <Text style={styles.textValue}>{dayData.pessoa}</Text>
+          <Text style={styles.textValue}>{dayData?.pessoa}</Text>
         </View>
 
-        {mode !== 'view' && (
-          <Button title="Enviar" onPress={handleSubmit(onSubmit)} />
-        )}
+        {
+          mode !== 'view'
+          &&
+          <Button title={"Salvar"} onPress={handleSubmit(onSubmit)} />
+        }
       </View>
     </View>
   );
@@ -111,7 +141,7 @@ const styles = StyleSheet.create({
   },
   firstLine: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   dataButton: {

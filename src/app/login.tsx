@@ -33,7 +33,7 @@ export default function HomeScreen() {
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Login
           </Text>
-          {erro && <Text style={globalStyles.error}>{erro}</Text>}
+          {erro && <Text style={{color: colors.error}}>{erro}</Text>}
 
           <View style={globalStyles.formContainer}>
             <Input

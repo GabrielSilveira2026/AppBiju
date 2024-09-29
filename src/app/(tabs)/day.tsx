@@ -11,11 +11,19 @@ export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
 
-    const [dayData, setDayData] = useState<CardDayData>()
+    const [dayData, setDayData] = useState<CardDayData>({
+        id_pessoa: Number(params.id_pessoa),
+        pessoa: String(params.pessoa)
+    })
+
+    const handleSubmit = (data: CardDayData) => {
+        console.log("Form submitted:", data);
+    };
 
     useEffect(() => {
         if (isFocused) {
             const paramsJson = {
+                id_dia: Number(params.id_dia),
                 id_pessoa: Number(params.id_pessoa),
                 pessoa: String(params.pessoa),
                 data_dia_producao: Array.isArray(params.data_dia_producao)
@@ -24,19 +32,17 @@ export default function DayDetails() {
                 valor_dia: params.valor_dia ? Number(params.valor_dia) : undefined,
             };
             setDayData(paramsJson)
-            console.log(paramsJson)
-        }  
+            console.log("Tela day", paramsJson)
+        }
     }, [isFocused])
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                {/* <CardDay
-                    mode={params.data_dia_producao ? "edit" : "create"}
-                    onSubmit={handleSubmit}
+                <CardDay
                     dayData={dayData}
-                /> */}
-                <Text>{dayData?.valor_dia}</Text>
+                    onSubmit={handleSubmit}
+                />
             </SafeAreaView>
         </ImageBackground>
     );

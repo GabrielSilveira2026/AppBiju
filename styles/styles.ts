@@ -39,8 +39,5 @@ export const globalStyles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "regular",
         color: colors.text
-    },
-    error: {
-        color: "#e91515"
-    },
+    }
 });

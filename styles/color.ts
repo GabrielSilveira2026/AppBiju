@@ -4,5 +4,6 @@ export const colors = {
     backgroundTertiary: '#181818',
     primary: "#FFDE00",
     text: "#FFFFFF",
-    textInput: 'rgba(255, 255, 255, 0.25)'
+    textInput: 'rgba(255, 255, 255, 0.25)',
+    error: "#e91515"
 }

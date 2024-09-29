@@ -65,7 +65,13 @@ export default function Profile() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        {!isSearch && userData && <HeaderProfile userData={userData} />}
+        {
+        !isSearch 
+        && 
+        userData 
+        && 
+        <HeaderProfile userData={userData} />
+        }
         <View style={[globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
             {
