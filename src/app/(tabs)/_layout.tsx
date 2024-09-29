@@ -56,8 +56,7 @@ export default function AppLayout() {
         name="day"
         options={{
           headerShown: false,
-          href: null,
-          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary}/>,
+          tabBarIcon: () => <Ionicons name="calendar-outline" size={35} color={colors.primary}/>,
         }}
       />
     </Tabs>
