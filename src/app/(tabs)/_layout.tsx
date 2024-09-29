@@ -32,7 +32,6 @@ export default function AppLayout() {
       <Tabs.Screen
         name="employees"
         options={{
-          title: "Funcionarios",
           headerShown: false,
           href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
           tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary}/>
@@ -41,7 +40,6 @@ export default function AppLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Perfil",
           headerShown: false,
           href: user?.perfil === "Funcionario" ? `/?${user?.id_pessoa}` : null,
           tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary}/>
@@ -50,8 +48,15 @@ export default function AppLayout() {
       <Tabs.Screen
         name="produtos"
         options={{
-          title: "Produtos",
           headerShown: false,
+          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary}/>,
+        }}
+      />
+      <Tabs.Screen
+        name="day"
+        options={{
+          headerShown: false,
+          href: null,
           tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary}/>,
         }}
       />

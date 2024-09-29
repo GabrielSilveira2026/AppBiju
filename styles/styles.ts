@@ -14,11 +14,11 @@ export const globalStyles = StyleSheet.create({
         padding: 8,
     },
     container: {
+        flexGrow: 0,
         backgroundColor: colors.backgroundSecundary,
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 8,
-        flexGrow: 0,
         width: "100%",
         gap: 16,
     },

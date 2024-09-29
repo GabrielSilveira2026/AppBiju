@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 
-import HeaderProfile from "@/src/components/HeaderProfile";
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
@@ -14,6 +13,7 @@ import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
+import HeaderProfile from "@/src/components/Index/HeaderProfile";
 
 type UserType = {
   nome: string;
@@ -69,14 +69,14 @@ export default function Profile() {
         <View style={[globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
             {
-              isSearch && 
-              <Ionicons 
-              onPress={() => {
-                setIsSearch(!isSearch)
-              }} 
-              name="arrow-back-outline" 
-              size={35} 
-              color={colors.primary} />
+              isSearch &&
+              <Ionicons
+                onPress={() => {
+                  setIsSearch(!isSearch)
+                }}
+                name="arrow-back-outline"
+                size={35}
+                color={colors.primary} />
             }
             <Text style={[globalStyles.title]}>
               {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : "Nenhum dia produzido"}
@@ -98,14 +98,29 @@ export default function Profile() {
             }
           </View>
           <FlatList
-            data={isSearch? dayList: dayList?.slice(0, 5)}
+            data={isSearch ? dayList : dayList?.slice(0, 5)}
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day.id_dia.toString()}
             renderItem={({ item }) => <DayListItem day={item} />}
           />
-          <View style={styles.bottomDias}>
-            <Ionicons onPress={() => { router.navigate("../(screens)/dayDetails") }} name="add-circle-outline" color={colors.primary} size={50} />
-          </View>
+          {
+            !userId &&
+            <View style={styles.bottomDias}>
+              <Ionicons
+                onPress={() => {
+                  router.navigate({
+                    pathname: '../(tabs)/day',
+                    params: {
+                      id_pessoa: user?.id_pessoa,
+                      pessoa: user?.nome
+                    },
+                  });
+                }}
+                name="add-circle-outline"
+                color={colors.primary}
+                size={50} />
+            </View>
+          }
         </View>
       </SafeAreaView>
     </ImageBackground>
