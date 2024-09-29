@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -11,6 +11,7 @@ import { colors } from "@/styles/color";
 import { Input } from "@/src/components/Input";
 import { Ionicons } from "@expo/vector-icons";
 import { useSync } from "@/src/contexts/SyncContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
@@ -58,8 +59,11 @@ export default function DayDetails() {
         const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
         if (selectedDate) {
             const response = await sync.postDay(parseInt(userId), selectedDate.toISOString())
-            console.log(response);
-
+            router.replace({
+                pathname: '../(tabs)/day',
+                params: { ...response.response, pessoa: params.pessoa }
+            })
+            setMode("view")
         }
         else {
             Alert.alert("Data invalida", "Por favor, selecione um dia")
@@ -127,6 +131,17 @@ export default function DayDetails() {
                     </View>
 
                 </View>
+                <View style={[globalStyles.container, styles.containerProducts]}>
+                    <View style={styles.headerProducts}>
+                        <Text style={globalStyles.title}>
+                            Produtos
+                        </Text>
+                    </View>
+                    <Button title={"Salvar"} onPress={() => { }} />
+                    <Button title={"Salvar"} onPress={() => { }} />
+                    <Button title={"Salvar"} onPress={() => { }} />
+                    <Button title={"Salvar"} onPress={() => { }} />
+                </View>
                 {
                     mode && mode !== 'view' &&
                     <Button title={"Salvar"} onPress={createDay} />
@@ -173,5 +188,16 @@ const styles = StyleSheet.create({
     textValue: {
         fontSize: 24,
         color: colors.text,
+    },
+    containerProducts: {
+        flex: 1,
+        flexGrow: 1
+    },
+
+    headerProducts: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 8,
+        gap: 8,
     }
 });

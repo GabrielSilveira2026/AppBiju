@@ -118,7 +118,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      // return await productDatabase.postProduct(produto);
+      // return await dayDatabase.postDay(id_pessoa, data_dia_producao);
     }
     let data = {
       "data_dia_producao": response.data.data_dia_producao,

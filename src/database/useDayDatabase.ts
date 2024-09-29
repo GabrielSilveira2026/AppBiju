@@ -11,17 +11,45 @@ export default function useDayDatabase() {
             const result = id_pessoa
                 ? `SELECT * FROM dia WHERE id_pessoa = $id_pessoa ORDER BY data_dia_producao DESC`
                 : `SELECT * FROM dia ORDER BY data_dia_producao DESC`;
-    
+
             const response = id_pessoa
                 ? await database.getAllAsync<DayType>(result, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<DayType>(result);
-    
+
             return response;
         } catch (error) {
             throw error;
         }
     }
-    
+
+    async function postDay(id_pessoa: number, data_dia_producao: string, valor_dia: number) {
+        const statement = await database.prepareAsync(`
+            INSERT INTO dia (
+                id_pessoa,
+                data_dia_producao,
+                valor_dia
+            )
+            VALUES (
+                $id_pessoa,
+                $data_dia_producao,
+                $valor_dia
+            )
+        `);
+
+        try {
+            await statement.executeAsync({
+                $id_pessoa: id_pessoa,
+                $data_dia_producao: data_dia_producao,
+                $valor_dia: valor_dia
+            });
+            console.log("Dia criado com sucesso.");
+        } catch (error) {
+            console.error("Erro ao criar dia:", error);
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+        }
+    }
 
     async function updateDiaList(diaList: DayType[], id_pessoa?: number) {
 
@@ -57,7 +85,7 @@ export default function useDayDatabase() {
         `);
 
         try {
-            for await (const dia of diaList) {                
+            for await (const dia of diaList) {
                 await statementInsert.executeAsync({
                     $id_pessoa: dia.id_pessoa,
                     $pessoa: dia.pessoa,
@@ -73,5 +101,5 @@ export default function useDayDatabase() {
     }
 
 
-    return { getDay, updateDiaList }
+    return { getDay, updateDiaList, postDay }
 }

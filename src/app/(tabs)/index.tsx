@@ -81,7 +81,7 @@ export default function Profile() {
                   setIsSearch(!isSearch)
                 }}
                 name="arrow-back-outline"
-                size={35}
+                size={40}
                 color={colors.primary} />
             }
             <Text style={[globalStyles.title]}>
