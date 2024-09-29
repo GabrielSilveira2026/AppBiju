@@ -17,8 +17,9 @@ type SyncContextType = {
   isConnected: boolean | null;
   syncData: () => Promise<void>;
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
-  getProduct: (name?: String | undefined) => Promise<any>
-  getDay: (id_pessoa?: number | undefined) => Promise<any>
+  getProduct: (name?: String | undefined) => Promise<any>,
+  getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  postDay: (id_pessoa: number, data_dia_producao: string) => Promise<any>,
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
 };
 
@@ -83,7 +84,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPendingPayment(id_pessoa?: number) {
     const response = await getPendingRemote(id_pessoa);
-    
+
     if (response.status === 571) {
       const response = await pendingPaymentDatabase.getPendingPayment(id_pessoa)
       return { response: response, origemDados: "Local" }
@@ -106,6 +107,25 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     dayDatabase.updateDiaList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
+  }
+
+  async function postDay(id_pessoa: number, data_dia_producao: string) {
+    const url = `${baseUrl}/dia/?id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
+
+    const response: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (response.status === 571) {
+      pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      // return await productDatabase.postProduct(produto);
+    }
+    let data = {
+      "data_dia_producao": response.data.data_dia_producao,
+      "id_dia": response.data.id_dia,
+      "id_pessoa": response.data.id_pessoa
+    }    
+    return { response: data, origemDados: "Remoto" };
   }
 
   async function postProduct(produto: Omit<ProductType, "id_produto">): Promise<ProductType[]> {
@@ -135,7 +155,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, getPendingPayment }}>
+    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment }}>
       {children}
     </SyncContext.Provider>
   );

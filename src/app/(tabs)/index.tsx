@@ -104,7 +104,7 @@ export default function Profile() {
             }
           </View>
           <FlatList
-            data={isSearch ? dayList : dayList?.slice(0, 5)}
+            data={isSearch ? dayList : dayList?.slice(0, 15)}
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day.id_dia.toString()}
             renderItem={({ item }) => <DayListItem day={item} />}

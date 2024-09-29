@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -10,6 +10,7 @@ import Button from "@/src/components/Button";
 import { colors } from "@/styles/color";
 import { Input } from "@/src/components/Input";
 import { Ionicons } from "@expo/vector-icons";
+import { useSync } from "@/src/contexts/SyncContext";
 
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
@@ -20,8 +21,9 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
+    const sync = useSync();
 
-    const [mode, setMode] = useState<"view" | "edit" | "create">();
+    const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [showPicker, setShowPicker] = useState<boolean>(false)
 
@@ -36,9 +38,11 @@ export default function DayDetails() {
             }
             else {
                 setMode("create")
+                setSelectedDate(new Date())
             }
         }
         return () => {
+            setMode(undefined)
             setSelectedDate(undefined)
         }
     }, [isFocused])
@@ -49,6 +53,18 @@ export default function DayDetails() {
             setSelectedDate(date);
         }
     };
+
+    async function createDay() {
+        const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+        if (selectedDate) {
+            const response = await sync.postDay(parseInt(userId), selectedDate.toISOString())
+            console.log(response);
+
+        }
+        else {
+            Alert.alert("Data invalida", "Por favor, selecione um dia")
+        }
+    }
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -71,12 +87,12 @@ export default function DayDetails() {
                                     color={colors.primary}
                                 />
                                 {
-                                    mode !== "view" ?
+                                    mode && mode !== "view" ?
                                         <Pressable
                                             onPress={() => setShowPicker(!showPicker)}
                                         >
                                             <View style={styles.dataContainer}>
-                                                <Text style={styles.dataText}>{selectedDate ? selectedDate.toLocaleDateString() : "__/__/__"}</Text>
+                                                <Text style={styles.dataText}>{selectedDate?.toLocaleDateString()}</Text>
                                             </View>
                                         </Pressable>
                                         :
@@ -95,8 +111,7 @@ export default function DayDetails() {
 
                             </View>
                             {
-                                mode !== "create"
-                                &&
+                                mode && mode !== "create" &&
                                 <Ionicons
                                     onPress={() => setMode("edit")}
                                     name={mode === "view" ? "create-outline" : "trash-outline"}
@@ -112,6 +127,10 @@ export default function DayDetails() {
                     </View>
 
                 </View>
+                {
+                    mode && mode !== 'view' &&
+                    <Button title={"Salvar"} onPress={createDay} />
+                }
             </SafeAreaView>
         </ImageBackground>
     );
@@ -129,7 +148,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     backAndData: {
-        flexGrow: 0, 
+        flexGrow: 0,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8
