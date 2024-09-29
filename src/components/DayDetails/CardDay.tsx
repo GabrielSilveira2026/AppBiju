@@ -18,9 +18,10 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 interface CardDayProps {
   dayData: CardDayData;
   onSubmit: (data: CardDayData) => void;
+  setText: any
 }
 
-export default function CardDay({ dayData, onSubmit }: CardDayProps) {
+export default function CardDay({ dayData, onSubmit, setText }: CardDayProps) {
   const { handleSubmit, setValue } = useForm<CardDayData>({
     defaultValues: dayData
   });
@@ -52,6 +53,7 @@ export default function CardDay({ dayData, onSubmit }: CardDayProps) {
 
   const handleDateChange = (event: any, date: Date | undefined) => {
     setShowPicker(false);
+    setText("abacaxi")
     if (date) {
       setSelectedDate(date);
       const dateString = date.toISOString();
