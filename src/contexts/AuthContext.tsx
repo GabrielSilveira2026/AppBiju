@@ -45,9 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
       } finally {
-        setTimeout(() => {
+        // setTimeout(() => {
           setIsLoading(false)
-        }, 1000);
+        // }, 1000);
       }
     }
 

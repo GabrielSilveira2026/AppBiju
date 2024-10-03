@@ -14,6 +14,7 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 type UserType = {
   nome: string;
@@ -62,17 +63,51 @@ export default function Profile() {
     };
   }, [isFocused]);
 
+  const headerPosition = useSharedValue(-300)
+  const daysPosition = useSharedValue(400)
+
+  useEffect(() => {
+    headerPosition.value = -300
+    headerPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+    daysPosition.value = 400
+    daysPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+  }, [isFocused])
+
+  const headerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: headerPosition.value
+        }
+      ]
+    }
+  })
+
+  const daysStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: daysPosition.value
+        }
+      ]
+    }
+  })
+
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
         {
-        !isSearch 
-        && 
-        userData 
-        && 
-        <HeaderProfile userData={userData} />
+          !isSearch
+          &&
+          userData
+          &&
+          <Animated.View style={[headerStyle, { width: "100%" }]}><HeaderProfile userData={userData} /></Animated.View>
         }
-        <View style={[globalStyles.container, styles.containerDias]}>
+        <Animated.View style={[daysStyle, globalStyles.container, styles.containerDias]}>
           <View style={styles.headerDias}>
             {
               isSearch &&
@@ -127,7 +162,7 @@ export default function Profile() {
                 size={50} />
             </View>
           }
-        </View>
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   );

@@ -1,6 +1,7 @@
 import { colors } from "@/styles/color";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type HeaderProfileProps = {
@@ -11,7 +12,9 @@ type HeaderProfileProps = {
     }
 }
 
-export default function HeaderProfile({userData}: HeaderProfileProps) {
+
+
+export default function HeaderProfile({ userData }: HeaderProfileProps) {
 
     return (
         <View style={globalStyles.container}>
@@ -21,7 +24,7 @@ export default function HeaderProfile({userData}: HeaderProfileProps) {
                 <View style={styles.firstLineHeader}>
                     <View style={styles.nameContainer}>
                         <Text style={styles.textValue}>
-                            {userData ? userData?.nome: "Carregando"}
+                            {userData ? userData?.nome : "Carregando"}
                         </Text>
                         <Ionicons name={"create-outline"} size={30} color={colors.primary} />
                     </View>
@@ -44,7 +47,7 @@ export default function HeaderProfile({userData}: HeaderProfileProps) {
                         <Ionicons name={"open-outline"} size={30} color={colors.primary} />
                     </View>
                     <Text style={styles.textValue}>
-                        {userData ? userData?.ultimo_pagamento: "__/__/____"}
+                        {userData ? userData?.ultimo_pagamento : "__/__/____"}
                     </Text>
                 </View>
             </View>

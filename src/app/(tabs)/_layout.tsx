@@ -29,14 +29,7 @@ export default function AppLayout() {
         tabBarShowLabel: false,
       }}
     >
-      <Tabs.Screen
-        name="employees"
-        options={{
-          headerShown: false,
-          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
-          tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary}/>
-        }}
-      />
+      
       <Tabs.Screen
         name="index"
         options={{
@@ -57,6 +50,14 @@ export default function AppLayout() {
         options={{
           headerShown: false,
           tabBarIcon: () => <Ionicons name="calendar-outline" size={35} color={colors.primary}/>,
+        }}
+      />
+      <Tabs.Screen
+        name="employees"
+        options={{
+          headerShown: false,
+          // href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary}/>
         }}
       />
     </Tabs>

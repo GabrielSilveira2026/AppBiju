@@ -10,6 +10,7 @@ import usePendingOperationDatabase from '../database/usePendingOperationDatabase
 import axios from 'axios';
 import { ProductType } from '../types/types';
 import usePendingPayment from '../database/usePendingPayment';
+import { useAuthContext } from './AuthContext';
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
@@ -27,11 +28,11 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const { user } = useAuthContext()
   const productDatabase = useProductDatabase();
   const dayDatabase = useDayDatabase();
   const pendingPaymentDatabase = usePendingPayment();
   const pendingOperationDatabase = usePendingOperationDatabase()
-
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -79,7 +80,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await getProduct();
-    await getPendingPayment()
+    await getPendingPayment(user?.id_perfil === 3 ? user?.id_perfil : undefined)
   };
 
   async function getPendingPayment(id_pessoa?: number) {
@@ -124,7 +125,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "data_dia_producao": response.data.data_dia_producao,
       "id_dia": response.data.id_dia,
       "id_pessoa": response.data.id_pessoa
-    }    
+    }
     return { response: data, origemDados: "Remoto" };
   }
 

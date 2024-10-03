@@ -12,6 +12,7 @@ import { Input } from "@/src/components/Input";
 import { Ionicons } from "@expo/vector-icons";
 import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
@@ -129,7 +130,6 @@ export default function DayDetails() {
                             <Text style={styles.textValue}>{params?.pessoa}</Text>
                         </View>
                     </View>
-
                 </View>
                 <View style={[globalStyles.container, styles.containerProducts]}>
                     <View style={styles.headerProducts}>
