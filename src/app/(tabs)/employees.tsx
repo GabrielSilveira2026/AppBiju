@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { PaymentType } from "@/src/types/types";
+import { PendingPaymentType } from "@/src/types/types";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { useIsFocused } from "@react-navigation/native";
@@ -12,7 +12,7 @@ export default function Funcionarios() {
 
     const sync = useSync()
 
-    const [listPendingPayment, setListPendingPayment] = useState<PaymentType[]>([])
+    const [listPendingPayment, setListPendingPayment] = useState<PendingPaymentType[]>([])
 
     async function getTablePendingPayment() {
         const response = await sync.getPendingPayment()

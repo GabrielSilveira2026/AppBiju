@@ -40,6 +40,7 @@ export default function Profile() {
   useEffect(() => {
     async function getDataHeader() {
       const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
+      
       let { nome, total, ultimo_pagamento } = response.response[0];
 
       ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();

@@ -35,19 +35,21 @@ export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">)
   return response
 }
 
-export function consult(id_pessoa: number) {
-  const response = axios.get(`${baseUrl}/pessoa/${id_pessoa}`).catch(function (error) {
-    return { status: 571 }
-    if (error.response) {
-      return error.response
+export function getPeople(id_pessoa?: number) {
 
-    } else if (error.request) {
-      return error.request;
+  const query = id_pessoa ? `,"id_pessoa":${id_pessoa}}` : "";
 
-    } else {
-      return error.message;
+  const response = axios.get(`${baseUrl}/pessoa/?q={"$orderby":{"nome":"asc"}${query}`).catch(function (error) {
+      return { status: 571 };
+      if (error.response) {
+          return error.response;
 
-    }
+      } else if (error.request) {
+          return error.request;
+
+      } else {
+          return error.message;
+      }
   });
-  return response
+  return response;
 }

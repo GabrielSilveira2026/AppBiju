@@ -9,8 +9,10 @@ import { getPending as getPendingRemote } from '../httpservices/payment';
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
 import { ProductType } from '../types/types';
-import usePendingPayment from '../database/usePendingPayment';
 import { useAuthContext } from './AuthContext';
+import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
+import { getPeople as getPeopleRemote } from '../httpservices/user';
+import usePeopleDatabase from '../database/usePeopleDatabase';
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
@@ -30,14 +32,16 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
   const productDatabase = useProductDatabase();
+  const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
-  const pendingPaymentDatabase = usePendingPayment();
+  const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
+    syncData();
 
     return () => {
       unsubscribe();
@@ -79,9 +83,27 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    await getProduct();
-    await getPendingPayment(user?.id_perfil === 3 ? user?.id_perfil : undefined)
+    // await getProduct();
+    await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
+    await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
   };
+
+  async function getPeople(id_pessoa?: number) {
+    const response = await getPeopleRemote(id_pessoa)
+    console.log("SYNC:", response?.data?.items);
+
+    if (response.status === 571) {
+      const response = await peopleDatabase.getPeople()
+      console.log("SYNC LOCAL:", response)
+      return { response: response, origemDados: "Local" }
+    }
+
+    await peopleDatabase.updatePeopleList(response.data.items)
+    const list = await peopleDatabase.getPeople()
+    console.log("Atualizado.", list);
+    
+    return { response: response.data.items, origemDados: "Remoto" };
+  }
 
   async function getPendingPayment(id_pessoa?: number) {
     const response = await getPendingRemote(id_pessoa);
@@ -91,7 +113,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
+    await pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
@@ -105,7 +127,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    dayDatabase.updateDiaList(response.data.items, id_pessoa)
+    await dayDatabase.updateDiaList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
@@ -150,7 +172,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    productDatabase.updateProductList(response.data.items)
+    await productDatabase.updateProductList(response.data.items)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }

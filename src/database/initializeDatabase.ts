@@ -60,10 +60,9 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pessoa (
-            id_pessoa INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pessoa INTEGER NOT NULL,
             nome TEXT NOT NULL,
             email TEXT NOT NULL,
-            senha TEXT NOT NULL,
             id_perfil INTEGER,
             CONSTRAINT fk_perfil FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil)
         );

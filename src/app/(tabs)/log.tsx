@@ -1,15 +1,17 @@
-import usePendingPayment from '@/src/database/usePendingPayment';
+import usePendingPaymentDatabase from '@/src/database/usePendingPaymentDatabase';
+import usePeopleDatabase from '@/src/database/usePeopleDatabase';
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native'
 
 export default function log() {
-    const pendingPaymentDatabase = usePendingPayment();
-
+    const pendingPaymentDatabase = usePendingPaymentDatabase();
+    const usePeople = usePeopleDatabase()
     const [listPendingPayment, setListPendingPayment ] = useState([])
 
     async function getTablePendingPayment() {
-        const response = await pendingPaymentDatabase.getPendingPayment()
+        const response = await usePeople.getPeople()
+        
         setListPendingPayment(response)
     }
 
@@ -27,11 +29,11 @@ export default function log() {
             renderItem={
               ({ item }) => (
                 <View style={{marginTop: 30}}>
-                  <Text>id_pagamento {item.id_pagamento}</Text>
+                  <Text>id_pagamento {item.email}</Text>
                   <Text>id_pessoa {item.id_pessoa}</Text>
                   <Text>nome {item.nome}</Text>
-                  <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>
-                  <Text>total {item.total}</Text>
+                  <Text>ultimo_pagamento {item.id_pessoa}</Text>
+                  <Text>total {item.id_perfil}</Text>
                 </View>
               )
             }

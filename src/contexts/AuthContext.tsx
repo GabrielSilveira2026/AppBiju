@@ -1,8 +1,9 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { consult, login } from '../httpservices/user';
+import { getPeople, login } from '../httpservices/user';
 import { UserType } from '../types/types';
+import { useSQLiteContext } from 'expo-sqlite';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const userDataLocal = await AsyncStorage.getItem('@user');
         if (userDataLocal) {
           const userDataLocalJson = JSON.parse(userDataLocal);
-          const response = await consult(userDataLocalJson.user.id_pessoa)
+          const response = await getPeople(userDataLocalJson.user.id_pessoa)
 
           if (response.status === 571) {
             console.warn('Erro ao recuperar o usuário nos base remota');
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.warn('Erro ao recuperar o usuário:', error);
       } finally {
         // setTimeout(() => {
-          setIsLoading(false)
+        setIsLoading(false)
         // }, 1000);
       }
     }
@@ -93,6 +94,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function signOut() {
+
     setIsLoading(true)
     try {
       setIsAuthenticated(false)

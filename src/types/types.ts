@@ -27,9 +27,25 @@ export type DayType = {
     valor_dia: number;
 };
 
-export type PaymentType = {
+export type PendingPaymentType = {
     id_pessoa: number;
     nome: string;
     ultimo_pagamento: string;
     total: number;
 };
+
+export type PaymentType = {
+    id_pagamento: number;
+    data_pagamento: string;
+    id_pessoa: number;
+    valor_pagamento: number;
+};
+
+export interface ProductionType {
+    id_producao?: number;
+    id_dia: number;
+    id_produto: number;
+    quantidade: number;
+    observacao: string;
+    historico_preco_unidade: number;
+}
