@@ -3,7 +3,7 @@ import { useSync } from '@/src/contexts/SyncContext';
 import { colors } from '@/styles/color';
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
 import Button from '../Button';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
@@ -38,12 +38,23 @@ export default function HourContainer() {
     };
 
     async function updateHourValue() {
-        const response = await sync.updateHourValue(Number(hourValue), initialDate.toLocaleDateString())
-        console.log(response);
-        
-        if (response.response.status === 200) {
-            setModeHourValue("view")
-        }
+        Alert.alert('Alterar valor da hora?', `Deseja realmente alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+            {
+                text: 'Cancelar'
+            },
+            {
+                text: 'Confirmar',
+                onPress: (async () => {
+                    const response = await sync.updateHourValue(Number(hourValue), initialDate.toLocaleDateString())
+                    console.log(response);
+
+                    if (response.response.status === 200) {
+                        setModeHourValue("view")
+                    }
+                })
+            }
+        ])
+
     }
     return (
         <View style={styles.hourContainer}>
