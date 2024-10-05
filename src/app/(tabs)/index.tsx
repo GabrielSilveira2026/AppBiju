@@ -58,7 +58,6 @@ export default function Profile() {
       getDataDays();
     }
 
-
     return () => {
       controller.abort();
     };

@@ -104,6 +104,23 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
+  async function updateHourValue(valor: number, data_inicio: string){
+    const url = `${baseUrl}/parametro/update/1`
+
+    const response: any = await axios.put(url, {data_inicio, valor}).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (response.status === 571) {
+      console.log("error 571");
+      
+      // pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      // return await productDatabase.postProduct(produto);
+    }
+
+    return response.data.items;
+  }
+
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
     // console.log("SYNC:", response?.data?.items);
@@ -170,7 +187,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function postProduct(produto: Omit<ProductType, "id_produto">): Promise<ProductType[]> {
     const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
-    const response = await postProductRemote(url);
+    const response: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
       return await productDatabase.postProduct(produto);

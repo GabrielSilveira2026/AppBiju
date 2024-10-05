@@ -8,11 +8,9 @@ import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Button from "@/src/components/Button";
 import { colors } from "@/styles/color";
-import { Input } from "@/src/components/Input";
 import { Ionicons } from "@expo/vector-icons";
 import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
@@ -137,9 +135,6 @@ export default function DayDetails() {
                             Produtos
                         </Text>
                     </View>
-                    <Button title={"Salvar"} onPress={() => { }} />
-                    <Button title={"Salvar"} onPress={() => { }} />
-                    <Button title={"Salvar"} onPress={() => { }} />
                     <Button title={"Salvar"} onPress={() => { }} />
                 </View>
                 {

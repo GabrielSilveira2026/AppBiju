@@ -4,7 +4,7 @@ export type UserType = {
     id_pessoa: number;
     nome: string;
     perfil: string;
-    senha?: string
+    senha?: string,
 };
 
 export type ProductType ={
