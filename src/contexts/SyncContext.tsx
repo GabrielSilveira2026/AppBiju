@@ -88,7 +88,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    // await getProduct();
     await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
     await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
   };
@@ -105,19 +104,22 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
-  async function updateHourValue(valor: number, data_inicio: string){
+  async function updateHourValue(valor: number, data_inicio: string) {
     const url = `${baseUrl}/parametro/update/1`
-
-    const response: any = await axios.put(url, {data_inicio, valor}).catch(function (error) {
+    const body = JSON.stringify({data_inicio, valor})
+    console.log(body);
+    
+    const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (response.status === 571) {
-      pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url });
-      // return await productDatabase.postProduct(produto);
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body});
+      const response = await paramDatabase.updateParam(1, data_inicio, valor);
+      return { response: { status: response.status }, origemDados: "Remoto" };
     }
 
-    return { response: {status: response.status}, origemDados: "Remoto" };
+    return { response: { status: response.status }, origemDados: "Remoto" };
   }
 
   async function getPeople(id_pessoa?: number) {
@@ -213,7 +215,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{updateHourValue ,  setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{ updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
       {children}
     </SyncContext.Provider>
   );

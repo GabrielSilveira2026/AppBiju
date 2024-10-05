@@ -1,15 +1,26 @@
 import Button from '@/src/components/Button';
 import { useAuthContext } from '@/src/contexts/AuthContext';
+import useDayDatabase from '@/src/database/useDayDatabase';
+import useParamDatabase from '@/src/database/useParamDatabase';
+import usePendingOperationDatabase from '@/src/database/usePendingOperationDatabase';
 import usePendingPaymentDatabase from '@/src/database/usePendingPaymentDatabase';
 import usePeopleDatabase from '@/src/database/usePeopleDatabase';
+import useProductDatabase from '@/src/database/useProductDatabase';
 import { useIsFocused } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, ScrollView } from 'react-native'
 
 export default function log() {
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const usePeople = usePeopleDatabase()
+  const productDatabase = useProductDatabase();
+  const peopleDatabase = usePeopleDatabase();
+  const dayDatabase = useDayDatabase();
+  const paramDatabase = useParamDatabase();
+  const pendingOperationDatabase = usePendingOperationDatabase()
+
+
   const [listPendingPayment, setListPendingPayment] = useState([])
 
   const { signIn, signOut, isAuthenticated } = useAuthContext()
@@ -22,8 +33,9 @@ export default function log() {
     }
     signOut()
   }
-  async function getTablePendingPayment() {
-    const response = await usePeople.getPeople()
+
+  async function getTable() {
+    const response = await pendingOperationDatabase.getPendingOperation()
 
     setListPendingPayment(response)
   }
@@ -31,14 +43,14 @@ export default function log() {
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    getTablePendingPayment()
+    getTable()
   }, [isFocused])
 
   return (
-    <View>
+    <ScrollView>
       <Text>Vc esta esta logado</Text>
       <Button onPress={logout} title={"Sign Out"}></Button>
-      <FlatList
+      {/* <FlatList
         data={listPendingPayment}
         keyExtractor={item => item.id_pessoa}
         renderItem={
@@ -52,7 +64,10 @@ export default function log() {
             </View>
           )
         }
-      />
-    </View>
+      /> */}
+      <Text>
+        {JSON.stringify(listPendingPayment, 0, 2)}
+      </Text>
+    </ScrollView>
   )
 }

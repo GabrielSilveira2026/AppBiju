@@ -46,8 +46,6 @@ export default function HourContainer() {
                 text: 'Confirmar',
                 onPress: (async () => {
                     const response = await sync.updateHourValue(Number(hourValue), initialDate.toLocaleDateString())
-                    console.log(response);
-
                     if (response.response.status === 200) {
                         setModeHourValue("view")
                     }
