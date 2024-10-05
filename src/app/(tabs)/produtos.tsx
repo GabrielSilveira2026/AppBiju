@@ -1,22 +1,28 @@
-import { useAuthContext } from "@/src/contexts/AuthContext";
+import { useSync } from "@/src/contexts/SyncContext";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Produtos() {
-
+  const sync = useSync()
   const isFocused = useIsFocused();
+  const [hourValue, setHourValue] = useState<number>(0)
 
   useEffect(() => {
+    async function getHourValue() {
+      const response = await sync.getHourValue()
+      setHourValue(response.response[0].valor)
+    }
+    
 
+    getHourValue()
   }, [isFocused]);
+
 
 
   return (
@@ -28,7 +34,7 @@ export default function Produtos() {
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
           <View style={styles.hourContainer}>
-            <Text style={styles.hourText}>Valor Hora: R$20,00</Text>
+            <Text style={styles.hourText}>Valor Hora: R${hourValue}</Text>
             <Ionicons name={"create-outline"} size={30} color={colors.primary} />
           </View>
         </View>
@@ -43,10 +49,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1
   },
-  titleContainer:{
+  titleContainer: {
     padding: 8,
-    gap:8,
-    flexDirection:"row",
+    gap: 8,
+    flexDirection: "row",
     alignItems: "center"
   },
   hourContainer: {

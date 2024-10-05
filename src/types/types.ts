@@ -49,3 +49,9 @@ export interface ProductionType {
     observacao: string;
     historico_preco_unidade: number;
 }
+
+export type ParamType = {
+    id_parametro: number;
+    descricao: string;
+    valor: number;
+};

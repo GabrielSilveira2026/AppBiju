@@ -90,7 +90,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS parametro (
-            id_parametro INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_parametro INTEGER NOT NULL,
             descricao TEXT NOT NULL,
             valor REAL NOT NULL
         );

@@ -13,6 +13,8 @@ import { useAuthContext } from './AuthContext';
 import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
+import { getParam } from '../httpservices/paramer';
+import useParamDatabase from '../database/useParamDatabase';
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
@@ -22,6 +24,7 @@ type SyncContextType = {
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  getHourValue: (id_parametro?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string) => Promise<any>,
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
 };
@@ -34,6 +37,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
+  const paramDatabase = useParamDatabase();
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
 
@@ -88,20 +92,32 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
   };
 
+  async function getHourValue() {
+    const response = await getParam("hora")
+    if (response.status === 571) {
+      const response = await paramDatabase.getParam("hora")
+      return { response: response, origemDados: "Local" }
+    }
+
+    await paramDatabase.updateParamList(response.data.items)
+
+    return { response: response.data.items, origemDados: "Remoto" };
+  }
+
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
-    console.log("SYNC:", response?.data?.items);
+    // console.log("SYNC:", response?.data?.items);
 
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
-      console.log("SYNC LOCAL:", response)
+      // console.log("SYNC LOCAL:", response)
       return { response: response, origemDados: "Local" }
     }
 
     await peopleDatabase.updatePeopleList(response.data.items)
     const list = await peopleDatabase.getPeople()
-    console.log("Atualizado.", list);
-    
+    // console.log("Atualizado.", list);
+
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
@@ -178,7 +194,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment }}>
+    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
       {children}
     </SyncContext.Provider>
   );
