@@ -107,8 +107,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function updateHourValue(valor: number, data_inicio: string) {
     const url = `${baseUrl}/parametro/update/1`
     const body = JSON.stringify({data_inicio, valor})
-    console.log(body);
-    
+        
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });

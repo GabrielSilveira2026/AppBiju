@@ -21,11 +21,8 @@ export default function useParamDatabase() {
     }
 
     async function updateParam(id_parametro: number, dataInicio: string, valor: number) {
-        // Converte a data do formato DD/MM/YYYY para YYYY-MM-DD
         const [day, month, year] = dataInicio.split('/');
         const v_data_inicio = new Date(`${year}-${month}-${day}`).toISOString();
-    
-        console.log(v_data_inicio); // Mostra a data em formato ISO
     
         const statementUpdateParam = await database.prepareAsync(`
             UPDATE parametro

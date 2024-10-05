@@ -77,7 +77,7 @@ export default function HourContainer() {
                         </View>
                 }
                 {
-                    user?.id_perfil !== 1 &&
+                    user?.id_perfil !== 3 &&
                     modeHourValue === "view" &&
                     <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
                 }
