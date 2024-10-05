@@ -24,6 +24,7 @@ type SyncContextType = {
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string) => Promise<any>,
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
@@ -112,13 +113,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (response.status === 571) {
-      console.log("error 571");
-      
-      // pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url });
       // return await productDatabase.postProduct(produto);
     }
 
-    return response.data.items;
+    return { response: {status: response.status}, origemDados: "Remoto" };
   }
 
   async function getPeople(id_pessoa?: number) {
@@ -214,7 +213,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{updateHourValue ,  setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
       {children}
     </SyncContext.Provider>
   );

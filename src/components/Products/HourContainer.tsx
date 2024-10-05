@@ -25,6 +25,7 @@ export default function HourContainer() {
         }
 
         if (isFocused) {
+            setModeHourValue("view")
             getHourValue()
         }
     }, [isFocused]);
@@ -36,8 +37,13 @@ export default function HourContainer() {
         }
     };
 
-    function updateHourValue() {
-
+    async function updateHourValue() {
+        const response = await sync.updateHourValue(Number(hourValue), initialDate.toLocaleDateString())
+        console.log(response);
+        
+        if (response.response.status === 200) {
+            setModeHourValue("view")
+        }
     }
     return (
         <View style={styles.hourContainer}>

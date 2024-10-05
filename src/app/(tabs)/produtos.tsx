@@ -16,6 +16,7 @@ export default function Produtos() {
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
           <HourContainer/>
+          
         </View>
       </SafeAreaView>
     </ImageBackground>
