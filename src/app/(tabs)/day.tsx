@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         flexGrow: 0,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8
+        gap: 8,
     },
     dataContainer: {
         padding: 12,
@@ -193,7 +193,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexGrow: 1
     },
-
     headerProducts: {
         flexDirection: "row",
         alignItems: "center",
