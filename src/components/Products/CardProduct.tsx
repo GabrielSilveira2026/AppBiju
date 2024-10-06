@@ -95,8 +95,6 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
         (modeCard === "create" || modeCard === "edit") ?
           (
             <View style={styles.cardOpenedDetails}>
-              <Text style={{ color: colors.primary }}>{mode}</Text>
-
               <View style={styles.line}>
                 <View style={{ flex: 2 }}>
                   <Input
@@ -108,7 +106,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                     multiline
                   />
                 </View>
-                <View style={{ flex: 1}}>
+                <View style={{ flex: 1 }}>
                   <Input
                     placeholder="Código"
                     value={formValues.cod_referencia.toString()}
@@ -124,30 +122,30 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                 value={formValues.descricao}
                 multiline
                 style={[styles.inputValue, styles.textDescription]}
-                onChangeText={value => handleInputChange('descricao', Number(value))}
+                onChangeText={value => handleInputChange('descricao', value)}
                 placeholderTextColor={colors.textInput}
               />
               <View style={styles.line}>
                 <View style={styles.valueVertical}>
                   <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
-                  <TextInput
+                  <Input
                     placeholder="Preço"
                     value={formValues.preco.toString()}
                     onChangeText={value => handleInputChange('preco', Number(value))}
                     keyboardType="numeric"
-                    style={styles.inputValue}
+                    style={[styles.inputValue, { textAlign: "center" }]}
                     placeholderTextColor={colors.textInput}
                   />
                 </View>
 
                 <View style={styles.valueVertical}>
                   <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-                  <TextInput
+                  <Input
                     placeholder="Tempo"
                     value={formatTime(formValues.tempo_minuto)}
                     onChangeText={handleTimeInputChange}
                     keyboardType="numeric"
-                    style={styles.inputValue}
+                    style={[styles.inputValue, { textAlign: "center" }]}
                   />
                 </View>
 
@@ -165,8 +163,13 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                   </Text>
                 </View>
               </View>
-
-              <Button title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+              <View style={styles.buttonsContainer}>
+                {
+                  modeCard === "create" &&
+                  <Button style={{flex: 1}} title="Cancelar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+                }
+                <Button style={{flex: 1}}title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+              </View>
             </View>
           )
           :
@@ -204,8 +207,8 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
             (
               <View style={styles.cardOpenedDetails}>
                 <View style={styles.line}>
-                  <Text style={styles.textValue}>{formValues.nome}</Text>
-                  <Text style={styles.textValue}>Cod.{`\n`}{formValues.cod_referencia}</Text>
+                  <Text style={[styles.textValue, { flex: 1 }]}>{formValues.nome}</Text>
+                  <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{formValues.cod_referencia}</Text>
                 </View>
                 <View style={styles.line}>
                   <View style={styles.textDescription}>
@@ -283,7 +286,9 @@ const styles = StyleSheet.create({
   },
   textDescription: {
     borderBottomColor: "white",
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    minHeight: 80,
+    flex: 1
   },
   titleText: {
     fontSize: 16,
@@ -293,6 +298,10 @@ const styles = StyleSheet.create({
   inputValue: {
     fontSize: 16,
     padding: 8,
-    color: colors.text
+    color: colors.text,
+  },
+  buttonsContainer:{
+    flexDirection: "row",
+    gap: 8,    
   }
 })

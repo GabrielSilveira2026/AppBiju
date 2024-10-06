@@ -63,19 +63,17 @@ export default function Produtos() {
             />
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
-          <ScrollView>
             <HourContainer
               hourValueProp={hourValue}
               onUpdateHourValue={updateHourValue}
             />
-            <CardProduct mode="create" hourValue={Number(hourValue)} />
             <FlatList
+              ListHeaderComponent={<CardProduct mode="create" hourValue={Number(hourValue)} />}
               data={productList.slice(0, 2)}
               contentContainerStyle={{ gap: 8 }}
               keyExtractor={(item) => String(item.id_produto)}
               renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
             />
-          </ScrollView>
         </View>
       </View>
     </ImageBackground>
