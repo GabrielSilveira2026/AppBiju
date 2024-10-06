@@ -1,9 +1,10 @@
 import { ProductType } from '@/src/types/types'
 import { useState } from 'react'
-import { View, Text, Button, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
+import Button from '../Button';
 
 type CardProductProps = {
   product?: ProductType;
@@ -32,7 +33,35 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
     }));
   };
 
-  console.log(modeCard);
+  function formatTime(tempoMinuto: number): string {
+    const minutes = Math.floor(tempoMinuto / 60);
+    const seconds = tempoMinuto % 60;
+
+    // Formata os minutos e segundos com dois dígitos
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+
+  function handleTimeInputChange(value: string): void {
+    const cleanValue = value.replace(/\D/g, '');
+
+    const numValue = cleanValue.slice(-4);
+
+    let minutes = 0;
+    let seconds = 0;
+
+    if (numValue.length <= 2) {
+      seconds = parseInt(numValue, 10) || 0;
+    } else {
+      minutes = parseInt(numValue.slice(0, numValue.length - 2), 10) || 0;
+      seconds = parseInt(numValue.slice(-2), 10) || 0;
+    }
+
+    const tempoMinuto = minutes * 60 + seconds;
+
+    handleInputChange('tempo_minuto', tempoMinuto);
+  }
+
 
   return (
     <View style={[styles.container,
@@ -66,32 +95,72 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
         (modeCard === "create" || modeCard === "edit") ?
           (
             <View style={styles.cardOpenedDetails}>
-              <Input
-                placeholder="Digite o nome do produto"
-                value={formValues.nome}
-                onChangeText={value => handleInputChange('nome', value)}
-              />
-              <Input
-                placeholder="Código"
-                value={formValues.cod_referencia.toString()}
-                onChangeText={value => handleInputChange('cod_referencia', value)}
-              />
-              <Input
-                placeholder="Preço"
-                value={formValues.preco.toString()}
-                onChangeText={value => handleInputChange('preco', Number(value))}
-              />
+              <View style={styles.line}>
+                <Input
+                  placeholder="Digite o nome do produto"
+                  value={formValues.nome}
+                  onChangeText={value => handleInputChange('nome', value)}
+                  style={[styles.inputValue, { textAlign: "left" }]}
+                />
+                <Input
+                  placeholder="Código"
+                  value={formValues.cod_referencia.toString()}
+                  onChangeText={value => handleInputChange('cod_referencia', value)}
+                  keyboardType="numeric"
+                  style={styles.inputValue}
+                />
+              </View>
               <Input
                 placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
                 value={formValues.descricao}
-                onChangeText={value => handleInputChange('preco', Number(value))}
+                style={[styles.inputValue, styles.textDescription]}
+                onChangeText={value => handleInputChange('descricao', Number(value))}
               />
+              <View style={styles.line}>
+                <View style={styles.valueVertical}>
+                  <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
+                  <Input
+                    placeholder="Preço"
+                    value={formValues.preco.toString()}
+                    onChangeText={value => handleInputChange('preco', Number(value))}
+                    keyboardType="numeric"
+                    style={styles.inputValue}
+                  />
+                </View>
+
+                <View style={styles.valueVertical}>
+                  <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
+                  <Input
+                    placeholder="Tempo"
+                    value={formatTime(formValues.tempo_minuto)}
+                    onChangeText={handleTimeInputChange}
+                    keyboardType="numeric"
+                    style={styles.inputValue}
+                  />
+                </View>
+
+                <View style={styles.valueVertical}>
+                  <Text
+                    style={styles.titleText}
+                  >
+                    Valor{"\n"}total:
+                  </Text>
+                  <Text
+                    style={styles.textValue}>R$
+                    {
+                      ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                    }
+                  </Text>
+                </View>
+              </View>
+
               <Button title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
             </View>
           )
           :
           modeCard === "view" ?
             (
+
               <View style={styles.line}>
                 <View style={styles.nameAndCode}>
                   <View style={styles.textContainer}>
@@ -134,18 +203,18 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                 <View style={styles.line}>
 
                   <View style={styles.valueVertical}>
-                    <Text style={styles.textValue}>Valor mão{"\n"}de obra:</Text>
+                    <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
                     <Text style={styles.textValue}>R${(formValues.preco.toFixed(2))}</Text>
                   </View>
 
                   <View style={styles.valueVertical}>
-                    <Text style={styles.textValue}>Tempo:</Text>
+                    <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
                     <Text style={styles.textValue}>00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
                   </View>
 
                   <View style={styles.valueVertical}>
                     <Text
-                      style={styles.textValue}
+                      style={styles.titleText}
                     >
                       Valor{"\n"}total:
                     </Text>
@@ -175,7 +244,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
+    gap: 8
   },
   textContainer: {
     padding: 8
@@ -192,13 +262,12 @@ const styles = StyleSheet.create({
   valueVertical: {
     padding: 8,
     gap: 8,
-    alignItems: "center"
+    alignItems: "center",
   },
   buttonOpen: {
     padding: 8
   },
   cardOpenedDetails: {
-    // backgroundColor: "red",
     padding: 8,
     gap: 8
   },
@@ -208,6 +277,16 @@ const styles = StyleSheet.create({
     minHeight: 100,
     borderBottomColor: "white",
     borderBottomWidth: 1
+  },
+  titleText: {
+    fontSize: 16,
+    color: colors.text,
+    textAlign: "center"
+  },
+  inputValue: {
+    fontSize: 16,
+    padding: 8,
+    color: colors.text,
+    textAlign: "center"
   }
-
 })

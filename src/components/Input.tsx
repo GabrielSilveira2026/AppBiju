@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+    flexWrap:"wrap",
     color: colors.text,
     fontSize: 16,
     padding: 12

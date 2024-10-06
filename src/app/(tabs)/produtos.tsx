@@ -50,7 +50,7 @@ export default function Produtos() {
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-      <SafeAreaView style={globalStyles.pageContainer}>
+      <View style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
           <View style={styles.titleContainer}>
             <Ionicons
@@ -68,12 +68,13 @@ export default function Produtos() {
             onUpdateHourValue={updateHourValue}
           />
           <FlatList
-            data={productList.slice(0, 1)}
+            data={productList.slice(0,2)}
+            contentContainerStyle={{gap: 8}}
             keyExtractor={(item) => String(item.id_produto)}
             renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
           />
         </View>
-      </SafeAreaView>
+      </View>
     </ImageBackground>
   );
 }
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
     padding: 8,
     flex: 1,
     flexGrow: 1,
+    marginTop: 28
   },
   titleContainer: {
     padding: 8,
