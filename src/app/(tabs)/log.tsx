@@ -10,6 +10,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, ScrollView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function log() {
   const pendingPaymentDatabase = usePendingPaymentDatabase();
@@ -47,10 +48,11 @@ export default function log() {
   }, [isFocused])
 
   return (
-    <ScrollView>
-      <Text>Vc esta esta logado</Text>
-      <Button onPress={logout} title={"Sign Out"}></Button>
-      {/* <FlatList
+    <SafeAreaView>
+      <ScrollView>
+        <Text>Vc esta esta logado</Text>
+        <Button onPress={logout} title={"Sign Out"}></Button>
+        {/* <FlatList
         data={listPendingPayment}
         keyExtractor={item => item.id_pessoa}
         renderItem={
@@ -65,9 +67,10 @@ export default function log() {
           )
         }
       /> */}
-      <Text>
-        {JSON.stringify(listPendingPayment, 0, 2)}
-      </Text>
-    </ScrollView>
+        <Text>
+          {JSON.stringify(listPendingPayment, 0, 2)}
+        </Text>
+      </ScrollView>
+    </SafeAreaView>
   )
 }

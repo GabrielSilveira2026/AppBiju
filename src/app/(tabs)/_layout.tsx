@@ -56,8 +56,16 @@ export default function AppLayout() {
         name="employees"
         options={{
           headerShown: false,
-          // href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
           tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary}/>
+        }}
+      />
+      <Tabs.Screen
+        name="log"
+        options={{
+          headerShown: false,
+          // href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary}/>
         }}
       />
     </Tabs>

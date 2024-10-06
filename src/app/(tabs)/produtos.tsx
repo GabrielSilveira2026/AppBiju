@@ -7,6 +7,7 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -52,12 +53,19 @@ export default function Produtos() {
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
           <View style={styles.titleContainer}>
-            <Ionicons name={"arrow-back-outline"} size={35} color={colors.primary} />
+            <Ionicons
+              onPress={() => {
+                router.navigate("/");
+              }}
+              name="arrow-back-outline"
+              size={35}
+              color={colors.primary}
+            />
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
           <HourContainer
-            hourValueProp={hourValue} // Passa o valor da hora
-            onUpdateHourValue={updateHourValue} // Função para atualizar o valor da hora
+            hourValueProp={hourValue}
+            onUpdateHourValue={updateHourValue}
           />
           <FlatList
             data={productList.slice(0, 1)}

@@ -124,7 +124,7 @@ export default function DayDetails() {
                             }
                         </View>
                         <View style={styles.secondLine}>
-                            <Text style={styles.textValue}>Total: R${params.valor_dia || '0,00'}</Text>
+                            <Text style={styles.textValue}>R${params.valor_dia || '0,00'}</Text>
                             <Text style={styles.textValue}>{params?.pessoa}</Text>
                         </View>
                     </View>

@@ -41,7 +41,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
       borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"
     }
     ]}>
-      <View style={styles.line}>
+      <View style={[styles.line, { paddingHorizontal: 8 }]}>
         {
           modeCard === "details"
           &&
@@ -101,7 +101,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                     <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
                   </View>
                 </View>
-                <View style={styles.unitPrice}>
+                <View style={styles.valueVertical}>
                   <Text
                     style={styles.textValue}
                   >
@@ -121,71 +121,58 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
             )
             :
             (
-              <View style={styles.line}>
-                <Text style={styles.textValue}>{formValues.nome}</Text>
-                <Text style={styles.textValue}>Cod.{`\n`}{formValues.cod_referencia}</Text>
+              <View style={styles.cardOpenedDetails}>
+                <View style={styles.line}>
+                  <Text style={styles.textValue}>{formValues.nome}</Text>
+                  <Text style={styles.textValue}>Cod.{`\n`}{formValues.cod_referencia}</Text>
+                </View>
+                <View style={styles.line}>
+                  <View style={styles.textDescription}>
+                    <Text style={styles.textValue}>{formValues.descricao}</Text>
+                  </View>
+                </View>
+                <View style={styles.line}>
+
+                  <View style={styles.valueVertical}>
+                    <Text style={styles.textValue}>Valor mão{"\n"}de obra:</Text>
+                    <Text style={styles.textValue}>R${(formValues.preco.toFixed(2))}</Text>
+                  </View>
+
+                  <View style={styles.valueVertical}>
+                    <Text style={styles.textValue}>Tempo:</Text>
+                    <Text style={styles.textValue}>00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
+                  </View>
+
+                  <View style={styles.valueVertical}>
+                    <Text
+                      style={styles.textValue}
+                    >
+                      Valor{"\n"}total:
+                    </Text>
+                    <Text
+                      style={styles.textValue}>R$
+                      {
+                        ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                      }
+                    </Text>
+                  </View>
+                </View>
               </View>
             )
       }
 
-      {modeCard === "details" && (
-        <View>
-          <Text style={styles.textValue}>descricao: {formValues.descricao}</Text>
-          <Text style={styles.textValue}>Valor mão de obra: R${formValues.preco}</Text>
-          <Text style={styles.textValue}>tempo_minuto: 00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
-        </View>
-      )}
-
-    </View>
+    </View >
   );
-
-
-
-  return (
-    <View style={[styles.container,
-    {
-      borderWidth: modeCard !== "view" ? 1 : 0,
-      borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"
-    }
-    ]}>
-      <View style={styles.line}>
-        <View style={styles.nameAndCode}>
-          <View style={styles.textContainer}>
-            <Text style={styles.textValue}>{formValues.nome}</Text>
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
-          </View>
-        </View>
-        <View style={styles.unitPrice}>
-          <Text
-            style={styles.textValue}
-          >
-            Valor{"\n"}total:
-          </Text>
-          <Text
-            style={styles.textValue}>R$
-            {
-              ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
-            }
-          </Text>
-        </View>
-        <View style={styles.buttonOpen}>
-          <Ionicons onPress={() => setModeCard("view")} name={"chevron-down-outline"} size={35} color={colors.primary} />
-        </View>
-      </View>
-    </View>
-  )
 }
 
 const styles = StyleSheet.create({
   container: {
     borderRadius: 4,
-    gap: 8,
     padding: 8,
     backgroundColor: colors.backgroundTertiary
   },
   line: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
@@ -202,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between"
   },
-  unitPrice: {
+  valueVertical: {
     padding: 8,
     gap: 8,
     alignItems: "center"
@@ -210,8 +197,17 @@ const styles = StyleSheet.create({
   buttonOpen: {
     padding: 8
   },
-  cardOpenedDetails:{
-    
+  cardOpenedDetails: {
+    // backgroundColor: "red",
+    padding: 8,
+    gap: 8
+  },
+  textDescription: {
+    flex: 1,
+    flexGrow: 1,
+    minHeight: 100,
+    borderBottomColor: "white",
+    borderBottomWidth: 1
   }
-  
+
 })
