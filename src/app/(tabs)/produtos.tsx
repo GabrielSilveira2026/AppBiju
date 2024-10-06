@@ -21,7 +21,7 @@ export default function Produtos() {
   useEffect(() => {
     if (isFocused) {
       listProduto();
-      getHourValue(); // Obter valor da hora quando a página é focada
+      getHourValue();
     }
 
     return () => {
@@ -44,7 +44,7 @@ export default function Produtos() {
   async function updateHourValue(newHourValue: string, initialDate: string) {
     const response = await sync.updateHourValue(Number(newHourValue), initialDate);
     if (response.response.status === 200) {
-      setHourValue(newHourValue); // Atualiza o valor da hora localmente após sucesso
+      setHourValue(newHourValue);
     }
   }
 

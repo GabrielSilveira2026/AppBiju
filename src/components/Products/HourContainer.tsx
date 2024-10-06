@@ -9,8 +9,8 @@ import { Input } from '../Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 type HourContainerProps = {
-    hourValueProp: string; // Novo: Valor da hora vindo da página
-    onUpdateHourValue: (newHourValue: string, date: string) => Promise<void>; // Novo: Função de update recebida
+    hourValueProp: string;
+    onUpdateHourValue: (newHourValue: string, date: string) => Promise<void>;
 };
 
 export default function HourContainer({ hourValueProp, onUpdateHourValue }: HourContainerProps) {
@@ -54,7 +54,10 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
         <View style={styles.hourContainer}>
             <View style={styles.firstLine}>
                 {modeHourValue === "edit" && (
-                    <Ionicons onPress={() => setModeHourValue("view")} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                    <Ionicons onPress={() => {
+                        setHourValue(hourValueProp)
+                        setModeHourValue("view")
+                    }} name={"arrow-back-outline"} size={35} color={colors.primary} />
                 )}
                 <Text style={styles.hourText}>Valor Hora: R$</Text>
                 {modeHourValue === "view" ? (

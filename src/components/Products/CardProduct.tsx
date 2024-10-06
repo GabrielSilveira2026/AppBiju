@@ -99,6 +99,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                 <View style={{ flex: 2 }}>
                   <Input
                     placeholder="Digite o nome do produto"
+                    label="Nome"
                     placeholderTextColor={colors.textInput}
                     value={formValues.nome}
                     onChangeText={value => handleInputChange('nome', value)}
@@ -109,6 +110,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
                 <View style={{ flex: 1 }}>
                   <Input
                     placeholder="Código"
+                    label="Código"
                     value={formValues.cod_referencia.toString()}
                     onChangeText={value => handleInputChange('cod_referencia', value)}
                     keyboardType="numeric"
@@ -120,6 +122,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
               <Input
                 placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
                 value={formValues.descricao}
+                label="Descrição"
                 multiline
                 style={[styles.inputValue, styles.textDescription]}
                 onChangeText={value => handleInputChange('descricao', value)}
@@ -166,9 +169,9 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
               <View style={styles.buttonsContainer}>
                 {
                   modeCard === "create" &&
-                  <Button style={{flex: 1}} title="Cancelar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+                  <Button style={{ flex: 1 }} title="Cancelar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
                 }
-                <Button style={{flex: 1}}title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+                <Button style={{ flex: 1 }} title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
               </View>
             </View>
           )
@@ -300,8 +303,8 @@ const styles = StyleSheet.create({
     padding: 8,
     color: colors.text,
   },
-  buttonsContainer:{
+  buttonsContainer: {
     flexDirection: "row",
-    gap: 8,    
+    gap: 8,
   }
 })
