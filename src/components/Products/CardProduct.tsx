@@ -1,11 +1,13 @@
 import { ProductType } from '@/src/types/types'
 import { useState } from 'react'
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, StyleSheet } from 'react-native'
 import { Input } from '../Input';
+import { colors } from '@/styles/color';
+import { Ionicons } from '@expo/vector-icons';
 
 type CardProductProps = {
-  product?: ProductType;  // Product é opcional no modo "create"
-  mode?: "view" | "details" | "create" | "edit";  // Modo opcional
+  product?: ProductType;
+  mode?: "view" | "details" | "create" | "edit";
   hourValue: number
 };
 
@@ -23,7 +25,6 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
     ultimo_valor: 0
   });
 
-  // Função para manipular mudança de valores no modo de edição ou criação
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
       ...prev,
@@ -31,8 +32,37 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
     }));
   };
 
+  console.log(modeCard);
+
+
   return (
-    <View>
+    <View style={[styles.container,
+    {
+      borderWidth: modeCard !== "view" ? 1 : 0,
+      borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"
+    }
+    ]}>
+      <View style={styles.firstLine}>
+        {
+          modeCard === "details"
+          &&
+          <>
+            <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
+            <Ionicons onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+          </>
+        }
+        {
+          modeCard === "edit"
+          &&
+          <>
+            <Ionicons onPress={() => setModeCard("details")} name={"arrow-back-outline"} size={35} color={colors.primary} />
+            <Ionicons onPress={() => {
+              console.log("Excluindo");
+            }} name={"trash-outline"} size={35} color={colors.error} />
+          </>
+        }
+      </View>
+
       {modeCard === "create" || modeCard === "edit" ? (
         <>
           <Input
@@ -54,28 +84,42 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
         </>
       ) : (
         <>
-          <Text>nome: {formValues.nome}</Text>
-          <Text>cod_referencia: {formValues.cod_referencia}</Text>
-
-          <Text>Valor unidade: {
-              ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
-            }
-          </Text>
-          <Text>tempo_minuto: {formValues.tempo_minuto}</Text>
-          <Text>modificado_por: {formValues.modificado_por}</Text>
+          <Text style={styles.textValue}>nome: {formValues.nome}</Text>
+          <Text style={styles.textValue}>cod_referencia: {formValues.cod_referencia}</Text>
         </>
       )}
+      <Text style={styles.textValue}>Valor unidade: {
+        ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+      }
+      </Text>
 
+      {modeCard === "details" && (
+        <View>
+          <Text style={styles.textValue}>descricao: {formValues.descricao}</Text>
+          <Text style={styles.textValue}>Valor mão de obra: R${formValues.preco}</Text>
+          <Text style={styles.textValue}>tempo_minuto: 00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
+        </View>
+      )}
       {modeCard === "view" && (
         <Button title="Detalhes" onPress={() => setModeCard("details")} />
       )}
 
-      {modeCard === "details" && (
-        <View>
-          <Text>Detalhes do produto...</Text>
-          <Button title="Editar" onPress={() => setModeCard("edit")} />
-        </View>
-      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    borderRadius: 4,
+    padding: 8,
+    backgroundColor: colors.backgroundTertiary
+  },
+  firstLine: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  textValue: {
+    fontSize: 16,
+    color: colors.text
+  }
+})
