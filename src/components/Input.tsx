@@ -68,8 +68,7 @@ const styles = StyleSheet.create({
     fontWeight: "regular"
   },
   input: {
-    flex: 1,
-    flexWrap:"wrap",
+    // flex: 1,
     color: colors.text,
     fontSize: 16,
     padding: 12

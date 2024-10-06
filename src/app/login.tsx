@@ -42,8 +42,8 @@ export default function HomeScreen() {
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
-              textContentType="emailAddress"
               keyboardType="email-address"
+              textContentType="emailAddress"
             />
             <Input
               label="Senha"

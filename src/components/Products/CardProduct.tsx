@@ -1,6 +1,6 @@
 import { ProductType } from '@/src/types/types'
 import { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TextInput } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
@@ -95,42 +95,54 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
         (modeCard === "create" || modeCard === "edit") ?
           (
             <View style={styles.cardOpenedDetails}>
+              <Text style={{ color: colors.primary }}>{mode}</Text>
+
               <View style={styles.line}>
-                <Input
-                  placeholder="Digite o nome do produto"
-                  value={formValues.nome}
-                  onChangeText={value => handleInputChange('nome', value)}
-                  style={[styles.inputValue, { textAlign: "left" }]}
-                />
-                <Input
-                  placeholder="Código"
-                  value={formValues.cod_referencia.toString()}
-                  onChangeText={value => handleInputChange('cod_referencia', value)}
-                  keyboardType="numeric"
-                  style={styles.inputValue}
-                />
+                <View style={{ flex: 2 }}>
+                  <Input
+                    placeholder="Digite o nome do produto"
+                    placeholderTextColor={colors.textInput}
+                    value={formValues.nome}
+                    onChangeText={value => handleInputChange('nome', value)}
+                    style={[styles.inputValue]}
+                    multiline
+                  />
+                </View>
+                <View style={{ flex: 1}}>
+                  <Input
+                    placeholder="Código"
+                    value={formValues.cod_referencia.toString()}
+                    onChangeText={value => handleInputChange('cod_referencia', value)}
+                    keyboardType="numeric"
+                    style={[styles.inputValue]}
+                    placeholderTextColor={colors.textInput}
+                  />
+                </View>
               </View>
               <Input
                 placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
                 value={formValues.descricao}
+                multiline
                 style={[styles.inputValue, styles.textDescription]}
                 onChangeText={value => handleInputChange('descricao', Number(value))}
+                placeholderTextColor={colors.textInput}
               />
               <View style={styles.line}>
                 <View style={styles.valueVertical}>
                   <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
-                  <Input
+                  <TextInput
                     placeholder="Preço"
                     value={formValues.preco.toString()}
                     onChangeText={value => handleInputChange('preco', Number(value))}
                     keyboardType="numeric"
                     style={styles.inputValue}
+                    placeholderTextColor={colors.textInput}
                   />
                 </View>
 
                 <View style={styles.valueVertical}>
                   <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-                  <Input
+                  <TextInput
                     placeholder="Tempo"
                     value={formatTime(formValues.tempo_minuto)}
                     onChangeText={handleTimeInputChange}
@@ -241,11 +253,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundTertiary
   },
   line: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 8
+    gap: 8,
   },
   textContainer: {
     padding: 8
@@ -261,7 +272,6 @@ const styles = StyleSheet.create({
   },
   valueVertical: {
     padding: 8,
-    gap: 8,
     alignItems: "center",
   },
   buttonOpen: {
@@ -272,9 +282,6 @@ const styles = StyleSheet.create({
     gap: 8
   },
   textDescription: {
-    flex: 1,
-    flexGrow: 1,
-    minHeight: 100,
     borderBottomColor: "white",
     borderBottomWidth: 1
   },
@@ -286,7 +293,6 @@ const styles = StyleSheet.create({
   inputValue: {
     fontSize: 16,
     padding: 8,
-    color: colors.text,
-    textAlign: "center"
+    color: colors.text
   }
 })

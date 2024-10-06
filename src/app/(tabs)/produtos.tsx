@@ -9,7 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Produtos() {
@@ -63,16 +63,19 @@ export default function Produtos() {
             />
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
-          <HourContainer
-            hourValueProp={hourValue}
-            onUpdateHourValue={updateHourValue}
-          />
-          <FlatList
-            data={productList.slice(0,2)}
-            contentContainerStyle={{gap: 8}}
-            keyExtractor={(item) => String(item.id_produto)}
-            renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
-          />
+          <ScrollView>
+            <HourContainer
+              hourValueProp={hourValue}
+              onUpdateHourValue={updateHourValue}
+            />
+            <CardProduct mode="create" hourValue={Number(hourValue)} />
+            <FlatList
+              data={productList.slice(0, 2)}
+              contentContainerStyle={{ gap: 8 }}
+              keyExtractor={(item) => String(item.id_produto)}
+              renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
+            />
+          </ScrollView>
         </View>
       </View>
     </ImageBackground>
