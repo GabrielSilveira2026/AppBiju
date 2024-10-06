@@ -123,18 +123,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
-    // console.log("SYNC:", response?.data?.items);
-
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
-      // console.log("SYNC LOCAL:", response)
       return { response: response, origemDados: "Local" }
     }
 
     await peopleDatabase.updatePeopleList(response.data.items)
-    const list = await peopleDatabase.getPeople()
-    // console.log("Atualizado.", list);
-
+    
     return { response: response.data.items, origemDados: "Remoto" };
   }
 

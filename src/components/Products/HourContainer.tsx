@@ -1,5 +1,4 @@
 import { useAuthContext } from '@/src/contexts/AuthContext';
-import { useSync } from '@/src/contexts/SyncContext';
 import { colors } from '@/styles/color';
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -9,81 +8,73 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export default function HourContainer() {
+type HourContainerProps = {
+    hourValueProp: string; // Novo: Valor da hora vindo da página
+    onUpdateHourValue: (newHourValue: string, date: string) => Promise<void>; // Novo: Função de update recebida
+};
+
+export default function HourContainer({ hourValueProp, onUpdateHourValue }: HourContainerProps) {
     const { user } = useAuthContext();
-    const sync = useSync()
     const isFocused = useIsFocused();
-    const [hourValue, setHourValue] = useState<string>("0")
-    const [modeHourValue, setModeHourValue] = useState<"view" | "edit">("view")
+    const [hourValue, setHourValue] = useState<string>(hourValueProp);
+    const [modeHourValue, setModeHourValue] = useState<"view" | "edit">("view");
     const [initialDate, setInitialDate] = useState<Date>(new Date());
-    const [showPicker, setShowPicker] = useState<boolean>(false)
+    const [showPicker, setShowPicker] = useState<boolean>(false);
 
     useEffect(() => {
-        async function getHourValue() {
-            const response = await sync.getHourValue()
-            setHourValue(response.response[0].valor.toString())
-        }
-
         if (isFocused) {
-            setModeHourValue("view")
-            getHourValue()
+            setHourValue(hourValueProp);
+            setModeHourValue("view");
         }
-    }, [isFocused]);
+    }, [hourValueProp, isFocused]);
 
     function handleDateChange(event: any, date: Date | undefined) {
-        setShowPicker(false)
+        setShowPicker(false);
         if (date) {
             setInitialDate(date);
         }
     };
 
-    async function updateHourValue() {
+    async function handleUpdateHourValue() {
         Alert.alert('Alterar valor da hora?', `Deseja realmente alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
             {
                 text: 'Cancelar'
             },
             {
                 text: 'Confirmar',
-                onPress: (async () => {
-                    const response = await sync.updateHourValue(Number(hourValue), initialDate.toLocaleDateString())
-                    if (response.response.status === 200) {
-                        setModeHourValue("view")
-                    }
-                })
+                onPress: async () => {
+                    await onUpdateHourValue(hourValue, initialDate.toLocaleDateString());
+                    setModeHourValue("view");
+                }
             }
-        ])
-
+        ]);
     }
+
     return (
         <View style={styles.hourContainer}>
             <View style={styles.firstLine}>
-                {
-                    modeHourValue === "edit" &&
+                {modeHourValue === "edit" && (
                     <Ionicons onPress={() => setModeHourValue("view")} name={"arrow-back-outline"} size={35} color={colors.primary} />
-                }
+                )}
                 <Text style={styles.hourText}>Valor Hora: R$</Text>
-                {
-                    modeHourValue === "view" ?
-                        <Text style={styles.hourText}>{hourValue}</Text>
-                        :
-                        <View>
-                            <Input
-                                value={hourValue.toString()}
-                                onChangeText={(text) => setHourValue(text)}
-                                keyboardType="number-pad"
-                                autoCapitalize="none"
-                                style={styles.hourValue}
-                            />
-                        </View>
-                }
-                {
-                    user?.id_perfil !== 3 &&
-                    modeHourValue === "view" &&
+                {modeHourValue === "view" ? (
+                    <Text style={styles.hourText}>{hourValue}</Text>
+                ) : (
+                    <View>
+                        <Input
+                            value={hourValue.toString()}
+                            onChangeText={(text) => setHourValue(text)}
+                            keyboardType="number-pad"
+                            autoCapitalize="none"
+                            style={styles.hourValue}
+                        />
+                    </View>
+                )}
+                {user?.id_perfil !== 1 && modeHourValue === "view" && (
                     <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
-                }
+                )}
             </View>
-            {
-                modeHourValue === "edit" &&
+            {modeHourValue === "edit" && (
                 <View style={styles.secondLine}>
                     <Pressable
                         style={styles.dataContainer}
@@ -94,25 +85,22 @@ export default function HourContainer() {
                             <Text style={styles.dataText}>{initialDate?.toLocaleDateString()}</Text>
                         </View>
                     </Pressable>
-
-                    <Button title={"Salvar"} onPress={updateHourValue} />
+                    <Button title={"Salvar"} onPress={handleUpdateHourValue} />
                 </View>
-            }
-            {
-                showPicker
-                &&
+            )}
+            {showPicker && (
                 <DateTimePicker
                     value={initialDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={handleDateChange}
                 />
-            }
+            )}
         </View>
-    )
+    );
 }
-const styles = StyleSheet.create({
 
+const styles = StyleSheet.create({
     hourContainer: {
         padding: 12,
         borderRadius: 4,
@@ -155,5 +143,4 @@ const styles = StyleSheet.create({
         fontSize: 20,
         padding: 8
     }
-
-})
+});

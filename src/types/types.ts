@@ -7,7 +7,7 @@ export type UserType = {
     senha?: string,
 };
 
-export type ProductType ={
+export type ProductType = {
     id_produto: number;
     cod_referencia: number;
     nome: string;
@@ -16,7 +16,7 @@ export type ProductType ={
     tempo_minuto: number;
     data_modificado: string | null;
     modificado_por: string | null;
-    ultimo_valor: number | null;
+    ultimo_valor: number | null
 }
 
 export type DayType = {
