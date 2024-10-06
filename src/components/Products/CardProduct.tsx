@@ -34,7 +34,6 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
 
   console.log(modeCard);
 
-
   return (
     <View style={[styles.container,
     {
@@ -42,7 +41,7 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
       borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"
     }
     ]}>
-      <View style={styles.firstLine}>
+      <View style={styles.line}>
         {
           modeCard === "details"
           &&
@@ -63,35 +62,71 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
         }
       </View>
 
-      {modeCard === "create" || modeCard === "edit" ? (
-        <>
-          <Input
-            placeholder="Nome do Produto"
-            value={formValues.nome}
-            onChangeText={value => handleInputChange('nome', value)}
-          />
-          <Input
-            placeholder="Código de Referência"
-            value={formValues.cod_referencia.toString()}
-            onChangeText={value => handleInputChange('cod_referencia', value)}
-          />
-          <Input
-            placeholder="Preço"
-            value={formValues.preco.toString()}
-            onChangeText={value => handleInputChange('preco', Number(value))}
-          />
-          <Button title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
-        </>
-      ) : (
-        <>
-          <Text style={styles.textValue}>nome: {formValues.nome}</Text>
-          <Text style={styles.textValue}>cod_referencia: {formValues.cod_referencia}</Text>
-        </>
-      )}
-      <Text style={styles.textValue}>Valor unidade: {
-        ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+      {
+        (modeCard === "create" || modeCard === "edit") ?
+          (
+            <View style={styles.cardOpenedDetails}>
+              <Input
+                placeholder="Digite o nome do produto"
+                value={formValues.nome}
+                onChangeText={value => handleInputChange('nome', value)}
+              />
+              <Input
+                placeholder="Código"
+                value={formValues.cod_referencia.toString()}
+                onChangeText={value => handleInputChange('cod_referencia', value)}
+              />
+              <Input
+                placeholder="Preço"
+                value={formValues.preco.toString()}
+                onChangeText={value => handleInputChange('preco', Number(value))}
+              />
+              <Input
+                placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
+                value={formValues.descricao}
+                onChangeText={value => handleInputChange('preco', Number(value))}
+              />
+              <Button title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+            </View>
+          )
+          :
+          modeCard === "view" ?
+            (
+              <View style={styles.line}>
+                <View style={styles.nameAndCode}>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.textValue}>{formValues.nome}</Text>
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
+                  </View>
+                </View>
+                <View style={styles.unitPrice}>
+                  <Text
+                    style={styles.textValue}
+                  >
+                    Valor{"\n"}total:
+                  </Text>
+                  <Text
+                    style={styles.textValue}>R$
+                    {
+                      ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                    }
+                  </Text>
+                </View>
+                <View style={styles.buttonOpen}>
+                  <Ionicons onPress={() => setModeCard("details")} name={"chevron-down-outline"} size={35} color={colors.primary} />
+                </View>
+              </View>
+            )
+            :
+            (
+              <View style={styles.line}>
+                <Text style={styles.textValue}>{formValues.nome}</Text>
+                <Text style={styles.textValue}>Cod.{`\n`}{formValues.cod_referencia}</Text>
+              </View>
+            )
       }
-      </Text>
 
       {modeCard === "details" && (
         <View>
@@ -100,26 +135,83 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
           <Text style={styles.textValue}>tempo_minuto: 00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
         </View>
       )}
-      {modeCard === "view" && (
-        <Button title="Detalhes" onPress={() => setModeCard("details")} />
-      )}
 
     </View>
   );
+
+
+
+  return (
+    <View style={[styles.container,
+    {
+      borderWidth: modeCard !== "view" ? 1 : 0,
+      borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"
+    }
+    ]}>
+      <View style={styles.line}>
+        <View style={styles.nameAndCode}>
+          <View style={styles.textContainer}>
+            <Text style={styles.textValue}>{formValues.nome}</Text>
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
+          </View>
+        </View>
+        <View style={styles.unitPrice}>
+          <Text
+            style={styles.textValue}
+          >
+            Valor{"\n"}total:
+          </Text>
+          <Text
+            style={styles.textValue}>R$
+            {
+              ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+            }
+          </Text>
+        </View>
+        <View style={styles.buttonOpen}>
+          <Ionicons onPress={() => setModeCard("view")} name={"chevron-down-outline"} size={35} color={colors.primary} />
+        </View>
+      </View>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     borderRadius: 4,
+    gap: 8,
     padding: 8,
     backgroundColor: colors.backgroundTertiary
   },
-  firstLine: {
+  line: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  textContainer: {
+    padding: 8
   },
   textValue: {
     fontSize: 16,
-    color: colors.text
+    color: colors.text,
+  },
+  nameAndCode: {
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "space-between"
+  },
+  unitPrice: {
+    padding: 8,
+    gap: 8,
+    alignItems: "center"
+  },
+  buttonOpen: {
+    padding: 8
+  },
+  cardOpenedDetails:{
+    
   }
+  
 })

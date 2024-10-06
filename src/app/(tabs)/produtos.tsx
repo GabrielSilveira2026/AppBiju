@@ -60,7 +60,6 @@ export default function Produtos() {
             onUpdateHourValue={updateHourValue} // Função para atualizar o valor da hora
           />
           <FlatList
-            contentContainerStyle={{ gap: 20 }}
             data={productList.slice(0, 1)}
             keyExtractor={(item) => String(item.id_produto)}
             renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
