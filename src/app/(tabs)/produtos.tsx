@@ -28,6 +28,7 @@ export default function Produtos() {
     return () => {
       if (!isFocused) {
         setProductList([]);
+        setIsCreating(false)
       }
     };
   }, [isFocused]);
@@ -49,8 +50,8 @@ export default function Produtos() {
     }
   }
 
-  function handleAddProduct() {
-    if(!isCreating){
+  function handleCreateProduct() {
+    if (!isCreating) {
       setIsCreating(true)
       const newProduct: ProductType = {
         id_produto: 0,
@@ -65,6 +66,13 @@ export default function Produtos() {
       };
       setProductList((prevProductList) => [newProduct, ...prevProductList]);
     }
+    else{
+      setIsCreating(false)
+    }
+  }
+
+  function handleSaveProduct(product: ProductType) {
+    console.log('Salvando produto...', product);
   }
 
   function handleRemoveProduct(productId: number) {
@@ -102,6 +110,7 @@ export default function Produtos() {
                 <CardProduct
                   mode="create"
                   hourValue={Number(hourValue)}
+                  onSave={handleSaveProduct}
                   onCancel={() => handleRemoveProduct(item.id_produto)}
                 />
               )
@@ -109,7 +118,7 @@ export default function Produtos() {
           />
           <View style={globalStyles.bottomDias}>
             <Ionicons
-              onPress={handleAddProduct}
+              onPress={handleCreateProduct}
               name="add-circle-outline"
               color={colors.primary}
               size={50} />

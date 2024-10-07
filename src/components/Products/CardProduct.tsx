@@ -10,10 +10,11 @@ type CardProductProps = {
   product?: ProductType;
   mode?: "view" | "details" | "create" | "edit";
   hourValue: number;
-  onCancel?: () => void; // Nova prop para lidar com o cancelamento
+  onCancel?: () => void;
+  onSave?: (product: ProductType) => void;
 };
 
-export default function CardProduct({onCancel, hourValue, product, mode = "view" }: CardProductProps) {
+export default function CardProduct({ onSave, onCancel, hourValue, product, mode = "view" }: CardProductProps) {
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [formValues, setFormValues] = useState<ProductType>(product || {
     id_produto: 0,
@@ -174,14 +175,21 @@ export default function CardProduct({onCancel, hourValue, product, mode = "view"
                     style={{ flex: 1 }}
                     title="Cancelar"
                     onPress={() => {
-                      setModeCard("view");
                       if (onCancel) {
                         onCancel();
                       }
                     }}
                   />
                 }
-                <Button style={{ flex: 1 }} title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+                <Button
+                  style={{ flex: 1 }}
+                  title="Salvar"
+                  onPress={() => {
+                    if (onSave){
+                      setModeCard("view");
+                      onSave(formValues)
+                    }
+                  }} />
               </View>
             </View>
           )
