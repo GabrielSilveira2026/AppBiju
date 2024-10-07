@@ -245,7 +245,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
                   <View style={styles.valueVertical}>
                     <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-                    <Text style={styles.textValue}>00:{String(formValues.tempo_minuto).padStart(2, '0')}</Text>
+                    <Text style={styles.textValue}>{String(formatTime(formValues.tempo_minuto).padStart(2, '0'))}</Text>
                   </View>
 
                   <View style={styles.valueVertical}>
