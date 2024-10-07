@@ -39,5 +39,12 @@ export const globalStyles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "regular",
         color: colors.text
-    }
+    },
+    bottomDias: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        borderTopWidth: 1,
+        borderTopColor: colors.primary,
+        paddingTop: 8,
+    },
 });

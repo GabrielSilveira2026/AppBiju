@@ -146,7 +146,7 @@ export default function Profile() {
           />
           {
             !userId &&
-            <View style={styles.bottomDias}>
+            <View style={globalStyles.bottomDias}>
               <Ionicons
                 onPress={() => {
                   router.navigate({
@@ -183,11 +183,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.primary,
   },
-  bottomDias: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    borderTopWidth: 1,
-    borderTopColor: colors.primary,
-    paddingTop: 8,
-  },
+  
 });

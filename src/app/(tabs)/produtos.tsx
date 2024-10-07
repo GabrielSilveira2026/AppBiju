@@ -17,6 +17,7 @@ export default function Produtos() {
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
   const [hourValue, setHourValue] = useState<string>("0");
+  const [isCreating, setIsCreating] = useState<boolean>(false)
 
   useEffect(() => {
     if (isFocused) {
@@ -48,6 +49,29 @@ export default function Produtos() {
     }
   }
 
+  function handleAddProduct() {
+    if(!isCreating){
+      setIsCreating(true)
+      const newProduct: ProductType = {
+        id_produto: 0,
+        cod_referencia: 0,
+        nome: '',
+        descricao: '',
+        preco: 0,
+        tempo_minuto: 0,
+        data_modificado: '',
+        modificado_por: '',
+        ultimo_valor: 0
+      };
+      setProductList((prevProductList) => [newProduct, ...prevProductList]);
+    }
+  }
+
+  function handleRemoveProduct(productId: number) {
+    setIsCreating(false)
+    setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
+  }
+
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <View style={globalStyles.pageContainer}>
@@ -63,17 +87,33 @@ export default function Produtos() {
             />
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
-            <HourContainer
-              hourValueProp={hourValue}
-              onUpdateHourValue={updateHourValue}
-            />
-            <FlatList
-              ListHeaderComponent={<CardProduct mode="create" hourValue={Number(hourValue)} />}
-              data={productList.slice(0, 2)}
-              contentContainerStyle={{ gap: 8 }}
-              keyExtractor={(item) => String(item.id_produto)}
-              renderItem={({ item }) => <CardProduct product={item} hourValue={Number(hourValue)} />}
-            />
+          <HourContainer
+            hourValueProp={hourValue}
+            onUpdateHourValue={updateHourValue}
+          />
+          <FlatList
+            data={productList.slice(0, 5)}
+            contentContainerStyle={{ gap: 8 }}
+            keyExtractor={(item) => String(item.id_produto)}
+            renderItem={({ item }) =>
+              item.id_produto ? (
+                <CardProduct product={item} hourValue={Number(hourValue)} />
+              ) : (
+                <CardProduct
+                  mode="create"
+                  hourValue={Number(hourValue)}
+                  onCancel={() => handleRemoveProduct(item.id_produto)}
+                />
+              )
+            }
+          />
+          <View style={globalStyles.bottomDias}>
+            <Ionicons
+              onPress={handleAddProduct}
+              name="add-circle-outline"
+              color={colors.primary}
+              size={50} />
+          </View>
         </View>
       </View>
     </ImageBackground>

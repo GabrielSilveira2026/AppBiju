@@ -9,10 +9,11 @@ import Button from '../Button';
 type CardProductProps = {
   product?: ProductType;
   mode?: "view" | "details" | "create" | "edit";
-  hourValue: number
+  hourValue: number;
+  onCancel?: () => void; // Nova prop para lidar com o cancelamento
 };
 
-export default function CardProduct({ hourValue, product, mode = "view" }: CardProductProps) {
+export default function CardProduct({onCancel, hourValue, product, mode = "view" }: CardProductProps) {
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [formValues, setFormValues] = useState<ProductType>(product || {
     id_produto: 0,
@@ -169,7 +170,16 @@ export default function CardProduct({ hourValue, product, mode = "view" }: CardP
               <View style={styles.buttonsContainer}>
                 {
                   modeCard === "create" &&
-                  <Button style={{ flex: 1 }} title="Cancelar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
+                  <Button
+                    style={{ flex: 1 }}
+                    title="Cancelar"
+                    onPress={() => {
+                      setModeCard("view");
+                      if (onCancel) {
+                        onCancel();
+                      }
+                    }}
+                  />
                 }
                 <Button style={{ flex: 1 }} title="Salvar" onPress={() => { setModeCard("view"); console.log('Salvando produto...') }} />
               </View>
