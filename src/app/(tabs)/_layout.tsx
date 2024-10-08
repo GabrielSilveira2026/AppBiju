@@ -19,22 +19,22 @@ export default function AppLayout() {
   }
 
 
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  // const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+  //     setKeyboardVisible(true);
+  //   });
 
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
+  //   const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+  //     setKeyboardVisible(false);
+  //   });
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  //   return () => {
+  //     keyboardDidShowListener.remove();
+  //     keyboardDidHideListener.remove();
+  //   };
+  // }, []);
 
   return (
     <Tabs
@@ -45,7 +45,7 @@ export default function AppLayout() {
           borderTopWidth: 1,
           minHeight: 60,
           paddingVertical: 8,
-          display: isKeyboardVisible && isKeyboardVisible ? "none" : "flex"
+          // display: isKeyboardVisible && isKeyboardVisible ? "none" : "flex"
         },
         tabBarShowLabel: false,
       }}

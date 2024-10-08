@@ -20,14 +20,13 @@ export default function Produtos() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused) {      
       getHourValue();
       listProduto();
     }
 
     return () => {
       if (!isFocused) {
-        setProductList([]);
         setIsCreating(false)
       }
     };
@@ -50,7 +49,7 @@ export default function Produtos() {
     }
   }
 
-  function handleCreateProduct() {
+  function handleCreateProduct() {    
     if (!isCreating) {
       setIsCreating(true)
       const newProduct: ProductType = {
@@ -124,7 +123,9 @@ export default function Produtos() {
               onPress={handleCreateProduct}
               name="add-circle-outline"
               color={colors.primary}
-              size={50} />
+              size={50}
+              disabled={isCreating}
+            />
           </View>
         </View>
       </SafeAreaView>

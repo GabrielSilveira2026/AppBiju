@@ -105,7 +105,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
 
 const styles = StyleSheet.create({
     hourContainer: {
-        padding: 12,
+        padding: 8,
         borderRadius: 4,
         backgroundColor: colors.backgroundTertiary,
         gap: 12
@@ -133,17 +133,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     dataText: {
-        fontSize: 20,
+        fontSize: 16,
         color: colors.text,
     },
     hourText: {
-        fontSize: 20,
+        fontSize: 16,
         color: colors.text
     },
     hourValue: {
         flexGrow: 0,
         color: colors.text,
-        fontSize: 20,
+        fontSize: 16,
         padding: 8
     }
 });
