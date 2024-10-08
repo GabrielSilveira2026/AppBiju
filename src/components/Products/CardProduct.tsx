@@ -16,6 +16,7 @@ type CardProductProps = {
 
 export default function CardProduct({ onSave, onCancel, hourValue, product, mode = "view" }: CardProductProps) {
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
+  const [alert, setAlert] = useState<string>("")
   const [formValues, setFormValues] = useState<ProductType>(product || {
     id_produto: 0,
     cod_referencia: "",
@@ -35,13 +36,20 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     }));
   };
 
+  function handlePriceInputChange(value: string) {
+    // Permite números, vírgulas, pontos e o sinal de menos na entrada
+    const formattedValue = value.replace(/[^0-9.,-]/g, '');
+
+    // Atualiza o estado com o valor formatado
+    handleInputChange('preco', formattedValue);
+  }
+
   function formatTime(tempoMinuto: number): string {
     const minutes = Math.floor(tempoMinuto / 60);
     const seconds = tempoMinuto % 60;
 
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
-
 
   function handleTimeInputChange(value: string): void {
     const cleanValue = value.replace(/\D/g, '');
@@ -63,6 +71,29 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     handleInputChange('tempo_minuto', tempoMinuto);
   }
 
+  function saveProduct() {
+
+    if (!formValues.nome.trim()) {
+      setAlert("O campo Nome é obrigatório.");
+      return;
+    }
+
+    if (!formValues.cod_referencia) {
+      setAlert("O campo Código é obrigatório.");
+      return;
+    }
+
+    if (formValues.tempo_minuto <= 0) {
+      setAlert("O campo Tempo de Produção deve ser maior que zero.");
+      return;
+    }
+
+    if (onSave) {
+      setAlert("");
+      setModeCard("view");
+      onSave(formValues);
+    }
+  }
 
   return (
     <View style={[styles.container,
@@ -96,15 +127,16 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
         (modeCard === "create" || modeCard === "edit") ?
           (
             <View style={styles.cardOpenedDetails}>
+              {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
               <View style={styles.line}>
                 <View style={{ flex: 2 }}>
                   <Input
-                    placeholder="Digite o nome do produto"
+                    placeholder="Nome do produto"
                     label="Nome"
                     placeholderTextColor={colors.textInput}
                     value={formValues.nome}
                     onChangeText={value => handleInputChange('nome', value)}
-                    style={[styles.inputValue]}
+                    style={[styles.inputValue, {flex: 1}]}
                     multiline
                   />
                 </View>
@@ -135,11 +167,12 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   <Input
                     placeholder="Preço"
                     value={formValues.preco.toString()}
-                    onChangeText={value => handleInputChange('preco', Number(value))}
-                    keyboardType="numeric"
+                    onChangeText={handlePriceInputChange}
+                    keyboardType="numbers-and-punctuation"
                     style={[styles.inputValue, { textAlign: "center" }]}
                     placeholderTextColor={colors.textInput}
                   />
+
                 </View>
 
                 <View style={styles.valueVertical}>
@@ -162,7 +195,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   <Text
                     style={styles.textValue}>R$
                     {
-                      ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                      !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
                     }
                   </Text>
                 </View>
@@ -183,12 +216,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                 <Button
                   style={{ flex: 1 }}
                   title="Salvar"
-                  onPress={() => {
-                    if (onSave){
-                      setModeCard("view");
-                      onSave(formValues)
-                    }
-                  }} />
+                  onPress={saveProduct} />
               </View>
             </View>
           )
@@ -214,7 +242,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   <Text
                     style={styles.textValue}>R$
                     {
-                      ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                      !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
                     }
                   </Text>
                 </View>
@@ -239,7 +267,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
                   <View style={styles.valueVertical}>
                     <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
-                    <Text style={styles.textValue}>R${(formValues.preco.toFixed(2))}</Text>
+                    <Text style={styles.textValue}>R${(Number(formValues.preco).toFixed(2))}</Text>
                   </View>
 
                   <View style={styles.valueVertical}>
@@ -256,7 +284,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     <Text
                       style={styles.textValue}>R$
                       {
-                        ((hourValue / 60) * formValues.tempo_minuto + formValues.preco).toFixed(2)
+                        !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
                       }
                     </Text>
                   </View>

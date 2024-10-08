@@ -20,7 +20,7 @@ export default function Produtos() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
   useEffect(() => {
-    if (isFocused) {      
+    if (isFocused) {
       getHourValue();
       listProduto();
     }
@@ -49,7 +49,7 @@ export default function Produtos() {
     }
   }
 
-  function handleCreateProduct() {    
+  function handleCreateProduct() {
     if (!isCreating) {
       setIsCreating(true)
       const newProduct: ProductType = {
@@ -72,6 +72,7 @@ export default function Produtos() {
 
   function handleSaveProduct(product: ProductType) {
     // Lógica para salvar o produto
+    setIsCreating(true)
     console.log('Salvando produto...', product);
     // Remover o card de produto recém-criado após salvar
     // setProductList((prevProductList) => prevProductList.filter(p => p.id_produto !== 0));
@@ -97,14 +98,17 @@ export default function Produtos() {
             />
             <Text style={globalStyles.title}>Produtos</Text>
           </View>
-          <HourContainer
-            hourValueProp={hourValue}
-            onUpdateHourValue={updateHourValue}
-          />
+
           <FlatList
             data={productList.slice(0, 5)}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
+            ListHeaderComponent={
+              <HourContainer
+                hourValueProp={hourValue}
+                onUpdateHourValue={updateHourValue}
+              />
+            }
             renderItem={({ item }) =>
               item.id_produto ? (
                 <CardProduct product={item} hourValue={Number(hourValue)} />
