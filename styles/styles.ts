@@ -31,7 +31,6 @@ export const globalStyles = StyleSheet.create({
         gap: 16,
     },
     backgroundImage: {
-        // flex: 1,
         height: height + statusBarHeight + 2,
         resizeMode: "cover",
     },

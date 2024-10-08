@@ -14,7 +14,7 @@ export default function RootLayout() {
       <AuthProvider>
         <SyncProvider>
           <StatusBar style="light" />
-          <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+          <ImageBackground source={IMAGE_PATHS.backgroundImage} style={[globalStyles.backgroundImage, {flex: 1}]}>
             <Slot />
           </ImageBackground>
         </SyncProvider>
