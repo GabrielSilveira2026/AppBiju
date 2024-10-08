@@ -55,15 +55,15 @@ export default function RegisterForm() {
   const password = watch('password');
 
   return (
-    <SafeAreaView style={globalStyles.pageContainer}>
-      <ScrollView style={{ flexGrow: 0, width: "100%"}}>
+    <SafeAreaView style={[globalStyles.pageContainer, { flex: 1, paddingBottom: 0 }]}>
+      <ScrollView style={{ flexGrow: 0, width: "100%" }}>
         <View style={globalStyles.container}>
           <Text style={[globalStyles.title, { color: colors.primary }]}>
             Cadastro
           </Text>
           <View style={globalStyles.formContainer}
           >
-            {erro && <Text style={{color: colors.error}}>{erro}</Text>}
+            {erro && <Text style={{ color: colors.error }}>{erro}</Text>}
             <Controller
               control={control}
               name="name"
@@ -74,10 +74,11 @@ export default function RegisterForm() {
                   placeholder="Digite seu nome"
                   value={value}
                   onChangeText={onChange}
+                  inputStyle={{ flex: 1 }}
                 />
               )}
             />
-            {errors.name && <Text style={{color: colors.error}}>{errors.name.message}</Text>}
+            {errors.name && <Text style={{ color: colors.error }}>{errors.name.message}</Text>}
 
             <Controller
               control={control}
@@ -98,10 +99,11 @@ export default function RegisterForm() {
                   autoCapitalize="none"
                   keyboardType="email-address"
                   textContentType="emailAddress"
+                  inputStyle={{ flex: 1 }}
                 />
               )}
             />
-            {errors.email && <Text style={{color: colors.error}}>{errors.email.message}</Text>}
+            {errors.email && <Text style={{ color: colors.error }}>{errors.email.message}</Text>}
 
             <Controller
               control={control}
@@ -119,10 +121,11 @@ export default function RegisterForm() {
                   secureTextEntry
                   autoCapitalize="none"
                   textContentType="password"
+                  inputStyle={{ flex: 1 }}
                 />
               )}
             />
-            {errors.password && <Text style={{color: colors.error}}>{errors.password.message}</Text>}
+            {errors.password && <Text style={{ color: colors.error }}>{errors.password.message}</Text>}
 
             <Controller
               control={control}
@@ -139,10 +142,11 @@ export default function RegisterForm() {
                   onChangeText={onChange}
                   secureTextEntry
                   textContentType="password"
+                  inputStyle={{ flex: 1 }}
                 />
               )}
             />
-            {errors.confirmPassword && <Text style={{color: colors.error}}>{errors.confirmPassword.message}</Text>}
+            {errors.confirmPassword && <Text style={{ color: colors.error }}>{errors.confirmPassword.message}</Text>}
           </View>
 
           <Button title={isLoading ? "Carregando..." : "Cadastrar"} onPress={handleSubmit(onSubmit)} />

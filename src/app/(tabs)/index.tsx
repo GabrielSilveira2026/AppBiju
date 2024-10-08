@@ -128,6 +128,7 @@ export default function Profile() {
                   value={searchDay}
                   onChangeText={setSearchDay}
                   placeholder="Pesquisar"
+                  inputStyle={{flex: 1}}
                 /> :
                 <Pressable
                   onPress={() => {

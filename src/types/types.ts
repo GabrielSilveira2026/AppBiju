@@ -9,7 +9,7 @@ export type UserType = {
 
 export type ProductType = {
     id_produto: number;
-    cod_referencia: number;
+    cod_referencia: number | string;
     nome: string;
     descricao: string;
     preco: number;

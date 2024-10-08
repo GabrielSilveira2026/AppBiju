@@ -18,7 +18,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [formValues, setFormValues] = useState<ProductType>(product || {
     id_produto: 0,
-    cod_referencia: 0,
+    cod_referencia: "",
     nome: '',
     descricao: '',
     preco: 0,
@@ -39,7 +39,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     const minutes = Math.floor(tempoMinuto / 60);
     const seconds = tempoMinuto % 60;
 
-    // Formata os minutos e segundos com dois dígitos
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 

@@ -28,43 +28,45 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={globalStyles.pageContainer}>
-        <View style={globalStyles.container}>
-          <Text style={[globalStyles.title, { color: colors.primary }]}>
-            Login
-          </Text>
-          {erro && <Text style={{color: colors.error}}>{erro}</Text>}
+    <SafeAreaView style={[globalStyles.pageContainer, { flex: 1, paddingBottom: 0 }]}>
+      <View style={globalStyles.container}>
+        <Text style={[globalStyles.title, { color: colors.primary }]}>
+          Login
+        </Text>
+        {erro && <Text style={{ color: colors.error }}>{erro}</Text>}
 
-          <View style={globalStyles.formContainer}>
-            <Input
-              label="Email"
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              textContentType="emailAddress"
-            />
-            <Input
-              label="Senha"
-              placeholder="Senha"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              textContentType="password"
-              autoCapitalize="none"
-              onSubmitEditing={login}
-            />
-          </View>
-          <Button
-            title={isLoading ? "Carregando..." : "Entrar"}
-            onPress={login}
+        <View style={globalStyles.formContainer}>
+          <Input
+            label="Email"
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            textContentType="emailAddress"
+            inputStyle={{ flex: 1 }}
           />
-          <Text style={styles.registerRedirect}>
-            Ainda não tem cadastro?
-            <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
-          </Text>
+          <Input
+            label="Senha"
+            placeholder="Senha"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            onSubmitEditing={login}
+            inputStyle={{ flex: 1 }}
+          />
         </View>
+        <Button
+          title={isLoading ? "Carregando..." : "Entrar"}
+          onPress={login}
+        />
+        <Text style={styles.registerRedirect}>
+          Ainda não tem cadastro?
+          <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
+        </Text>
+      </View>
     </SafeAreaView>
   );
 }

@@ -7,11 +7,12 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 
 export const globalStyles = StyleSheet.create({
     pageContainer: {
-        flex: 1,
+        height: height,
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
         padding: 8,
+        paddingBottom: 35,
     },
     container: {
         flexGrow: 0,
@@ -30,10 +31,9 @@ export const globalStyles = StyleSheet.create({
         gap: 16,
     },
     backgroundImage: {
-        flex: 1,
+        // flex: 1,
         height: height + statusBarHeight + 2,
         resizeMode: "cover",
-        justifyContent: 'center'
     },
     title: {
         fontSize: 20,

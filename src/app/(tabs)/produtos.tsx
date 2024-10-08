@@ -21,8 +21,8 @@ export default function Produtos() {
 
   useEffect(() => {
     if (isFocused) {
-      listProduto();
       getHourValue();
+      listProduto();
     }
 
     return () => {
@@ -66,13 +66,16 @@ export default function Produtos() {
       };
       setProductList((prevProductList) => [newProduct, ...prevProductList]);
     }
-    else{
+    else {
       setIsCreating(false)
     }
   }
 
   function handleSaveProduct(product: ProductType) {
+    // Lógica para salvar o produto
     console.log('Salvando produto...', product);
+    // Remover o card de produto recém-criado após salvar
+    // setProductList((prevProductList) => prevProductList.filter(p => p.id_produto !== 0));
   }
 
   function handleRemoveProduct(productId: number) {
