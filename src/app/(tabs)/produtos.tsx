@@ -85,7 +85,7 @@ export default function Produtos() {
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-      <View style={globalStyles.pageContainer}>
+      <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
           <View style={styles.titleContainer}>
             <Ionicons
@@ -127,17 +127,15 @@ export default function Produtos() {
               size={50} />
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   productContainer: {
-    padding: 8,
     flex: 1,
     flexGrow: 1,
-    marginTop: 28
   },
   titleContainer: {
     padding: 8,
