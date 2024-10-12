@@ -6,7 +6,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
             cod_referencia INTEGER NOT NULL,
             nome TEXT NOT NULL,
-            descricao TEXT NOT NULL,
+            descricao TEXT,
             preco REAL NOT NULL,
             tempo_minuto INTEGER NOT NULL,
             data_modificado TEXT,

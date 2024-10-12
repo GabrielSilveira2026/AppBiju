@@ -145,7 +145,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     placeholder="Código"
                     label="Código"
                     value={formValues.cod_referencia.toString()}
-                    onChangeText={value => handleInputChange('cod_referencia', value)}
+                    onChangeText={value => handleInputChange('cod_referencia', Number(value))}
                     keyboardType="numeric"
                     style={[styles.inputValue]}
                     placeholderTextColor={colors.textInput}

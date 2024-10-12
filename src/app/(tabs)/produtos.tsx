@@ -59,9 +59,9 @@ export default function Produtos() {
         descricao: '',
         preco: 0,
         tempo_minuto: 0,
-        data_modificado: '',
-        modificado_por: '',
-        ultimo_valor: 0
+        data_modificado: null,
+        modificado_por: null,
+        ultimo_valor: null
       };
       setProductList((prevProductList) => [newProduct, ...prevProductList]);
     }
@@ -70,12 +70,17 @@ export default function Produtos() {
     }
   }
 
-  function handleSaveProduct(product: ProductType) {
-    // Lógica para salvar o produto
+  async function handleSaveProduct(product: ProductType) {
     setIsCreating(true)
-    console.log('Salvando produto...', product);
-    // Remover o card de produto recém-criado após salvar
-    // setProductList((prevProductList) => prevProductList.filter(p => p.id_produto !== 0));
+
+    const request = await sync.postProduct(product)
+    console.log(request.response[0]);
+    
+    setProductList((prevProductList) => [request.response[0], ...prevProductList]);
+
+
+    setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
+    setIsCreating(false)
   }
 
   function handleRemoveProduct(productId: number) {
@@ -100,7 +105,7 @@ export default function Produtos() {
           </View>
 
           <FlatList
-            data={productList.slice(0, 5)}
+            data={productList}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             ListHeaderComponent={

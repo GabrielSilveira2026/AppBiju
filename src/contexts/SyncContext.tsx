@@ -21,7 +21,7 @@ type SyncContextType = {
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
   isConnected: boolean | null;
   syncData: () => Promise<void>;
-  postProduct: (product: Omit<ProductType, "id_produto">) => Promise<ProductType[]>,
+  postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
@@ -179,19 +179,21 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: data, origemDados: "Remoto" };
   }
 
-  async function postProduct(produto: Omit<ProductType, "id_produto">): Promise<ProductType[]> {
-    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
+  async function postProduct(produto: Omit<ProductType, "id_produto">){
+    const url = `${baseUrl}/produto/`
+    const body = JSON.stringify(produto)
 
-    const response: any = await axios.post(url).catch(function (error) {
+    const response: any = await axios.post(url, produto).catch(function (error) {
       return { status: 571 }
-    });
+    });    
 
     if (response.status === 571) {
-      pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      return await productDatabase.postProduct(produto);
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url, body: body });
+      const response = await productDatabase.postProduct(produto);
+      return { response: response, origemDados: "Local" }
     }
 
-    return response.data.items;
+    return { response: response.data.items, origemDados: "Remoto" };
   }
 
   async function getProduct(name?: String) {
