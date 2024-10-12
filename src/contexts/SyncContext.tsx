@@ -66,7 +66,17 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         if (operacaoPendente.metodo === "POST") {
           try {
-            await axios.post(operacaoPendente.url);
+            await axios.post(operacaoPendente.url, operacaoPendente?.body).catch(function (error) {
+              if (error.response) {
+                console.log(error.response)
+
+              } else if (error.request) {
+                console.log(error.request)
+
+              } else {
+                console.log(error.message)
+              }
+            });
           } catch (error) {
             return;
           }
@@ -106,14 +116,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function updateHourValue(valor: number, data_inicio: string) {
     const url = `${baseUrl}/parametro/update/1`
-    const body = JSON.stringify({data_inicio, valor})
-        
+    const body = JSON.stringify({ data_inicio, valor })
+
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body});
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body });
       const response = await paramDatabase.updateParam(1, data_inicio, valor);
       return { response: { status: response.status }, origemDados: "Remoto" };
     }
@@ -129,7 +139,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await peopleDatabase.updatePeopleList(response.data.items)
-    
+
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
@@ -179,16 +189,15 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: data, origemDados: "Remoto" };
   }
 
-  async function postProduct(produto: Omit<ProductType, "id_produto">){
-    const url = `${baseUrl}/produto/`
-    const body = JSON.stringify(produto)
+  async function postProduct(produto: Omit<ProductType, "id_produto">) {
+    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
-    const response: any = await axios.post(url, produto).catch(function (error) {
+    const response: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
-    });    
+    });
 
     if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url, body: body });
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url});
       const response = await productDatabase.postProduct(produto);
       return { response: response, origemDados: "Local" }
     }
@@ -208,6 +217,12 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     await productDatabase.updateProductList(response.data.items)
 
     return { response: response.data.items, origemDados: "Remoto" };
+  }
+
+  async function putProduct(id_produto: number) {
+    const url = `${baseUrl}/produto/${id_produto}`
+
+
   }
 
   return (

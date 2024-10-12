@@ -29,9 +29,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     ultimo_valor: 0
   });
 
-  console.log(formValues);
-  
-
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
       ...prev,
