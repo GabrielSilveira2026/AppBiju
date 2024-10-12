@@ -1,5 +1,6 @@
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
 import { ProductType } from "@/src/types/types";
 import { colors } from "@/styles/color";
@@ -14,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Produtos() {
   const sync = useSync();
+  const { user } = useAuthContext()
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
   const [hourValue, setHourValue] = useState<string>("0");
@@ -23,6 +25,7 @@ export default function Produtos() {
     if (isFocused) {
       getHourValue();
       listProduto();
+      setIsCreating(false)
     }
 
     return () => {
@@ -54,13 +57,13 @@ export default function Produtos() {
       setIsCreating(true)
       const newProduct: ProductType = {
         id_produto: 0,
-        cod_referencia: 0,
+        cod_referencia: "",
         nome: '',
         descricao: '',
         preco: 0,
         tempo_minuto: 0,
         data_modificado: null,
-        modificado_por: null,
+        modificado_por: user?.id_pessoa || null,
         ultimo_valor: null
       };
       setProductList((prevProductList) => [newProduct, ...prevProductList]);
@@ -73,13 +76,31 @@ export default function Produtos() {
   async function handleSaveProduct(product: ProductType) {
     setIsCreating(true)
 
-    const request = await sync.postProduct(product)
-    console.log(request.response[0]);
-    
-    setProductList((prevProductList) => [request.response[0], ...prevProductList]);
+    if (product.id_produto === 0) {
+      const request = await sync.postProduct(product)
+      console.log(request.response[0]);
+
+      setProductList((prevProductList) => [request.response[0], ...prevProductList]);
 
 
-    setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
+      setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
+    }
+    else {
+
+      const teste = {
+        "id_produto": 0,
+        "cod_referencia": 11,
+        "nome": "1111",
+        "descricao": "",
+        "preco": 0,
+        "tempo_minuto": 60,
+        "data_modificado": "",
+        "modificado_por": "",
+        "ultimo_valor": 0
+      }
+
+    }
+
     setIsCreating(false)
   }
 
@@ -115,16 +136,14 @@ export default function Produtos() {
               />
             }
             renderItem={({ item }) =>
-              item.id_produto ? (
-                <CardProduct product={item} hourValue={Number(hourValue)} />
-              ) : (
-                <CardProduct
-                  mode="create"
-                  hourValue={Number(hourValue)}
-                  onSave={handleSaveProduct}
-                  onCancel={() => handleRemoveProduct(item.id_produto)}
-                />
-              )
+              <CardProduct
+                mode={item.id_produto !== 0 ? "view" : "create"}
+                product={item}
+                hourValue={Number(hourValue)}
+                onSave={handleSaveProduct}
+                onCancel={() => handleRemoveProduct(item.id_produto)}
+              />
+              // )
             }
           />
           <View style={globalStyles.bottomDias}>

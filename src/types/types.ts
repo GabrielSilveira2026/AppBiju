@@ -15,7 +15,7 @@ export type ProductType = {
     preco: number;
     tempo_minuto: number;
     data_modificado: string | null;
-    modificado_por: string | null;
+    modificado_por: number | null;
     ultimo_valor: number | null
 }
 

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
 
 type CardProductProps = {
-  product?: ProductType;
+  product: ProductType;
   mode?: "view" | "details" | "create" | "edit";
   hourValue: number;
   onCancel?: () => void;
@@ -25,9 +25,12 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     preco: 0,
     tempo_minuto: 0,
     data_modificado: '',
-    modificado_por: '',
+    modificado_por: null,
     ultimo_valor: 0
   });
+
+  console.log(formValues);
+  
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
@@ -37,10 +40,8 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   };
 
   function handlePriceInputChange(value: string) {
-    // Permite números, vírgulas, pontos e o sinal de menos na entrada
     const formattedValue = value.replace(/[^0-9.,-]/g, '');
 
-    // Atualiza o estado com o valor formatado
     handleInputChange('preco', formattedValue);
   }
 
