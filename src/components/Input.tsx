@@ -33,7 +33,7 @@ export const Input: React.FC<InputProps> = ({
       {label && <Text style={styles.label}>{label}</Text>}
       <View style={styles.inputLine}>
         <TextInput
-          style={[styles.input, inputStyle]}
+          style={[inputStyle, styles.input]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     fontWeight: "regular"
   },
   input: {
-    flex: 1,
+    // flex: 1,
     color: colors.text,
     fontSize: 16,
     padding: 12

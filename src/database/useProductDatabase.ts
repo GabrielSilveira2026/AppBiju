@@ -1,6 +1,6 @@
 
 import { useSQLiteContext } from "expo-sqlite";
-import { ProductType } from "../types/types";
+import { ParamType, ProductType } from "../types/types";
 
 export default function useProductDatabase() {
 
@@ -53,7 +53,6 @@ export default function useProductDatabase() {
         }
     }
 
-
     async function updateProductList(productList: ProductType[]) {
         const statement = await database.prepareAsync(`
             INSERT INTO produto (
@@ -86,7 +85,7 @@ export default function useProductDatabase() {
             await statementDelete.finalizeAsync()
         }
 
-        try {            
+        try {
             for await (const product of productList) {
                 await statement.executeAsync({
                     $cod_referencia: product.cod_referencia,
@@ -119,5 +118,75 @@ export default function useProductDatabase() {
         }
     }
 
-    return { postProduct, getProduct, updateProductList }
+    async function updateProduct(v_id_produto: number, productData: ProductType, dataInicio: string) {
+        const [day, month, year] = dataInicio.split('/');
+        const v_data_inicio = new Date(`${year}-${month}-${day}`).toISOString();
+
+        const statementUpdateProduct = await database.prepareAsync(`
+        UPDATE produto
+        SET 
+            cod_referencia = $cod_referencia,
+            nome = $nome,
+            descricao = $descricao,
+            preco = $preco,
+            tempo_minuto = $tempo_minuto,
+            data_modificado = datetime('now'),
+            modificado_por = $modificado_por,
+            ultimo_valor = $ultimo_valor
+        WHERE id_produto = $id_produto
+    `);
+
+        const statementUpdateProducao = await database.prepareAsync(`
+        UPDATE producao
+        SET historico_preco_unidade = 
+        (
+            $valor_hora / 60 * $tempo_minuto + $preco
+        )
+        WHERE id_dia IN (
+            SELECT id_dia
+            FROM dia
+            WHERE data_dia_producao >= $data_inicio
+        )
+        AND id_produto = $id_produto
+    `);
+
+        try {
+            await statementUpdateProduct.executeAsync({
+                $cod_referencia: productData.cod_referencia,
+                $nome: productData.nome,
+                $descricao: productData.descricao,
+                $preco: productData.preco,
+                $tempo_minuto: productData.tempo_minuto,
+                $modificado_por: productData.modificado_por,
+                $ultimo_valor: productData.ultimo_valor,
+                $id_produto: v_id_produto
+            });
+
+            const valorHoraResult = `SELECT valor FROM parametro WHERE id_parametro = 1`
+            const valorHoraDB = await database.getAllAsync<ParamType>(valorHoraResult)
+            const valorHora = valorHoraDB[0] ? valorHoraDB[0].valor : 0;
+
+            await statementUpdateProducao.executeAsync({
+                $valor_hora: valorHora,
+                $tempo_minuto: productData.tempo_minuto,
+                $preco: productData.preco,
+                $data_inicio: v_data_inicio,
+                $id_produto: v_id_produto
+            });
+
+            const result = `SELECT * FROM produto WHERE id_produto = ${v_id_produto}`
+
+            const response = await database.getAllAsync<ProductType>(result)
+
+            return response
+        } catch (error) {
+            throw error;
+        } finally {
+            await statementUpdateProduct.finalizeAsync();
+            await statementUpdateProducao.finalizeAsync();
+        }
+    }
+
+
+    return { postProduct, getProduct, updateProduct, updateProductList }
 }

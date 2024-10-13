@@ -7,18 +7,19 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 
 export const globalStyles = StyleSheet.create({
     pageContainer: {
-        flex: 1,
+        height: height,
         justifyContent: "center",
         alignItems: "center",
         gap: 12,
         padding: 8,
+        paddingBottom: 30,
     },
     container: {
+        flexGrow: 0,
         backgroundColor: colors.backgroundSecundary,
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 8,
-        flexGrow: 0,
         width: "100%",
         gap: 16,
     },
@@ -33,14 +34,17 @@ export const globalStyles = StyleSheet.create({
         flex: 1,
         height: height + statusBarHeight + 2,
         resizeMode: "cover",
-        justifyContent: 'center'
     },
     title: {
         fontSize: 20,
         fontWeight: "regular",
         color: colors.text
     },
-    error: {
-        color: "#e91515"
+    bottomDias: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        borderTopWidth: 1,
+        borderTopColor: colors.primary,
+        paddingTop: 8,
     },
 });

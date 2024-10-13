@@ -4,19 +4,19 @@ export type UserType = {
     id_pessoa: number;
     nome: string;
     perfil: string;
-    senha?: string
+    senha?: string,
 };
 
-export type ProductType ={
+export type ProductType = {
     id_produto: number;
-    cod_referencia: number;
+    cod_referencia: number | string;
     nome: string;
     descricao: string;
     preco: number;
     tempo_minuto: number;
     data_modificado: string | null;
-    modificado_por: string | null;
-    ultimo_valor: number | null;
+    modificado_por: number | null;
+    ultimo_valor: number | null
 }
 
 export type DayType = {
@@ -27,9 +27,31 @@ export type DayType = {
     valor_dia: number;
 };
 
-export type PaymentType = {
+export type PendingPaymentType = {
     id_pessoa: number;
     nome: string;
     ultimo_pagamento: string;
     total: number;
+};
+
+export type PaymentType = {
+    id_pagamento: number;
+    data_pagamento: string;
+    id_pessoa: number;
+    valor_pagamento: number;
+};
+
+export interface ProductionType {
+    id_producao?: number;
+    id_dia: number;
+    id_produto: number;
+    quantidade: number;
+    observacao: string;
+    historico_preco_unidade: number;
+}
+
+export type ParamType = {
+    id_parametro: number;
+    descricao: string;
+    valor: number;
 };

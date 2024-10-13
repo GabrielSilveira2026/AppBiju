@@ -1,18 +1,18 @@
+import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { PaymentType } from "@/src/types/types";
+import { PendingPaymentType } from "@/src/types/types";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { useIsFocused } from "@react-navigation/native";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, FlatList, ImageBackground, Text, View } from "react-native";
 
 export default function Funcionarios() {
 
-    // const pendingPaymentDatabase = usePendingPayment();
     const sync = useSync()
 
-    const [listPendingPayment, setListPendingPayment] = useState<PaymentType[]>([])
+    const [listPendingPayment, setListPendingPayment] = useState<PendingPaymentType[]>([])
 
     async function getTablePendingPayment() {
         const response = await sync.getPendingPayment()
@@ -26,7 +26,6 @@ export default function Funcionarios() {
             getTablePendingPayment()
         }
     }, [isFocused])
-
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <View style={{ flexGrow: 0, justifyContent: 'center', alignItems: 'center' }}>
@@ -37,7 +36,6 @@ export default function Funcionarios() {
                     renderItem={
                         ({ item }) => (
                             <View style={{ marginTop: 30 }}>
-                                <Text>id_pagamento {item.id_pagamento}</Text>
                                 <Text>id_pessoa {item.id_pessoa}</Text>
                                 <Text>nome {item.nome}</Text>
                                 <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>

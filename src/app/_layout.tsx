@@ -11,14 +11,14 @@ import { SyncProvider } from "../contexts/SyncContext";
 export default function RootLayout() {
   return (
     <SQLiteProvider databaseName="myDataBase.db" onInit={initializeDatabase}>
-      <SyncProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <SyncProvider>
           <StatusBar style="light" />
-          <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+          <ImageBackground source={IMAGE_PATHS.backgroundImage} style={[globalStyles.backgroundImage]}>
             <Slot />
           </ImageBackground>
-        </AuthProvider>
-      </SyncProvider>
+        </SyncProvider>
+      </AuthProvider>
     </SQLiteProvider>
   );
 }
