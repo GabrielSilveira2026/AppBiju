@@ -42,7 +42,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="produtos"
+        name="product"
         options={{
           headerShown: false,
           tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,

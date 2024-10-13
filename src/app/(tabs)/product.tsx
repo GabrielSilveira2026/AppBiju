@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Produtos() {
+export default function Product() {
   const sync = useSync();
   const { user } = useAuthContext()
   const isFocused = useIsFocused();
