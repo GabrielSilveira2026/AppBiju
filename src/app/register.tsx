@@ -23,12 +23,10 @@ export default function RegisterForm() {
   const { control, handleSubmit, watch, formState: { errors } } = useForm<FormType>();
   const { signIn } = useAuthContext()
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [erro, setErro] = useState<string>("")
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
     setErro("")
-    setIsLoading(true)
     const response = await register(
       {
         nome: data.name.trim(),
@@ -49,7 +47,6 @@ export default function RegisterForm() {
     } else if (response?.status === 201) {
       await signIn(data.email.trim(), password)
     }
-    setIsLoading(false)
   };
 
   const password = watch('password');
@@ -149,7 +146,7 @@ export default function RegisterForm() {
             {errors.confirmPassword && <Text style={{ color: colors.error }}>{errors.confirmPassword.message}</Text>}
           </View>
 
-          <Button title={isLoading ? "Carregando..." : "Cadastrar"} onPress={handleSubmit(onSubmit)} />
+          <Button title={"Cadastrar"} onPress={handleSubmit(onSubmit)} />
           <Text style={styles.semCadastro}>
             Já tem cadastro?
             <Link href={"/login"} style={styles.cliqueAqui}> Clique aqui</Link>

@@ -40,7 +40,7 @@ export default function Profile() {
   useEffect(() => {
     async function getDataHeader() {
       const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
-      
+
       let { nome, total, ultimo_pagamento } = response.response[0];
 
       ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
@@ -120,27 +120,31 @@ export default function Profile() {
                 color={colors.primary} />
             }
             <Text style={[globalStyles.title]}>
-              {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : "Nenhum dia produzido"}
+              {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : ""}
             </Text>
             {
-              isSearch ?
-                <Input
-                  value={searchDay}
-                  onChangeText={setSearchDay}
-                  placeholder="Pesquisar"
-                  inputStyle={{flex: 1}}
-                /> :
-                <Pressable
-                  onPress={() => {
-                    setIsSearch(!isSearch)
-                  }}
-                >
-                  <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
-                </Pressable>
+              isSearch &&
+              <Input
+                value={searchDay}
+                onChangeText={setSearchDay}
+                placeholder="Pesquisar"
+                inputStyle={{ flex: 1 }}
+              />
+            }
+            {
+              isSearch || dayList?.length !== 0 &&
+              <Pressable
+                onPress={() => {
+                  setIsSearch(!isSearch)
+                }}
+              >
+                <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
+              </Pressable>
             }
           </View>
           <FlatList
             data={isSearch ? dayList : dayList?.slice(0, 15)}
+            ListEmptyComponent={<Text style={[globalStyles.title, {margin: "auto"}]}>Nenhum dia produzido ainda</Text>}
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day.id_dia.toString()}
             renderItem={({ item }) => <DayListItem day={item} />}
@@ -184,5 +188,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.primary,
   },
-  
+
 });

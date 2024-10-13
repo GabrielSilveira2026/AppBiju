@@ -51,7 +51,7 @@ export default function log() {
     <SafeAreaView>
       <ScrollView>
         <Text>Vc esta esta logado</Text>
-        <Button onPress={logout} title={"Sign Out"}></Button>
+        <Button onPress={logout} title={"Sign Out"} style={{backgroundColor: "black"}}/>
         {/* <FlatList
         data={listPendingPayment}
         keyExtractor={item => item.id_pessoa}

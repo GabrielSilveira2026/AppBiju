@@ -22,9 +22,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const [formValues, setFormValues] = useState<ProductType>(product);
 
-  console.log(formValues);
-  
-
   function handleDateChange(event: any, date: Date | undefined) {
     setShowPicker(false);
     if (date) {
@@ -72,7 +69,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     handleInputChange('tempo_minuto', tempoMinuto);
   }
 
-  function saveProduct() {
+  async function saveProduct() {
 
     if (!formValues.nome.trim()) {
       setAlert("O campo Nome é obrigatório.");
@@ -120,9 +117,9 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
               setFormValues(product)
               setModeCard("details")
             }} name={"arrow-back-outline"} size={35} color={colors.primary} />
-            <Ionicons onPress={() => {
+            {/* <Ionicons onPress={() => {
               console.log("Excluindo");
-            }} name={"trash-outline"} size={35} color={colors.error} />
+            }} name={"trash-outline"} size={35} color={colors.error} /> */}
           </>
         }
       </View>
@@ -230,7 +227,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   <Button
                     style={{ flex: 1 }}
                     title="Cancelar"
-                    onPress={() => {
+                    onPress={async() => {
                       if (onCancel) {
                         onCancel();
                       }

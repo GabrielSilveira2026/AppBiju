@@ -96,16 +96,13 @@ export default function Produtos() {
 
     if (product.id_produto === 0) {
       const request = await sync.postProduct(product)
-      console.log(request.response[0]);
 
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
-
 
       setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
     }
     else {
-
-      console.log(initialDate.toLocaleDateString());
+      await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
     }
 
     setIsCreating(false)

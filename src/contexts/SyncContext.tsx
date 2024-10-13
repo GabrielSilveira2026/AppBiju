@@ -21,6 +21,7 @@ type SyncContextType = {
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
   isConnected: boolean | null;
   syncData: () => Promise<void>;
+  uptdateProduct: (id_produto: number, data_inicio: string, produto: ProductType) => Promise<any>,
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
@@ -66,29 +67,19 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         if (operacaoPendente.metodo === "POST") {
           try {
-            await axios.post(operacaoPendente.url, operacaoPendente?.body).catch(function (error) {
-              if (error.response) {
-                console.log(error.response)
-
-              } else if (error.request) {
-                console.log(error.request)
-
-              } else {
-                console.log(error.message)
-              }
-            });
+            await axios.post(operacaoPendente.url, operacaoPendente?.body)
+            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
           } catch (error) {
             return;
           }
-          pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
         } else if (operacaoPendente.metodo === "PUT") {
           try {
-            await axios.put(operacaoPendente.url, operacaoPendente.body);
+            await axios.put(operacaoPendente.url, operacaoPendente.body)
+              pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
           } catch (error) {
             return;
           }
-          pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
         } else if (operacaoPendente.metodo === "DELETE") {
 
@@ -219,17 +210,37 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
-  async function uptdateProduct(id_produto: number, data_inicio: string, produto: ProductType) {
+  async function uptdateProduct(id_produto: number, data_inicio: string, product: ProductType) {
     const url = `${baseUrl}/produto/${id_produto}`
-    const body = JSON.stringify({ produto, data_inicio })
-
+    
+    const body = JSON.stringify({
+      "cod_referencia": product.cod_referencia,
+      "data_modificado": product.data_modificado,
+      "descricao": product.descricao,
+      "id_produto": product.id_produto,
+      "modificado_por": product.modificado_por,
+      "nome": product.nome,
+      "preco": product.preco,
+      "tempo_minuto": product.tempo_minuto,
+      "ultimo_valor": product.ultimo_valor,
+      "data_inicio": data_inicio
+    })
+    
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
+
+    if (response.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+      const response = await productDatabase.updateProduct(id_produto, product, data_inicio)
+      return { response: response, origemDados: "Local" }
+    }
+
+    return { response: response.data.items, origemDados: "Remoto" };
   }
 
   return (
-    <SyncContext.Provider value={{ updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
       {children}
     </SyncContext.Provider>
   );

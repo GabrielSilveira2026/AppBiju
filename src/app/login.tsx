@@ -13,12 +13,9 @@ export default function HomeScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [erro, setErro] = useState<string>("")
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function login() {
-    setIsLoading(true)
     const response = await signIn(email.trim(), password.trim())
-    setIsLoading(false)
     if (response?.status === 401) {
       setErro("Email ou senha inválidos")
     }
@@ -59,7 +56,7 @@ export default function HomeScreen() {
           />
         </View>
         <Button
-          title={isLoading ? "Carregando..." : "Entrar"}
+          title={"Entrar"}
           onPress={login}
         />
         <Text style={styles.registerRedirect}>
