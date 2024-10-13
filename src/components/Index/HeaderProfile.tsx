@@ -12,8 +12,6 @@ type HeaderProfileProps = {
     }
 }
 
-
-
 export default function HeaderProfile({ userData }: HeaderProfileProps) {
 
     return (

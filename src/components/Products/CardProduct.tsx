@@ -1,5 +1,5 @@
 import { ProductType } from '@/src/types/types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
@@ -21,6 +21,10 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const [formValues, setFormValues] = useState<ProductType>(product);
+
+  useEffect(()=>{
+    setFormValues(product)
+  },[product])
 
   function handleDateChange(event: any, date: Date | undefined) {
     setShowPicker(false);

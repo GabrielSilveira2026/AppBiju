@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Produtos() {
@@ -20,11 +20,22 @@ export default function Produtos() {
   const [productList, setProductList] = useState<ProductType[]>([]);
   const [hourValue, setHourValue] = useState<string>("0");
   const [isCreating, setIsCreating] = useState<boolean>(false)
+  const controller = new AbortController();
 
   useEffect(() => {
-    if (isFocused) {
+    async function getProductList() {
+      const request = await sync.getProduct();
+      setProductList(request.response);
+    }
+
+    async function getHourValue() {
+      const request = await sync.getHourValue();
+      setHourValue(request.response[0].valor.toString());
+    }
+
+    if (isFocused) {      
+      getProductList();
       getHourValue();
-      listProduto();
       setIsCreating(false)
     }
 
@@ -32,6 +43,7 @@ export default function Produtos() {
       if (!isFocused) {
         setIsCreating(false)
       }
+      controller.abort();
     };
   }, [isFocused]);
 
@@ -52,19 +64,10 @@ export default function Produtos() {
     };
   }, []);
 
-  async function listProduto() {
-    const response = await sync.getProduct();
-    setProductList(response.response);
-  }
-
-  async function getHourValue() {
-    const response = await sync.getHourValue();
-    setHourValue(response.response[0].valor.toString());
-  }
 
   async function updateHourValue(newHourValue: string, initialDate: string) {
-    const response = await sync.updateHourValue(Number(newHourValue), initialDate);
-    if (response.response.status === 200) {
+    const request = await sync.updateHourValue(Number(newHourValue), initialDate);
+    if (request.response.status === 200) {
       setHourValue(newHourValue);
     }
   }
@@ -93,7 +96,6 @@ export default function Produtos() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
-
     if (product.id_produto === 0) {
       const request = await sync.postProduct(product)
 
@@ -102,7 +104,17 @@ export default function Produtos() {
       setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
     }
     else {
-      await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
+      Alert.alert('Alterar valor do produto?', `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+        {
+          text: 'Cancelar'
+        },
+        {
+          text: 'Confirmar',
+          onPress: async () => {
+            await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
+          }
+        }
+      ]);
     }
 
     setIsCreating(false)
@@ -131,7 +143,7 @@ export default function Produtos() {
 
           <FlatList
             data={productList}
-            style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0}}
+            style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             ListHeaderComponent={
