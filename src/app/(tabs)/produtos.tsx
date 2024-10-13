@@ -33,7 +33,7 @@ export default function Produtos() {
       setHourValue(request.response[0].valor.toString());
     }
 
-    if (isFocused) {      
+    if (isFocused) {
       getProductList();
       getHourValue();
       setIsCreating(false)
@@ -129,28 +129,30 @@ export default function Produtos() {
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
-          <View style={styles.titleContainer}>
-            <Ionicons
-              onPress={() => {
-                router.navigate("/");
-              }}
-              name="arrow-back-outline"
-              size={35}
-              color={colors.primary}
-            />
-            <Text style={globalStyles.title}>Produtos</Text>
-          </View>
+
 
           <FlatList
             data={productList}
             style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
-            ListHeaderComponent={
+            ListHeaderComponent={<>
+              <View style={styles.titleContainer}>
+                <Ionicons
+                  onPress={() => {
+                    router.navigate("/");
+                  }}
+                  name="arrow-back-outline"
+                  size={35}
+                  color={colors.primary}
+                />
+                <Text style={globalStyles.title}>Produtos</Text>
+              </View>
               <HourContainer
                 hourValueProp={hourValue}
                 onUpdateHourValue={updateHourValue}
               />
+            </>
             }
             renderItem={({ item }) =>
               <CardProduct

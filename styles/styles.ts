@@ -12,7 +12,7 @@ export const globalStyles = StyleSheet.create({
         alignItems: "center",
         gap: 12,
         padding: 8,
-        paddingBottom: 35,
+        paddingBottom: 30,
     },
     container: {
         flexGrow: 0,

@@ -287,7 +287,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                 </View>
                 <View style={styles.line}>
                   <View style={styles.textDescription}>
-                    <Text style={styles.textValue}>{formValues.descricao}</Text>
+                    <Text style={[styles.textValue, {fontSize: 14}]}>{formValues.descricao}</Text>
                   </View>
                 </View>
                 <View style={styles.line}>

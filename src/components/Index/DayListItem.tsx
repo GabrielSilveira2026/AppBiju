@@ -6,7 +6,6 @@ import { router } from 'expo-router';
 
 export default function DayListItem({ day }: { day: DayType }) {
 
-  console.log(day.data_dia_producao);
   return (
     <Pressable style={styles.container}
       onPress={() => {

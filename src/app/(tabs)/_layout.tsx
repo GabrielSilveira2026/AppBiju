@@ -26,7 +26,7 @@ export default function AppLayout() {
           backgroundColor: "black",
           borderTopColor: colors.primary,
           borderTopWidth: 1,
-          minHeight: 60,
+          minHeight: 40,
           paddingVertical: 8,
         },
         tabBarShowLabel: false,

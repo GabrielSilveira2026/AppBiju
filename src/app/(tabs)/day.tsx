@@ -56,8 +56,13 @@ export default function DayDetails() {
 
     async function createDay() {
         const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+        
         if (selectedDate) {
-            const response = await sync.postDay(parseInt(userId), selectedDate.toISOString())
+            const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+        
+            console.log(localDate.toISOString());
+    
+            const response = await sync.postDay(parseInt(userId), localDate.toISOString());
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { ...response.response, pessoa: params.pessoa }
@@ -95,11 +100,11 @@ export default function DayDetails() {
                                             onPress={() => setShowPicker(!showPicker)}
                                         >
                                             <View style={styles.dataContainer}>
-                                                <Text style={styles.dataText}>{selectedDate?.toLocaleDateString()}</Text>
+                                                <Text style={styles.dataText}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
                                             </View>
                                         </Pressable>
                                         :
-                                        <Text style={styles.textValue}>{selectedDate?.toLocaleDateString()}</Text>
+                                        <Text style={styles.textValue}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
                                 }
                                 {
                                     showPicker
