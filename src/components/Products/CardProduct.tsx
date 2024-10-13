@@ -227,7 +227,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   <Button
                     style={{ flex: 1 }}
                     title="Cancelar"
-                    onPress={async() => {
+                    onPress={async () => {
                       if (onCancel) {
                         onCancel();
                       }
@@ -244,33 +244,34 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           :
           modeCard === "view" ?
             (
-
-              <View style={styles.line}>
-                <View style={styles.nameAndCode}>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.textValue}>{formValues.nome}</Text>
+              <Pressable onPress={() => setModeCard("details")}>
+                <View style={styles.line}>
+                  <View style={styles.nameAndCode}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.textValue}>{formValues.nome}</Text>
+                    </View>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
+                    </View>
                   </View>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
+                  <View style={styles.valueVertical}>
+                    <Text
+                      style={styles.textValue}
+                    >
+                      Valor{"\n"}total:
+                    </Text>
+                    <Text
+                      style={styles.textValue}>R$
+                      {
+                        !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
+                      }
+                    </Text>
+                  </View>
+                  <View style={styles.buttonOpen}>
+                    <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
                   </View>
                 </View>
-                <View style={styles.valueVertical}>
-                  <Text
-                    style={styles.textValue}
-                  >
-                    Valor{"\n"}total:
-                  </Text>
-                  <Text
-                    style={styles.textValue}>R$
-                    {
-                      !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
-                    }
-                  </Text>
-                </View>
-                <View style={styles.buttonOpen}>
-                  <Ionicons onPress={() => setModeCard("details")} name={"chevron-down-outline"} size={35} color={colors.primary} />
-                </View>
-              </View>
+              </Pressable>
             )
             :
             (

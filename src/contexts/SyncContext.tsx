@@ -75,8 +75,18 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
         } else if (operacaoPendente.metodo === "PUT") {
           try {
-            await axios.put(operacaoPendente.url, operacaoPendente.body)
-              pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+            await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+              if (error.response) {
+                console.log(error.response)
+
+              } else if (error.request) {
+                console.log(error.request)
+
+              } else {
+                console.log(error.message)
+              }
+            });
+            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
           } catch (error) {
             return;
           }
@@ -225,7 +235,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-    
+      
+    console.log(body);
+
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
