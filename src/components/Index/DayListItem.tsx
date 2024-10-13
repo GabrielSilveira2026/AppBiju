@@ -5,6 +5,8 @@ import { colors } from '@/styles/color';
 import { router } from 'expo-router';
 
 export default function DayListItem({ day }: { day: DayType }) {
+
+  console.log(day.data_dia_producao);
   return (
     <Pressable style={styles.container}
       onPress={() => {
@@ -19,7 +21,7 @@ export default function DayListItem({ day }: { day: DayType }) {
           },
         });
       }}>
-      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString()}</Text>
+      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
       <Text style={styles.text}>{`R$${day.valor_dia.toFixed(2)}`}</Text>
       <Ionicons
         name="arrow-forward"

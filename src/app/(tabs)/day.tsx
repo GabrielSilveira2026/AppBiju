@@ -135,7 +135,7 @@ export default function DayDetails() {
                             Produtos
                         </Text>
                     </View>
-                    <Button title={"Salvar"} onPress={() => { }} />
+                    <Button title={"Adicionar"}/>
                 </View>
                 {
                     mode && mode !== 'view' &&

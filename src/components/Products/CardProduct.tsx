@@ -24,6 +24,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
   useEffect(()=>{
     setFormValues(product)
+    setInitialDate(new Date())
   },[product])
 
   function handleDateChange(event: any, date: Date | undefined) {
