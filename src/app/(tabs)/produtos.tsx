@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Produtos() {
@@ -34,6 +34,23 @@ export default function Produtos() {
       }
     };
   }, [isFocused]);
+
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   async function listProduto() {
     const response = await sync.getProduct();
@@ -73,8 +90,9 @@ export default function Produtos() {
     }
   }
 
-  async function handleSaveProduct(product: ProductType) {
+  async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
+
 
     if (product.id_produto === 0) {
       const request = await sync.postProduct(product)
@@ -87,18 +105,7 @@ export default function Produtos() {
     }
     else {
 
-      const teste = {
-        "id_produto": 0,
-        "cod_referencia": 11,
-        "nome": "1111",
-        "descricao": "",
-        "preco": 0,
-        "tempo_minuto": 60,
-        "data_modificado": "",
-        "modificado_por": "",
-        "ultimo_valor": 0
-      }
-
+      console.log(initialDate.toLocaleDateString());
     }
 
     setIsCreating(false)
@@ -127,6 +134,7 @@ export default function Produtos() {
 
           <FlatList
             data={productList}
+            style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0}}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             ListHeaderComponent={
@@ -143,7 +151,6 @@ export default function Produtos() {
                 onSave={handleSaveProduct}
                 onCancel={() => handleRemoveProduct(item.id_produto)}
               />
-              // )
             }
           />
           <View style={globalStyles.bottomDias}>

@@ -197,7 +197,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url});
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
       const response = await productDatabase.postProduct(produto);
       return { response: response, origemDados: "Local" }
     }
@@ -219,10 +219,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
-  async function putProduct(id_produto: number) {
+  async function uptdateProduct(id_produto: number, data_inicio: string, produto: ProductType) {
     const url = `${baseUrl}/produto/${id_produto}`
+    const body = JSON.stringify({ produto, data_inicio })
 
-
+    const response: any = await axios.put(url, body).catch(function (error) {
+      return { status: 571 }
+    });
   }
 
   return (

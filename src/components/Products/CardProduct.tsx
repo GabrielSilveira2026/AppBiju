@@ -1,33 +1,36 @@
 import { ProductType } from '@/src/types/types'
 import { useState } from 'react'
-import { View, Text, StyleSheet, TextInput } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type CardProductProps = {
   product: ProductType;
   mode?: "view" | "details" | "create" | "edit";
   hourValue: number;
   onCancel?: () => void;
-  onSave?: (product: ProductType) => void;
+  onSave?: (product: ProductType, initialDate: Date) => void;
 };
 
 export default function CardProduct({ onSave, onCancel, hourValue, product, mode = "view" }: CardProductProps) {
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
-  const [formValues, setFormValues] = useState<ProductType>(product || {
-    id_produto: 0,
-    cod_referencia: "",
-    nome: '',
-    descricao: '',
-    preco: 0,
-    tempo_minuto: 0,
-    data_modificado: '',
-    modificado_por: null,
-    ultimo_valor: 0
-  });
+  const [showPicker, setShowPicker] = useState<boolean>(false);
+  const [initialDate, setInitialDate] = useState<Date>(new Date());
+  const [formValues, setFormValues] = useState<ProductType>(product);
+
+  console.log(formValues);
+  
+
+  function handleDateChange(event: any, date: Date | undefined) {
+    setShowPicker(false);
+    if (date) {
+      setInitialDate(date);
+    }
+  };
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
@@ -89,7 +92,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     if (onSave) {
       setAlert("");
       setModeCard("view");
-      onSave(formValues);
+      onSave(formValues, initialDate);
     }
   }
 
@@ -113,7 +116,10 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           modeCard === "edit"
           &&
           <>
-            <Ionicons onPress={() => setModeCard("details")} name={"arrow-back-outline"} size={35} color={colors.primary} />
+            <Ionicons onPress={() => {
+              setFormValues(product)
+              setModeCard("details")
+            }} name={"arrow-back-outline"} size={35} color={colors.primary} />
             <Ionicons onPress={() => {
               console.log("Excluindo");
             }} name={"trash-outline"} size={35} color={colors.error} />
@@ -134,7 +140,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     placeholderTextColor={colors.textInput}
                     value={formValues.nome}
                     onChangeText={value => handleInputChange('nome', value)}
-                    style={[styles.inputValue, {flex: 1}]}
+                    style={[styles.inputValue, { flex: 1 }]}
                     multiline
                   />
                 </View>
@@ -198,6 +204,26 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                   </Text>
                 </View>
               </View>
+              {
+                modeCard === "edit" &&
+                <Pressable
+                  style={styles.dataContainer}
+                  onPress={() => setShowPicker(!showPicker)}
+                >
+                  <Text style={styles.dataText}>Alterar partir de: </Text>
+                  <View style={styles.dataValue}>
+                    <Text style={styles.dataText}>{initialDate?.toLocaleDateString()}</Text>
+                  </View>
+                </Pressable>
+              }
+              {showPicker && (
+                <DateTimePicker
+                  value={initialDate || new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={handleDateChange}
+                />
+              )}
               <View style={styles.buttonsContainer}>
                 {
                   modeCard === "create" &&
@@ -349,5 +375,22 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     gap: 8,
-  }
+  },
+  dataContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  dataValue: {
+    padding: 12,
+    backgroundColor: colors.backgroundInput,
+    borderBottomColor: colors.text,
+    borderBottomWidth: 1,
+    borderRadius: 4,
+    alignItems: "center",
+  },
+  dataText: {
+    fontSize: 16,
+    color: colors.text,
+  },
 })
