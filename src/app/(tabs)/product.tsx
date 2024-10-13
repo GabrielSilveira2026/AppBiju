@@ -104,17 +104,7 @@ export default function Product() {
       setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
     }
     else {
-      Alert.alert('Alterar valor do produto?', `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
-        {
-          text: 'Cancelar'
-        },
-        {
-          text: 'Confirmar',
-          onPress: async () => {
-            await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
-          }
-        }
-      ]);
+      await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
     }
 
     setIsCreating(false)

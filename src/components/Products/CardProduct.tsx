@@ -1,6 +1,6 @@
 import { ProductType } from '@/src/types/types'
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,10 +22,10 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const [formValues, setFormValues] = useState<ProductType>(product);
 
-  useEffect(()=>{
+  useEffect(() => {
     setFormValues(product)
     setInitialDate(new Date())
-  },[product])
+  }, [product])
 
   function handleDateChange(event: any, date: Date | undefined) {
     setShowPicker(false);
@@ -93,8 +93,18 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
     if (onSave) {
       setAlert("");
-      setModeCard("view");
-      onSave(formValues, initialDate);
+      Alert.alert('Alterar valor do produto?', `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+        {
+          text: 'Cancelar'
+        },
+        {
+          text: 'Confirmar',
+          onPress: async () => {
+            setModeCard("view");
+            onSave(formValues, initialDate);
+          }
+        }
+      ])
     }
   }
 
@@ -287,7 +297,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                 </View>
                 <View style={styles.line}>
                   <View style={styles.textDescription}>
-                    <Text style={[styles.textValue, {fontSize: 14}]}>{formValues.descricao}</Text>
+                    <Text style={[styles.textValue, { fontSize: 14 }]}>{formValues.descricao}</Text>
                   </View>
                 </View>
                 <View style={styles.line}>
