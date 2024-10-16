@@ -76,6 +76,7 @@ export default function Product() {
     if (!isCreating) {
       setIsCreating(true)
       const newProduct: ProductType = {
+        id_produto_local: 0,
         id_produto: 0,
         cod_referencia: "",
         nome: '',
@@ -104,7 +105,7 @@ export default function Product() {
       setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
     }
     else {
-      await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
+      await sync.uptdateProduct(initialDate.toLocaleDateString(), product)
     }
 
     setIsCreating(false)
@@ -150,7 +151,7 @@ export default function Product() {
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
-                onCancel={() => handleRemoveProduct(item.id_produto)}
+                onCancel={() => handleRemoveProduct(item.id_produto_local)}
               />
             }
           />

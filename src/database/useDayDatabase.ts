@@ -37,12 +37,17 @@ export default function useDayDatabase() {
         `);
 
         try {
-            await statement.executeAsync({
+            const result = await statement.executeAsync({
                 $id_pessoa: id_pessoa,
                 $data_dia_producao: data_dia_producao,
                 $valor_dia: valor_dia
             });
-            console.log("Dia criado com sucesso.");
+
+            const insertedRowId = result.lastInsertRowId.toLocaleString()
+
+            const response = await database.getAllAsync<DayType>(`SELECT * FROM dia WHERE rowid = ${insertedRowId}`)
+
+            return response
         } catch (error) {
             console.error("Erro ao criar dia:", error);
             throw error;
@@ -71,12 +76,14 @@ export default function useDayDatabase() {
 
         const statementInsert = await database.prepareAsync(`
             INSERT INTO dia (
+                id_dia,
                 id_pessoa,
                 pessoa,
                 data_dia_producao,
                 valor_dia
             )
             VALUES (
+                $id_dia,
                 $id_pessoa,
                 $pessoa,
                 $data_dia_producao,
@@ -87,6 +94,7 @@ export default function useDayDatabase() {
         try {
             for await (const dia of diaList) {
                 await statementInsert.executeAsync({
+                    $id_dia: dia.id_dia,
                     $id_pessoa: dia.id_pessoa,
                     $pessoa: dia.pessoa,
                     $data_dia_producao: dia.data_dia_producao,

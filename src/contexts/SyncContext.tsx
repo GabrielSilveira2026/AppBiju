@@ -21,7 +21,7 @@ type SyncContextType = {
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
   isConnected: boolean | null;
   syncData: () => Promise<void>;
-  uptdateProduct: (id_produto: number, data_inicio: string, produto: ProductType) => Promise<any>,
+  uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
@@ -190,7 +190,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: data, origemDados: "Remoto" };
   }
 
-  async function postProduct(produto: Omit<ProductType, "id_produto">) {
+  async function postProduct(produto: ProductType) {
     const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
     const response: any = await axios.post(url).catch(function (error) {
@@ -208,26 +208,30 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getProduct(name?: String) {
 
-    const response = await getProductRemote();
+    const request = await getProductRemote();
 
-    if (response.status === 571) {
-      const response = await productDatabase.getProduct()
-      return { response: response, origemDados: "Local" }
+    if (request.status === 571) {
+      const request = await productDatabase.getProduct()
+      return { response: request, origemDados: "Local" }
     }
+    console.log("Produtos remotos",request.data.items)
+    await productDatabase.updateProductList(request.data.items)
 
-    await productDatabase.updateProductList(response.data.items)
+    const localData = await productDatabase.getProduct()
+    console.log("Pós update, local:", localData);
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    return { response: localData, origemDados: "Remoto" };
   }
 
-  async function uptdateProduct(id_produto: number, data_inicio: string, product: ProductType) {
-    const url = `${baseUrl}/produto/${id_produto}`
-    
+
+  async function uptdateProduct(data_inicio: string, product: ProductType) {
+    const url = `${baseUrl}/produto/${product.id_produto}`
+
     const body = JSON.stringify({
+      "id_produto": product.id_produto,
       "cod_referencia": product.cod_referencia,
       "data_modificado": product.data_modificado,
       "descricao": product.descricao,
-      "id_produto": product.id_produto,
       "modificado_por": product.modificado_por,
       "nome": product.nome,
       "preco": product.preco,
@@ -235,24 +239,36 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-      
-    console.log(body);
 
+    console.log("\nRecebeu update sync: ", JSON.stringify(body));
+    
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
+    console.log("\n\nRetornou remoto sync:", JSON.stringify(response?.data?.items));
+
     if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
-      const response = await productDatabase.updateProduct(id_produto, product, data_inicio)
-      return { response: response, origemDados: "Local" }
+      if (product?.id_produto) {
+        console.log("Produto a ser att: ", product?.id_produto);
+        
+        const pendingOperation = await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+        console.log("ID operação pendente: ", pendingOperation);
+
+        const response = await productDatabase.updateProduct(product, data_inicio)
+
+        console.log("Produto att local: ", response);
+        
+        return { response: response, origemDados: "Local" }
+      }
+      return { response: [], origemDados: "Local" }
     }
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
   return (
-    <SyncContext.Provider value={{uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{ uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
       {children}
     </SyncContext.Provider>
   );

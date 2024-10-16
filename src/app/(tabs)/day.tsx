@@ -59,8 +59,6 @@ export default function DayDetails() {
         
         if (selectedDate) {
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-        
-            console.log(localDate.toISOString());
     
             const response = await sync.postDay(parseInt(userId), localDate.toISOString());
             router.replace({

@@ -3,7 +3,8 @@ import { type SQLiteDatabase } from "expo-sqlite";
 export async function initializeDatabase(database: SQLiteDatabase) {
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS produto (
-            id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_produto_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_produto INTEGER,
             cod_referencia INTEGER NOT NULL,
             nome TEXT NOT NULL,
             descricao TEXT,
@@ -28,7 +29,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS dia (
-            id_dia INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_dia_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_dia INTEGER,
             id_pessoa INTEGER NOT NULL,
             pessoa VARCHAR(100) NOT NULL,
             data_dia_producao DATE NOT NULL,
@@ -40,7 +42,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pagamento_pendente (
-            id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pagamento INTEGER,
             id_pessoa INTEGER NOT NULL,
             nome TEXT NOT NULL,
             ultimo_pagamento TEXT,
@@ -50,7 +53,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pagamento (
-            id_pagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pagamento INTEGER,
             data_pagamento TEXT,
             id_pessoa INTEGER NOT NULL,
             valor_pagamento REAL,
@@ -60,7 +64,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pessoa (
-            id_pessoa INTEGER NOT NULL,
+            id_pessoa_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pessoa INTEGER,
             nome TEXT NOT NULL,
             email TEXT NOT NULL,
             id_perfil INTEGER,
@@ -70,7 +75,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS producao (
-            id_producao INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_producao_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_producao INTEGER,
             id_dia INTEGER NOT NULL,
             id_produto INTEGER NOT NULL,
             quantidade REAL NOT NULL,
@@ -83,7 +89,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS perfil (
-            id_perfil INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_perfil_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_perfil INTEGER,
             perfil TEXT NOT NULL
         );
     `);

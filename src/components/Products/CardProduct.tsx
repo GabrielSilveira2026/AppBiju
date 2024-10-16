@@ -121,6 +121,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           &&
           <>
             <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
+            <Text style={{ color: "white" }}>id: {product.id_produto_local}</Text>
             <Ionicons onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </>
         }
@@ -151,7 +152,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     label="Nome"
                     placeholderTextColor={colors.textInput}
                     value={formValues.nome}
-                    onChangeText={value => handleInputChange('nome', value)}
+                    onChangeText={value => handleInputChange('nome', value.trim())}
                     style={[styles.inputValue, { flex: 1 }]}
                     multiline
                   />
@@ -174,7 +175,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                 label="Descrição"
                 multiline
                 style={[styles.inputValue, styles.textDescription]}
-                onChangeText={value => handleInputChange('descricao', value)}
+                onChangeText={value => handleInputChange('descricao', value.trim())}
                 placeholderTextColor={colors.textInput}
               />
               <View style={styles.line}>
