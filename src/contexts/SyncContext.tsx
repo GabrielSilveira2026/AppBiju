@@ -214,11 +214,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await productDatabase.getProduct()
       return { response: request, origemDados: "Local" }
     }
-    console.log("Produtos remotos",request.data.items)
     await productDatabase.updateProductList(request.data.items)
 
     const localData = await productDatabase.getProduct()
-    console.log("Pós update, local:", localData);
 
     return { response: localData, origemDados: "Remoto" };
   }
@@ -231,34 +229,26 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "id_produto": product.id_produto,
       "cod_referencia": product.cod_referencia,
       "data_modificado": product.data_modificado,
-      "descricao": product.descricao,
+      "descricao": product.descricao.trim(),
       "modificado_por": product.modificado_por,
-      "nome": product.nome,
+      "nome": product.nome.trim(),
       "preco": product.preco,
       "tempo_minuto": product.tempo_minuto,
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-
-    console.log("\nRecebeu update sync: ", JSON.stringify(body));
     
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
-    console.log("\n\nRetornou remoto sync:", JSON.stringify(response?.data?.items));
-
     if (response.status === 571) {
       if (product?.id_produto) {
-        console.log("Produto a ser att: ", product?.id_produto);
         
-        const pendingOperation = await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
-        console.log("ID operação pendente: ", pendingOperation);
+        await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
 
         const response = await productDatabase.updateProduct(product, data_inicio)
 
-        console.log("Produto att local: ", response);
-        
         return { response: response, origemDados: "Local" }
       }
       return { response: [], origemDados: "Local" }

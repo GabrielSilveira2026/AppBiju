@@ -152,7 +152,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     label="Nome"
                     placeholderTextColor={colors.textInput}
                     value={formValues.nome}
-                    onChangeText={value => handleInputChange('nome', value.trim())}
+                    onChangeText={value => handleInputChange('nome', value)}
                     style={[styles.inputValue, { flex: 1 }]}
                     multiline
                   />
@@ -175,7 +175,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                 label="Descrição"
                 multiline
                 style={[styles.inputValue, styles.textDescription]}
-                onChangeText={value => handleInputChange('descricao', value.trim())}
+                onChangeText={value => handleInputChange('descricao', value)}
                 placeholderTextColor={colors.textInput}
               />
               <View style={styles.line}>
