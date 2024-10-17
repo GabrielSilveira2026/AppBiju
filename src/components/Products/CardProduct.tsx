@@ -93,18 +93,24 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
     if (onSave) {
       setAlert("");
-      Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
-        {
-          text: "Cancelar"
-        },
-        {
-          text: "Confirmar",
-          onPress: async () => {
-            setModeCard("view");
-            onSave(formValues, initialDate);
+      if (formValues.id_produto_local === 0) {
+        setModeCard("view");
+        onSave(formValues, initialDate);
+      }
+      else{
+        Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+          {
+            text: "Cancelar"
+          },
+          {
+            text: "Confirmar",
+            onPress: async () => {
+              setModeCard("view");
+              onSave(formValues, initialDate);
+            }
           }
-        }
-      ])
+        ])
+      }
     }
   }
 

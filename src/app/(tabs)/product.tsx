@@ -146,7 +146,7 @@ export default function Product() {
             }
             renderItem={({ item }) =>
               <CardProduct
-                mode={item.id_produto ? "view" : "create"}
+                mode={item.id_produto_local ? "view" : "create"}
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
