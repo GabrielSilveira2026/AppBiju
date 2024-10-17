@@ -2,32 +2,6 @@ import { type SQLiteDatabase } from "expo-sqlite";
 
 export async function initializeDatabase(database: SQLiteDatabase) {
     await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS produto (
-            id_produto_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_produto INTEGER,
-            cod_referencia INTEGER NOT NULL,
-            nome TEXT NOT NULL,
-            descricao TEXT,
-            preco REAL NOT NULL,
-            tempo_minuto INTEGER NOT NULL,
-            data_modificado TEXT,
-            modificado_por TEXT,
-            ultimo_valor REAL
-        ); 
-    `)
-
-    await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS operacoes_pendentes(
-            id_operacoes_pendentes INTEGER PRIMARY KEY AUTOINCREMENT,
-            metodo TEXT NOT NULL,
-            url TEXT NOT NULL,
-            body TEXT,
-            header TEXT,
-            sincronizado BOOLEAN DEFAULT FALSE
-        );
-    `)
-
-    await database.execAsync(`
         CREATE TABLE IF NOT EXISTS dia (
             id_dia_local INTEGER PRIMARY KEY AUTOINCREMENT,
             id_dia INTEGER,
@@ -39,6 +13,35 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         );
     `);
 
+    await database.execAsync(`
+        CREATE TABLE IF NOT EXISTS operacoes_pendentes(
+            id_operacoes_pendentes INTEGER PRIMARY KEY AUTOINCREMENT,
+            metodo TEXT NOT NULL,
+            url TEXT NOT NULL,
+            body TEXT,
+            header TEXT,
+            sincronizado BOOLEAN DEFAULT FALSE
+        );
+    `);
+
+    await database.execAsync(`
+        CREATE TABLE IF NOT EXISTS parametro (
+            id_parametro INTEGER NOT NULL,
+            descricao TEXT NOT NULL,
+            valor REAL NOT NULL
+        );
+    `);
+
+    await database.execAsync(`
+        CREATE TABLE IF NOT EXISTS pagamento (
+            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pagamento INTEGER,
+            data_pagamento TEXT,
+            id_pessoa INTEGER NOT NULL,
+            valor_pagamento REAL,
+            CONSTRAINT fk_pessoa_pagamento FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
+        );
+    `);
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pagamento_pendente (
@@ -52,13 +55,10 @@ export async function initializeDatabase(database: SQLiteDatabase) {
     `);
 
     await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS pagamento (
-            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_pagamento INTEGER,
-            data_pagamento TEXT,
-            id_pessoa INTEGER NOT NULL,
-            valor_pagamento REAL,
-            CONSTRAINT fk_pessoa_pagamento FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
+        CREATE TABLE IF NOT EXISTS perfil (
+            id_perfil_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_perfil INTEGER,
+            perfil TEXT NOT NULL
         );
     `);
 
@@ -88,19 +88,17 @@ export async function initializeDatabase(database: SQLiteDatabase) {
     `);
 
     await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS perfil (
-            id_perfil_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_perfil INTEGER,
-            perfil TEXT NOT NULL
-        );
+        CREATE TABLE IF NOT EXISTS produto (
+            id_produto_local INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_produto INTEGER,
+            cod_referencia INTEGER NOT NULL,
+            nome TEXT NOT NULL,
+            descricao TEXT,
+            preco REAL NOT NULL,
+            tempo_minuto INTEGER NOT NULL,
+            data_modificado TEXT,
+            modificado_por TEXT,
+            ultimo_valor REAL
+        ); 
     `);
-
-    await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS parametro (
-            id_parametro INTEGER NOT NULL,
-            descricao TEXT NOT NULL,
-            valor REAL NOT NULL
-        );
-    `);
-
 }

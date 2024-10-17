@@ -64,43 +64,49 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
-      try {
         if (operacaoPendente.metodo === "POST") {
-          try {
-            await axios.post(operacaoPendente.url, operacaoPendente?.body)
-            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-          } catch (error) {
-            return;
-          }
 
-        } else if (operacaoPendente.metodo === "PUT") {
-          try {
-            await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
-              if (error.response) {
-                console.log(error.response)
+          await axios.post(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+            if (error.response) {
+              console.warn(error.response)
+              return
+            } else if (error.request) {
+              console.warn(error.request)
+              return
+            } else {
+              console.warn(error.message)
+              return
+            }
+          });
 
-              } else if (error.request) {
-                console.log(error.request)
+          await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
-              } else {
-                console.log(error.message)
-              }
-            });
-            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-          } catch (error) {
-            return;
-          }
+        }
+        else if (operacaoPendente.metodo === "PUT") {
+
+          await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+            if (error.response) {
+              console.warn(error.response)
+              return
+            } else if (error.request) {
+              console.warn(error.request)
+              return
+            } else {
+              console.warn(error.message)
+              return
+            }
+          });
+
+          await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
         } else if (operacaoPendente.metodo === "DELETE") {
 
         }
-      } catch (error) {
-        console.error(`Erro ao sincronizar operação pendente: ${error}`);
-      }
     }
 
     await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
     await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
+    await getProduct();
   };
 
   async function getHourValue() {
@@ -190,22 +196,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: data, origemDados: "Remoto" };
   }
 
-  async function postProduct(produto: ProductType) {
-    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
-
-    const response: any = await axios.post(url).catch(function (error) {
-      return { status: 571 }
-    });
-
-    if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      const response = await productDatabase.postProduct(produto);
-      return { response: response, origemDados: "Local" }
-    }
-
-    return { response: response.data.items, origemDados: "Remoto" };
-  }
-
   async function getProduct(name?: String) {
 
     const request = await getProductRemote();
@@ -221,7 +211,22 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: localData, origemDados: "Remoto" };
   }
 
+  async function postProduct(produto: ProductType) {
+    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
+    const response: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (response.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      const response = await productDatabase.postProduct(produto);
+      return { response: response, origemDados: "Local" }
+    }
+
+    return { response: response.data.items, origemDados: "Remoto" };
+  }
+  
   async function uptdateProduct(data_inicio: string, product: ProductType) {
     const url = `${baseUrl}/produto/${product.id_produto}`
 
@@ -237,14 +242,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-    
+
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (response.status === 571) {
       if (product?.id_produto) {
-        
+
         await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
 
         const response = await productDatabase.updateProduct(product, data_inicio)

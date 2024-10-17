@@ -6,6 +6,18 @@ export default function useProductDatabase() {
 
     const database = useSQLiteContext()
 
+    async function getProduct() {
+        try {
+            const result = "SELECT * FROM produto ORDER BY nome ASC"
+
+            const response = await database.getAllAsync<ProductType>(result)
+
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
     async function postProduct(product: ProductType) {
         const statement = await database.prepareAsync(`
             INSERT INTO produto (
@@ -53,73 +65,6 @@ export default function useProductDatabase() {
             throw error
         } finally {
             await statement.finalizeAsync()
-        }
-    }
-
-    async function updateProductList(productList: ProductType[]) {
-        const statement = await database.prepareAsync(`
-            INSERT INTO produto (
-                id_produto,
-                cod_referencia, 
-                nome, 
-                descricao, 
-                preco, 
-                tempo_minuto, 
-                data_modificado, 
-                modificado_por, 
-                ultimo_valor
-            )
-            VALUES (
-                $id_produto,
-                $cod_referencia, 
-                $nome, 
-                $descricao, 
-                $preco, 
-                $tempo_minuto, 
-                $data_modificado, 
-                $modificado_por, $ultimo_valor
-            )
-        `)
-
-        const statementDelete = await database.prepareAsync(`DELETE FROM produto`)
-        try {
-            await statementDelete.executeAsync()
-        } catch (error) {
-            throw error
-        } finally {
-            await statementDelete.finalizeAsync()
-        }
-
-        try {
-            for await (const product of productList) {
-                await statement.executeAsync({
-                    $id_produto: product.id_produto || null,
-                    $cod_referencia: product.cod_referencia,
-                    $nome: product.nome,
-                    $descricao: product.descricao,
-                    $preco: product.preco,
-                    $tempo_minuto: product.tempo_minuto,
-                    $data_modificado: product.data_modificado,
-                    $modificado_por: product.modificado_por,
-                    $ultimo_valor: product.ultimo_valor
-                })
-            }
-        } catch (error) {
-            throw error
-        } finally {
-            await statement.finalizeAsync()
-        }
-    }
-
-    async function getProduct() {
-        try {
-            const result = "SELECT * FROM produto ORDER BY nome ASC"
-
-            const response = await database.getAllAsync<ProductType>(result)
-
-            return response
-        } catch (error) {
-            throw error
         }
     }
 
@@ -197,6 +142,60 @@ export default function useProductDatabase() {
         }
     }
 
+    async function updateProductList(productList: ProductType[]) {
+        const statement = await database.prepareAsync(`
+            INSERT INTO produto (
+                id_produto,
+                cod_referencia, 
+                nome, 
+                descricao, 
+                preco, 
+                tempo_minuto, 
+                data_modificado, 
+                modificado_por, 
+                ultimo_valor
+            )
+            VALUES (
+                $id_produto,
+                $cod_referencia, 
+                $nome, 
+                $descricao, 
+                $preco, 
+                $tempo_minuto, 
+                $data_modificado, 
+                $modificado_por, $ultimo_valor
+            )
+        `)
 
+        const statementDelete = await database.prepareAsync(`DELETE FROM produto`)
+        try {
+            await statementDelete.executeAsync()
+        } catch (error) {
+            throw error
+        } finally {
+            await statementDelete.finalizeAsync()
+        }
+
+        try {
+            for await (const product of productList) {
+                await statement.executeAsync({
+                    $id_produto: product.id_produto || null,
+                    $cod_referencia: product.cod_referencia,
+                    $nome: product.nome,
+                    $descricao: product.descricao,
+                    $preco: product.preco,
+                    $tempo_minuto: product.tempo_minuto,
+                    $data_modificado: product.data_modificado,
+                    $modificado_por: product.modificado_por,
+                    $ultimo_valor: product.ultimo_valor
+                })
+            }
+        } catch (error) {
+            throw error
+        } finally {
+            await statement.finalizeAsync()
+        }
+    }
+    
     return { postProduct, getProduct, updateProduct, updateProductList }
 }

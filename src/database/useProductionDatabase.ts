@@ -7,7 +7,7 @@ export default function useProductionDatabase() {
     async function getProduction(id_dia?: number) {
         try {
             const result = id_dia
-                ? `SELECT * FROM producao WHERE id_dia = $id_dia ORDER BY id_producao`
+                ? `SELECT * FROM producao WHERE id_dia = $id_dia ORDER BY id_producao DESC`
                 : `SELECT * FROM producao ORDER BY id_producao`;
     
             const response = id_dia

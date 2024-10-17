@@ -94,7 +94,7 @@ export default function useDayDatabase() {
         try {
             for await (const dia of diaList) {
                 await statementInsert.executeAsync({
-                    $id_dia: dia.id_dia,
+                    $id_dia: dia.id_dia || null,
                     $id_pessoa: dia.id_pessoa,
                     $pessoa: dia.pessoa,
                     $data_dia_producao: dia.data_dia_producao,
@@ -107,7 +107,6 @@ export default function useDayDatabase() {
             await statementInsert.finalizeAsync();
         }
     }
-
 
     return { getDay, updateDiaList, postDay }
 }

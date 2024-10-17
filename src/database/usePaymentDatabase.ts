@@ -20,7 +20,6 @@ export default function usePaymentDatabase() {
         }
     }
     
-
     async function postPayment(payment: Omit<PaymentType, "id_pagamento">) {
         const statement = await database.prepareAsync(`
             INSERT INTO pagamento (
@@ -94,6 +93,5 @@ export default function usePaymentDatabase() {
         }
     }
     
-
     return { postPayment, getPayment, updatePaymentList };
 }
