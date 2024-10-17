@@ -93,18 +93,27 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
     if (onSave) {
       setAlert("");
-      Alert.alert('Alterar valor do produto?', `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+      Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
         {
-          text: 'Cancelar'
+          text: "Cancelar"
         },
         {
-          text: 'Confirmar',
+          text: "Confirmar",
           onPress: async () => {
             setModeCard("view");
             onSave(formValues, initialDate);
           }
         }
       ])
+    }
+  }
+
+  function checkEditable() {
+    if (formValues.id_produto) {
+      setModeCard("edit")
+    }
+    else {
+      Alert.alert("Produto ainda não sincronizado", "Este produto ainda não foi sincronizado, por favor tente sincronizar os dados")
     }
   }
 
@@ -120,8 +129,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           modeCard === "details"
           &&
           <>
-            <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
-            <Text style={{ color: "white" }}>id: {product.id_produto_local}</Text>
+            <Ionicons onPress={checkEditable} name={"create-outline"} size={35} color={colors.primary} />
             <Ionicons onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </>
         }

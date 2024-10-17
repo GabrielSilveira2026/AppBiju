@@ -146,7 +146,7 @@ export default function Profile() {
             data={isSearch ? dayList : dayList?.slice(0, 15)}
             ListEmptyComponent={<Text style={[globalStyles.title, {margin: "auto"}]}>Nenhum dia produzido ainda</Text>}
             contentContainerStyle={{ gap: 12 }}
-            keyExtractor={(day) => day?.id_dia?.toString()}
+            keyExtractor={(day) => day?.id_dia_local?.toString()}
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {

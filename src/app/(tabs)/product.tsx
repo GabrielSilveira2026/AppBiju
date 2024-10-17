@@ -34,9 +34,9 @@ export default function Product() {
     }
 
     if (isFocused) {
-      getProductList();
-      getHourValue();
       setIsCreating(false)
+      getHourValue();
+      getProductList();
     }
 
     return () => {
@@ -64,7 +64,6 @@ export default function Product() {
     };
   }, []);
 
-
   async function updateHourValue(newHourValue: string, initialDate: string) {
     const request = await sync.updateHourValue(Number(newHourValue), initialDate);
     if (request.response.status === 200) {
@@ -77,7 +76,7 @@ export default function Product() {
       setIsCreating(true)
       const newProduct: ProductType = {
         id_produto_local: 0,
-        id_produto: 0,
+        id_produto: undefined,
         cod_referencia: "",
         nome: '',
         descricao: '',
@@ -97,12 +96,12 @@ export default function Product() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
-    if (product.id_produto === 0) {
+    if (!product.id_produto) {
       const request = await sync.postProduct(product)
 
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
 
-      setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
+      setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto_local !== 0));
     }
     else {
       await sync.uptdateProduct(initialDate.toLocaleDateString(), product)
@@ -113,7 +112,7 @@ export default function Product() {
 
   function handleRemoveProduct(productId: number) {
     setIsCreating(false)
-    setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
+    setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto_local !== productId));
   }
 
   return (
@@ -147,7 +146,7 @@ export default function Product() {
             }
             renderItem={({ item }) =>
               <CardProduct
-                mode={item.id_produto !== 0 ? "view" : "create"}
+                mode={item.id_produto ? "view" : "create"}
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}

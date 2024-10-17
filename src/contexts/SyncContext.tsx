@@ -15,6 +15,7 @@ import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
 import useParamDatabase from '../database/useParamDatabase';
+import { Text, View } from 'react-native';
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
@@ -64,44 +65,44 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
-        if (operacaoPendente.metodo === "POST") {
+      if (operacaoPendente.metodo === "POST") {
 
-          await axios.post(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
-            if (error.response) {
-              console.warn(error.response)
-              return
-            } else if (error.request) {
-              console.warn(error.request)
-              return
-            } else {
-              console.warn(error.message)
-              return
-            }
-          });
+        await axios.post(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+          if (error.response) {
+            console.warn(error.response)
+            return
+          } else if (error.request) {
+            console.warn(error.request)
+            return
+          } else {
+            console.warn(error.message)
+            return
+          }
+        });
 
-          await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
-        }
-        else if (operacaoPendente.metodo === "PUT") {
+      }
+      else if (operacaoPendente.metodo === "PUT") {
 
-          await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
-            if (error.response) {
-              console.warn(error.response)
-              return
-            } else if (error.request) {
-              console.warn(error.request)
-              return
-            } else {
-              console.warn(error.message)
-              return
-            }
-          });
+        await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+          if (error.response) {
+            console.warn(error.response)
+            return
+          } else if (error.request) {
+            console.warn(error.request)
+            return
+          } else {
+            console.warn(error.message)
+            return
+          }
+        });
 
-          await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
-        } else if (operacaoPendente.metodo === "DELETE") {
+      } else if (operacaoPendente.metodo === "DELETE") {
 
-        }
+      }
     }
 
     await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
@@ -132,7 +133,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     if (response.status === 571) {
       await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body });
       const response = await paramDatabase.updateParam(1, data_inicio, valor);
-      return { response: { status: response.status }, origemDados: "Remoto" };
+      return { response: { status: response.status }, origemDados: "Local" };
     }
 
     return { response: { status: response.status }, origemDados: "Remoto" };
@@ -165,16 +166,18 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getDay(id_pessoa?: number) {
 
-    const response = await getDayRemote(id_pessoa);
+    const request = await getDayRemote(id_pessoa);
 
-    if (response.status === 571) {
-      const response = await dayDatabase.getDay(id_pessoa)
-      return { response: response, origemDados: "Local" }
+    if (request.status === 571) {
+      const localData = await dayDatabase.getDay(id_pessoa)
+      return { response: localData, origemDados: "Local" }
     }
 
-    await dayDatabase.updateDiaList(response.data.items, id_pessoa)
+    await dayDatabase.updateDiaList(request.data.items, id_pessoa)
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    const localData = await dayDatabase.getDay(id_pessoa)
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
   async function postDay(id_pessoa: number, data_dia_producao: string) {
@@ -226,7 +229,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
-  
+
   async function uptdateProduct(data_inicio: string, product: ProductType) {
     const url = `${baseUrl}/produto/${product.id_produto}`
 
@@ -264,7 +267,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SyncContext.Provider value={{ uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
-      {children}
+        {children}
     </SyncContext.Provider>
   );
 };
