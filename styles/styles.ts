@@ -23,6 +23,11 @@ export const globalStyles = StyleSheet.create({
         width: "100%",
         gap: 16,
     },
+    cardContainer:{
+        borderRadius: 4,
+        padding: 8,
+        backgroundColor: colors.backgroundTertiary
+    },
     formContainer: {
         backgroundColor: colors.backgroundTertiary,
         paddingVertical: 8,

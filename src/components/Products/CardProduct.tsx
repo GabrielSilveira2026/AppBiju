@@ -6,6 +6,7 @@ import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { globalStyles } from '@/styles/styles';
 
 type CardProductProps = {
   product: ProductType;
@@ -124,7 +125,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   }
 
   return (
-    <View style={[styles.container,
+    <View style={[globalStyles.cardContainer,
     {
       borderWidth: modeCard !== "view" ? 1 : 0,
       borderColor: modeCard === "create" || modeCard === "edit" ? colors.primary : "white"

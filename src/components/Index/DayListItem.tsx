@@ -3,11 +3,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { DayType } from '@/src/types/types';
 import { colors } from '@/styles/color';
 import { router } from 'expo-router';
+import { globalStyles } from '@/styles/styles';
 
 export default function DayListItem({ day }: { day: DayType }) {
 
   return (
-    <Pressable style={styles.container}
+    <Pressable style={[globalStyles.cardContainer, styles.container]}
       onPress={() => {
         router.navigate({
           pathname: '../../(tabs)/day',
@@ -35,9 +36,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 8,
-    backgroundColor: colors.backgroundTertiary,
-    borderRadius: 4,
     borderBottomWidth: 1,
     borderBottomColor: "white",
   },
