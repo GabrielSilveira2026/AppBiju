@@ -13,7 +13,7 @@ import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CardProduct from "@/src/components/Products/CardProduct";
 import { FlatList } from 'react-native';
-import CardProduction from "@/src/components/CardProduction";
+import CardProduction from "@/src/components/Production/CardProduction";
 import { getProduction } from "@/src/httpservices/production";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {

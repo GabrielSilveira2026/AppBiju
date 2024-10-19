@@ -50,7 +50,7 @@ export default function Profile() {
 
     async function getDataDays() {
       const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
-      console.log(response);
+      // console.log(JSON.stringify(response.response,0,2));
       
       setDayList(response.response);
     }

@@ -137,7 +137,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           &&
           <>
             <Ionicons onPress={checkEditable} name={"create-outline"} size={35} color={colors.primary} />
-            <Ionicons onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+            <Ionicons style={{flex:1, textAlign: "right"}} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </>
         }
         {
