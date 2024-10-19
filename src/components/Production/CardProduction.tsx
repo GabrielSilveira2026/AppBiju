@@ -7,6 +7,7 @@ import { globalStyles } from '@/styles/styles';
 import { Input } from '../Input';
 import { useSync } from '@/src/contexts/SyncContext';
 import { useIsFocused } from '@react-navigation/native';
+import SelectDropdown from 'react-native-select-dropdown'
 
 type CardProductionProps = {
     production: ProductionType;
@@ -21,7 +22,6 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     const controller = new AbortController();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
     const [productionValues, setProductionValues] = useState<ProductionType>(production);
-    const [isSelectionProduct, setIsSelectionProduct] = useState<boolean>(false)
     const [productList, setProductList] = useState<ProductType[]>([]);
 
     useEffect(() => {
@@ -46,14 +46,14 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                 onPress={() => setModeCard("details")}
             >
                 <View style={stylesView.cardContainer}>
-                    <View style={stylesView.textContainer}>
+                    <View style={styles.textContainer}>
                         <View style={{ flex: 1, gap: 8 }}>
-                            <Text style={stylesView.text}>{productionValues.nome_produto}</Text>
-                            <Text style={stylesView.text}>{productionValues.observacao}</Text>
+                            <Text style={styles.text}>{productionValues.nome_produto}</Text>
+                            <Text style={styles.text}>{productionValues.observacao}</Text>
                         </View>
                         <View style={{ justifyContent: "space-between" }}>
-                            <Text style={stylesView.text}>Qtde {productionValues.quantidade}</Text>
-                            <Text style={stylesView.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
+                            <Text style={styles.text}>Qtde {productionValues.quantidade}</Text>
+                            <Text style={styles.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
                         </View>
                     </View>
                     <Ionicons name="chevron-down-outline" size={40} color={colors.primary} />
@@ -68,35 +68,34 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                 style={globalStyles.cardContainer}
             >
                 <Ionicons onPress={() => {
-                    setIsSelectionProduct(false)
                     setModeCard("details")
                     setProductionValues(production)
                 }} name={"arrow-back-outline"} size={35} color={colors.primary} />
                 <View style={{ flexDirection: "row", gap: 8 }}>
-                    <Pressable
-                        style={{ flex: 4 }}
-                        onPress={() => {
-                            setIsSelectionProduct(!isSelectionProduct)
-                            getProductList()
+                    <SelectDropdown
+                        data={productList}
+                        onSelect={(selectedItem, index) => {
+                            console.log(selectedItem, index);
                         }}
-                    >
-                        <Text
-                            style={{ color: "white" }}
-                        >Teste produto 1</Text>
-                    </Pressable>
-                    {
-                        isSelectionProduct
-                        &&
-                        <FlatList
-                            style={{
-                                position: "absolute",
-                                // bottom:,
-                                flex: 1,
-                            }}
-                            data={productList}
-                            renderItem={({ item }) => <Text style={{ color: "white" }}>{item.nome}</Text>}
-                        />
-                    }
+                        renderButton={(selectedItem, isOpened) => {
+                            return (
+                                <View style={stylesEditAndCreate.dropdownButtonStyle}>
+                                    <Text style={stylesEditAndCreate.dropdownButtonTxtStyle}>
+                                        {(selectedItem && selectedItem.nome) || 'Selecione um produto'}
+                                    </Text>
+                                    <Ionicons name={isOpened ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
+                                </View>
+                            );
+                        }}
+                        renderItem={(item: ProductType, index, isSelected) => {
+                            return (
+                                <View style={stylesEditAndCreate.dropdownItemStyle}>
+                                    <Text style={styles.text}>{item.nome || "teste"}</Text>
+                                </View>
+                            );
+                        }}
+                        dropdownStyle={stylesEditAndCreate.dropdownMenuStyle}
+                    />
                     <Input
                         inputStyle={{ flex: 1 }}
                         onChangeText={() => { }}
@@ -110,10 +109,13 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
         return (
             <Pressable
                 style={globalStyles.cardContainer}
-                onPress={() => setModeCard("details")}
+                onPress={() => {setModeCard("details")}}
             >
                 <View style={stylesEditAndCreate.headerButtons}>
-                    <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
+                    <Ionicons onPress={() => {
+                        getProductList()
+                        setModeCard("edit")
+                    }} name={"create-outline"} size={35} color={colors.primary} />
                     <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
                 </View>
 
@@ -126,16 +128,7 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     }
 }
 
-const stylesView = StyleSheet.create({
-    cardContainer:
-    {
-        flexDirection: "row",
-        backgroundColor: colors.backgroundTertiary,
-        borderRadius: 4,
-        gap: 8,
-        alignItems: "center",
-        padding: 8
-    },
+const styles= StyleSheet.create({
     textContainer: {
         flexDirection: "row",
         flex: 1,
@@ -147,10 +140,48 @@ const stylesView = StyleSheet.create({
     }
 })
 
+const stylesView = StyleSheet.create({
+    cardContainer:
+    {
+        flexDirection: "row",
+        backgroundColor: colors.backgroundTertiary,
+        borderRadius: 4,
+        gap: 8,
+        alignItems: "center",
+        padding: 8
+    },
+})
+
 const stylesEditAndCreate = StyleSheet.create({
     headerButtons: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between"
+    },
+    dropdownButtonStyle: {
+        flex: 4,
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 8,
+        backgroundColor: colors.backgroundInput,
+        borderBottomColor: colors.text,
+        borderBottomWidth: 1,
+        borderRadius: 4,
+    },
+    dropdownButtonTxtStyle: {
+        flex: 1,
+        fontSize: 16,
+        color: colors.text,
+    },
+    dropdownMenuStyle: {
+        marginTop: -35,
+        backgroundColor: colors.backgroundTertiary,
+        borderBottomStartRadius: 4,
+        borderBottomEndRadius: 4,
+        borderBottomWidth: 1,
+        borderBottomColor: "white",
+    },
+    dropdownItemStyle:{
+        padding: 8
     }
 })

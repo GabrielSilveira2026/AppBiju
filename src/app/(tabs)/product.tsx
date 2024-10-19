@@ -22,11 +22,12 @@ export default function Product() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const controller = new AbortController();
 
+  async function getProductList() {
+    const request = await sync.getProduct();
+    setProductList(request.response);
+  }
+
   useEffect(() => {
-    async function getProductList() {
-      const request = await sync.getProduct();
-      setProductList(request.response);
-    }
 
     async function getHourValue() {
       const request = await sync.getHourValue();
@@ -45,7 +46,7 @@ export default function Product() {
       }
       controller.abort();
     };
-  }, [isFocused]);
+  }, []);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -121,6 +122,8 @@ export default function Product() {
         <View style={[globalStyles.container, styles.productContainer]}>
           <FlatList
             data={productList}
+            refreshing={false}
+            onRefresh={() => getProductList()}
             style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
