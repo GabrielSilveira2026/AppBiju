@@ -119,8 +119,6 @@ export default function Product() {
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
-
-
           <FlatList
             data={productList}
             style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}

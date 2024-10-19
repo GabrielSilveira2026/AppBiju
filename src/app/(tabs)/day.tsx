@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -11,7 +11,8 @@ import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
 import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import CardProduct from "@/src/components/Products/CardProduct";
+import { FlatList } from 'react-native';
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -25,30 +26,46 @@ export default function DayDetails() {
 
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-    const [showPicker, setShowPicker] = useState<boolean>(false)
+    const [showPicker, setShowPicker] = useState<boolean>(false);
+
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true);
+        });
+
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
 
     useEffect(() => {
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao)
                 ? params.data_dia_producao[0]
-                : params.data_dia_producao || undefined
+                : params.data_dia_producao || undefined;
             if (data) {
-                setMode("view")
-                setSelectedDate(new Date(data))
-            }
-            else {
-                setMode("create")
-                setSelectedDate(new Date())
+                setMode("view");
+                setSelectedDate(new Date(data));
+            } else {
+                setMode("create");
+                setSelectedDate(new Date());
             }
         }
         return () => {
-            setMode(undefined)
-            setSelectedDate(undefined)
-        }
-    }, [isFocused])
+            setMode(undefined);
+            setSelectedDate(undefined);
+        };
+    }, [isFocused]);
 
     const handleDateChange = (event: any, date: Date | undefined) => {
-        setShowPicker(false)
+        setShowPicker(false);
         if (date) {
             setSelectedDate(date);
         }
@@ -56,99 +73,121 @@ export default function DayDetails() {
 
     async function createDay() {
         const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
-        
+
         if (selectedDate) {
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-    
+            console.log(localDate.toISOString());
+
             const response = await sync.postDay(parseInt(userId), localDate.toISOString());
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { ...response.response, pessoa: params.pessoa }
-            })
-            setMode("view")
+            });
+            setMode("view");
+        } else {
+            Alert.alert("Data inválida", "Por favor, selecione um dia");
         }
-        else {
-            Alert.alert("Data invalida", "Por favor, selecione um dia")
-        }
+    }
+
+    const renderProduct = ({ item }: { item: any }) => (
+        <CardProduct hourValue={50} product={item} />
+    );
+
+    const produtoTeste = {
+        id_produto_local: 0,
+        id_produto: 50,
+        cod_referencia: "",
+        nome: '',
+        descricao: '',
+        preco: 0,
+        tempo_minuto: 0,
+        data_modificado: null,
+        modificado_por: null,
+        ultimo_valor: null
     }
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                <View style={globalStyles.container}>
-                    <View style={styles.dayContainer}>
-                        <View style={styles.firstLine}>
-                            <View style={styles.backAndData}>
-                                <Ionicons
-                                    onPress={() => {
-                                        if (mode === "edit") {
-                                            setMode("view")
-                                        }
-                                        else {
-                                            router.navigate("/");
-                                        }
-                                    }}
-                                    name="arrow-back-outline"
-                                    size={35}
-                                    color={colors.primary}
-                                />
-                                {
-                                    mode && mode !== "view" ?
-                                        <Pressable
-                                            onPress={() => setShowPicker(!showPicker)}
-                                        >
-                                            <View style={styles.dataContainer}>
-                                                <Text style={styles.dataText}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
-                                            </View>
-                                        </Pressable>
-                                        :
-                                        <Text style={styles.textValue}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
-                                }
-                                {
-                                    showPicker
-                                    &&
-                                    <DateTimePicker
-                                        value={selectedDate || new Date()}
-                                        mode="date"
-                                        display="default"
-                                        onChange={handleDateChange}
-                                    />
-                                }
-
-                            </View>
-                            {
-                                mode && mode !== "create" &&
-                                <Ionicons
-                                    onPress={() => setMode("edit")}
-                                    name={mode === "view" ? "create-outline" : "trash-outline"}
-                                    size={35}
-                                    color={mode === "view" ? colors.primary : colors.error}
-                                />
-                            }
-                        </View>
-                        <View style={styles.secondLine}>
-                            <Text style={styles.textValue}>R${params.valor_dia || '0,00'}</Text>
-                            <Text style={styles.textValue}>{params?.pessoa}</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={[globalStyles.container, styles.containerProducts]}>
-                    <View style={styles.headerProducts}>
-                        <Text style={globalStyles.title}>
-                            Produtos
-                        </Text>
-                    </View>
-                    <Button title={"Adicionar"}/>
-                </View>
                 {
-                    mode && mode !== 'view' &&
-                    <Button title={"Salvar"} onPress={createDay} />
+                    !isKeyboardVisible &&
+                    <View style={globalStyles.container}>
+                        <View style={styles.dayContainer}>
+                            <View style={styles.firstLine}>
+                                <View style={styles.backAndData}>
+                                    <Ionicons
+                                        onPress={() => {
+                                            if (mode === "edit") {
+                                                setMode("view");
+                                            } else {
+                                                router.navigate("/");
+                                            }
+                                        }}
+                                        name="arrow-back-outline"
+                                        size={35}
+                                        color={colors.primary}
+                                    />
+                                    {
+                                        mode && mode !== "view" ? (
+                                            <Pressable onPress={() => setShowPicker(!showPicker)}>
+                                                <View style={styles.dataContainer}>
+                                                    <Text style={styles.dataText}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
+                                                </View>
+                                            </Pressable>
+                                        ) : (
+                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
+                                        )
+                                    }
+                                    {showPicker && (
+                                        <DateTimePicker
+                                            value={selectedDate || new Date()}
+                                            mode="date"
+                                            display="default"
+                                            onChange={handleDateChange}
+                                        />
+                                    )}
+                                </View>
+                                {mode && mode !== "create" && (
+                                    <Ionicons
+                                        onPress={() => setMode("edit")}
+                                        name={mode === "view" ? "create-outline" : "trash-outline"}
+                                        size={35}
+                                        color={mode === "view" ? colors.primary : colors.error}
+                                    />
+                                )}
+                            </View>
+                            <View style={styles.secondLine}>
+                                <Text style={styles.textValue}>R${params.valor_dia || '0,00'}</Text>
+                                <Text style={styles.textValue}>{params?.pessoa}</Text>
+                            </View>
+                        </View>
+                    </View>
                 }
+                <View style={[globalStyles.container, styles.containerProducts]}>
+                    <FlatList
+                        ListHeaderComponent={
+                            <View style={styles.headerProducts}>
+                                <Text style={globalStyles.title}>Produtos</Text>
+                            </View>
+                        }
+                        data={[produtoTeste, produtoTeste, produtoTeste, produtoTeste, produtoTeste, produtoTeste]}
+                        renderItem={renderProduct}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={{ gap: 8 }}
+                    />
+                    <View style={globalStyles.bottomDias}>
+                        <Ionicons
+                            onPress={() => { }}
+                            name="add-circle-outline"
+                            color={colors.primary}
+                            size={50} />
+                    </View>
+                </View>
+                {mode && mode !== 'view' && <Button title={"Salvar"} onPress={createDay} />}
             </SafeAreaView>
         </ImageBackground>
     );
 }
-
 
 const styles = StyleSheet.create({
     dayContainer: {
@@ -189,7 +228,7 @@ const styles = StyleSheet.create({
     },
     containerProducts: {
         flex: 1,
-        flexGrow: 1
+        flexGrow: 1,
     },
     headerProducts: {
         flexDirection: "row",
