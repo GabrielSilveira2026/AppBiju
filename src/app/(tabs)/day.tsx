@@ -50,6 +50,15 @@ export default function DayDetails() {
     }, []);
 
     useEffect(() => {
+        async function getProductions() {
+            const id_dia = Array.isArray(params.id_dia)
+                ? params.id_dia[0]
+                : params.id_dia || undefined;
+    
+            const request = await sync.getProduction(Number(id_dia))            
+            setProductionList(request.response)
+        }
+    
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao)
                 ? params.data_dia_producao[0]
@@ -67,6 +76,7 @@ export default function DayDetails() {
         return () => {
             setMode(undefined);
             setSelectedDate(undefined);
+            setProductionList([])
         };
     }, [isFocused]);
 
@@ -82,8 +92,6 @@ export default function DayDetails() {
 
         if (selectedDate) {
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-            console.log(localDate.toISOString());
-
             const response = await sync.postDay(parseInt(userId), localDate.toISOString());
             router.replace({
                 pathname: '../(tabs)/day',
@@ -93,17 +101,6 @@ export default function DayDetails() {
         } else {
             Alert.alert("Data inválida", "Por favor, selecione um dia");
         }
-    }
-
-    async function getProductions() {
-        const id_dia = Array.isArray(params.id_dia)
-            ? params.id_dia[0]
-            : params.id_dia || undefined;
-
-        const request = await sync.getProduction(Number(id_dia))
-        console.log(request.response);
-        
-        setProductionList(request.response)
     }
 
     const produtoTeste = {

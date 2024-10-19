@@ -268,7 +268,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function getProduction(id_dia?: number) {
-    const request = await getProductionRemote() 
+    const request = await getProductionRemote(id_dia) 
 
     return { response: request.data.items, origemDados: "Remoto" };
   }
