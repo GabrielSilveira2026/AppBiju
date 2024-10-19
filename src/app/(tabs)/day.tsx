@@ -3,7 +3,7 @@ import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Te
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
-import { DayType } from "@/src/types/types";
+import { DayType, ProductionType } from "@/src/types/types";
 import { useIsFocused } from "@react-navigation/native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Button from "@/src/components/Button";
@@ -13,6 +13,8 @@ import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CardProduct from "@/src/components/Products/CardProduct";
 import { FlatList } from 'react-native';
+import CardProduction from "@/src/components/CardProduction";
+import { getProduction } from "@/src/httpservices/production";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -27,6 +29,8 @@ export default function DayDetails() {
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [showPicker, setShowPicker] = useState<boolean>(false);
+
+    const [productionList, setProductionList] = useState<ProductionType[]>([])
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -57,6 +61,8 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
+
+            getProductions()
         }
         return () => {
             setMode(undefined);
@@ -89,9 +95,16 @@ export default function DayDetails() {
         }
     }
 
-    const renderProduct = ({ item }: { item: any }) => (
-        <CardProduct hourValue={50} product={item} />
-    );
+    async function getProductions() {
+        const id_dia = Array.isArray(params.id_dia)
+            ? params.id_dia[0]
+            : params.id_dia || undefined;
+
+        const request = await sync.getProduction(Number(id_dia))
+        console.log(request.response);
+        
+        setProductionList(request.response)
+    }
 
     const produtoTeste = {
         id_produto_local: 0,
@@ -170,8 +183,10 @@ export default function DayDetails() {
                                 <Text style={globalStyles.title}>Produtos</Text>
                             </View>
                         }
-                        data={[produtoTeste, produtoTeste, produtoTeste, produtoTeste, produtoTeste, produtoTeste]}
-                        renderItem={renderProduct}
+                        data={productionList}
+                        renderItem={({item}) =>
+                            <CardProduction production={item} mode="view"/>
+                        }
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />

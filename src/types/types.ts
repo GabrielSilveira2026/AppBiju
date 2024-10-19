@@ -49,6 +49,7 @@ export interface ProductionType {
     id_producao?: number;
     id_dia: number;
     id_produto: number;
+    nome_produto: string;
     quantidade: number;
     observacao: string;
     historico_preco_unidade: number;

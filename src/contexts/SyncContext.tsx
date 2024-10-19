@@ -2,13 +2,14 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, 
 import NetInfo from '@react-native-community/netinfo';
 import useProductDatabase from '../database/useProductDatabase';
 import useDayDatabase from '../database/useDayDatabase';
-import { getProduct as getProductRemote, postProduct as postProductRemote } from '../httpservices/product';
+import { getProduct as getProductRemote } from '../httpservices/product';
 import { getDay as getDayRemote } from '../httpservices/day';
 import { getPending as getPendingRemote } from '../httpservices/payment';
+import { getProduction as getProductionRemote } from '../httpservices/production';
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
-import { ProductType } from '../types/types';
+import { ProductionType, ProductType } from '../types/types';
 import { useAuthContext } from './AuthContext';
 import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
@@ -25,6 +26,7 @@ type SyncContextType = {
   uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
+  getProduction: (id_dia?: number) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
@@ -265,9 +267,15 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
+  async function getProduction(id_dia?: number) {
+    const request = await getProductionRemote() 
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{ uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
-        {children}
+    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+      {children}
     </SyncContext.Provider>
   );
 };
