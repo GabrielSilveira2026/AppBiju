@@ -18,15 +18,19 @@ type CardProductionProps = {
 
 export default function CardProduction({ production, mode, onSave, onCancel }: CardProductionProps) {
     const sync = useSync();
-    const isFocused = useIsFocused();
-    const controller = new AbortController();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
     const [productionValues, setProductionValues] = useState<ProductionType>(production);
     const [productList, setProductList] = useState<ProductType[]>([]);
 
-    useEffect(() => {
-        setProductionValues(production)
-    }, [production])
+    function formatMinutesToHours(totalMinutes: number) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        const formattedHours = String(hours).padStart(2, '0');
+        const formattedMinutes = String(minutes).padStart(2, '0');
+
+        return `${formattedHours}:${formattedMinutes}`;
+    };
 
     async function getProductList() {
         const request = await sync.getProduct();
@@ -34,10 +38,9 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     }
 
     useEffect(() => {
-        return () => {
-            controller.abort();
-        };
-    }, [isFocused]);
+        getProductList
+        setProductionValues(production)
+    }, [production])
 
     if (modeCard === "view") {
         return (
@@ -48,8 +51,8 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                 <View style={stylesView.cardContainer}>
                     <View style={styles.textContainer}>
                         <View style={{ flex: 1, gap: 8 }}>
-                            <Text style={styles.text}>{productionValues.nome_produto}</Text>
-                            <Text style={styles.text}>{productionValues.observacao}</Text>
+                            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.nome_produto}</Text>
+                            <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.observacao}</Text>
                         </View>
                         <View style={{ justifyContent: "space-between" }}>
                             <Text style={styles.text}>Qtde {productionValues.quantidade}</Text>
@@ -79,8 +82,8 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                         }}
                         renderButton={(selectedItem, isOpened) => {
                             return (
-                                <View style={stylesEditAndCreate.dropdownButtonStyle}>
-                                    <Text style={stylesEditAndCreate.dropdownButtonTxtStyle}>
+                                <View style={stylesCreateAndEdit.dropdownButtonStyle}>
+                                    <Text style={stylesCreateAndEdit.dropdownButtonTxtStyle}>
                                         {(selectedItem && selectedItem.nome) || 'Selecione um produto'}
                                     </Text>
                                     <Ionicons name={isOpened ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
@@ -89,12 +92,12 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                         }}
                         renderItem={(item: ProductType, index, isSelected) => {
                             return (
-                                <View style={stylesEditAndCreate.dropdownItemStyle}>
+                                <View style={stylesCreateAndEdit.dropdownItemStyle}>
                                     <Text style={styles.text}>{item.nome || "teste"}</Text>
                                 </View>
                             );
                         }}
-                        dropdownStyle={stylesEditAndCreate.dropdownMenuStyle}
+                        dropdownStyle={stylesCreateAndEdit.dropdownMenuStyle}
                     />
                     <Input
                         inputStyle={{ flex: 1 }}
@@ -107,11 +110,10 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     }
     else {
         return (
-            <Pressable
+            <View
                 style={globalStyles.cardContainer}
-                onPress={() => {setModeCard("details")}}
             >
-                <View style={stylesEditAndCreate.headerButtons}>
+                <View style={stylesDetails.headerButtons}>
                     <Ionicons onPress={() => {
                         getProductList()
                         setModeCard("edit")
@@ -119,16 +121,37 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                     <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
                 </View>
 
-                <View>
+                <View style={stylesDetails.contentContainer}>
 
+                    <View style={{ flex: 2, gap: 8 }}>
+                        <View style={stylesDetails.lineProductName}>
+                            <Text style={[styles.text]}>
+                                tassss
+                            </Text>
+                            <Ionicons name="open-outline" size={24} color={colors.primary} />
+                        </View>
+                        <View>
+                            <Text style={styles.text}>{productionValues.observacao}</Text>
+                        </View>
+                    </View>
+
+
+                    <View style={{ justifyContent: "space-around", flex: 1 }}>
+                        <Text style={[styles.text, { textAlign: "center" }]}>
+                            Valor{"\n"}total{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
+                        </Text>
+                        <Text style={[styles.text, { textAlign: "center" }]}>
+                            ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
+                        </Text>
+                    </View>
                 </View>
 
-            </Pressable>
+            </View>
         )
     }
 }
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
     textContainer: {
         flexDirection: "row",
         flex: 1,
@@ -152,12 +175,28 @@ const stylesView = StyleSheet.create({
     },
 })
 
-const stylesEditAndCreate = StyleSheet.create({
+const stylesDetails = StyleSheet.create({
     headerButtons: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between"
     },
+
+    contentContainer: {
+        flexDirection: "row",
+        gap: 8
+    },
+
+    lineProductName: {
+        flex: 1,
+        gap: 8,
+        flexDirection: "row",
+        alignItems: "center",
+    }
+})
+
+const stylesCreateAndEdit = StyleSheet.create({
+
     dropdownButtonStyle: {
         flex: 4,
         flexDirection: "row",
@@ -168,11 +207,13 @@ const stylesEditAndCreate = StyleSheet.create({
         borderBottomWidth: 1,
         borderRadius: 4,
     },
+
     dropdownButtonTxtStyle: {
         flex: 1,
         fontSize: 16,
         color: colors.text,
     },
+
     dropdownMenuStyle: {
         marginTop: -35,
         backgroundColor: colors.backgroundTertiary,
@@ -181,7 +222,8 @@ const stylesEditAndCreate = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "white",
     },
-    dropdownItemStyle:{
+
+    dropdownItemStyle: {
         padding: 8
-    }
+    },
 })
