@@ -22,6 +22,16 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     const [productionValues, setProductionValues] = useState<ProductionType>(production);
     const [productList, setProductList] = useState<ProductType[]>([]);
 
+    async function getProductList() {
+        const request = await sync.getProduct();
+        setProductList(request.response);
+    }
+
+    useEffect(() => {
+        getProductList
+        setProductionValues(production)
+    }, [production])
+
     function formatMinutesToHours(totalMinutes: number) {
         const hours = Math.floor(totalMinutes / 60);
         const minutes = totalMinutes % 60;
@@ -32,15 +42,12 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
         return `${formattedHours}:${formattedMinutes}`;
     };
 
-    async function getProductList() {
-        const request = await sync.getProduct();
-        setProductList(request.response);
-    }
-
-    useEffect(() => {
-        getProductList
-        setProductionValues(production)
-    }, [production])
+    const handleInputChange = (field: keyof ProductionType, value: string | number) => {
+        setProductionValues(prev => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     if (modeCard === "view") {
         return (
@@ -74,36 +81,72 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                     setModeCard("details")
                     setProductionValues(production)
                 }} name={"arrow-back-outline"} size={35} color={colors.primary} />
-                <View style={{ flexDirection: "row", gap: 8 }}>
-                    <SelectDropdown
-                        data={productList}
-                        onSelect={(selectedItem, index) => {
-                            console.log(selectedItem, index);
-                        }}
-                        renderButton={(selectedItem, isOpened) => {
-                            return (
-                                <View style={stylesCreateAndEdit.dropdownButtonStyle}>
-                                    <Text style={stylesCreateAndEdit.dropdownButtonTxtStyle}>
-                                        {(selectedItem && selectedItem.nome) || 'Selecione um produto'}
-                                    </Text>
-                                    <Ionicons name={isOpened ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
-                                </View>
-                            );
-                        }}
-                        renderItem={(item: ProductType, index, isSelected) => {
-                            return (
-                                <View style={stylesCreateAndEdit.dropdownItemStyle}>
-                                    <Text style={styles.text}>{item.nome || "teste"}</Text>
-                                </View>
-                            );
-                        }}
-                        dropdownStyle={stylesCreateAndEdit.dropdownMenuStyle}
-                    />
-                    <Input
-                        inputStyle={{ flex: 1 }}
-                        onChangeText={() => { }}
-                        value='Qtde'
-                    />
+                <View style={{ gap: 8 }}>
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                        <SelectDropdown
+                            data={productList}
+                            onSelect={(selectedItem: ProductType, index) => {
+                                console.log(selectedItem, index);
+                                handleInputChange('tempo_minuto', selectedItem.tempo_minuto)
+                                if (selectedItem.id_produto) {
+                                    handleInputChange('id_produto', selectedItem.id_produto)
+                                }
+                            }}
+                            renderButton={(selectedItem: ProductType, isOpened) => {
+                                return (
+                                    <View style={stylesCreateAndEdit.dropdownButtonStyle}>
+                                        <Text
+                                            style={[
+                                                stylesCreateAndEdit.dropdownButtonTxtStyle,
+                                                { color: productionValues.nome_produto ? colors.text : colors.textInput }
+                                            ]}>
+                                            {(selectedItem && selectedItem.nome) || productionValues.nome_produto || 'Selecione um produto'}
+                                        </Text>
+                                        <Ionicons name={isOpened ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
+                                    </View>
+                                );
+                            }}
+                            renderItem={(item: ProductType, index, isSelected) => {
+                                return (
+                                    <View style={stylesCreateAndEdit.dropdownItemStyle}>
+                                        <Text style={styles.text}>{item.nome}</Text>
+                                    </View>
+                                );
+                            }}
+                            dropdownStyle={stylesCreateAndEdit.dropdownMenuStyle}
+                        />
+                        <Input
+                            inputStyle={{ flex: 1 }}
+                            onChangeText={(text) => handleInputChange('quantidade', text)}
+                            placeholder="Qtde"
+                            value={productionValues.quantidade.toString() || ""}
+                        />
+                    </View>
+                    <View>
+                        <Input
+                            inputStyle={{ flex: 1 }}
+                            onChangeText={(text) => handleInputChange('observacao', text)}
+                            multiline
+                            placeholder="Digite uma anotação"
+                            value={productionValues.observacao || ""}
+                        />
+                    </View>
+                    {
+                        productionValues.id_produto === 1 &&
+                        <View>
+                            <Text style={{ color: "white" }}>
+                                Hora
+                            </Text>
+                        </View>
+                    }
+                    <View style={{ justifyContent: "space-between", flex: 1, flexDirection: "row", paddingVertical: 8 }}>
+                        <Text style={[styles.text, { textAlign: "center" }]}>
+                            Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
+                        </Text>
+                        <Text style={[styles.text, { textAlign: "center" }]}>
+                            ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
+                        </Text>
+                    </View>
                 </View>
             </View>
         )
@@ -114,21 +157,26 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                 style={globalStyles.cardContainer}
             >
                 <View style={stylesDetails.headerButtons}>
-                    <Ionicons onPress={() => {
+                    <Ionicons style={{flex: 1}} onPress={() => {
                         getProductList()
                         setModeCard("edit")
                     }} name={"create-outline"} size={35} color={colors.primary} />
-                    <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+
+                    <Ionicons style={{flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
                 </View>
 
                 <View style={stylesDetails.contentContainer}>
 
                     <View style={{ flex: 2, gap: 8 }}>
                         <View style={stylesDetails.lineProductName}>
-                            <Text style={[styles.text]}>
-                                tassss
-                            </Text>
-                            <Ionicons name="open-outline" size={24} color={colors.primary} />
+                            <View style={{ maxWidth: "80%" }}>
+                                <Text style={styles.text}>
+                                    {productionValues.nome_produto}
+                                </Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Ionicons name="open-outline" size={24} color={colors.primary} />
+                            </View>
                         </View>
                         <View>
                             <Text style={styles.text}>{productionValues.observacao}</Text>
@@ -136,9 +184,10 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                     </View>
 
 
-                    <View style={{ justifyContent: "space-around", flex: 1 }}>
+                    <View style={{ justifyContent: "space-around", flex: 1, gap: 16 }}>
+                        <Text style={[styles.text, { textAlign: "center" }]}>Qtde {productionValues.quantidade}</Text>
                         <Text style={[styles.text, { textAlign: "center" }]}>
-                            Valor{"\n"}total{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
+                            Valor{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
@@ -184,6 +233,7 @@ const stylesDetails = StyleSheet.create({
 
     contentContainer: {
         flexDirection: "row",
+        paddingVertical: 8,
         gap: 8
     },
 

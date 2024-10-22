@@ -50,12 +50,8 @@ export default function DayDetails() {
     }, []);
 
     useEffect(() => {
-        async function getProductions() {
-            const id_dia = Array.isArray(params.id_dia)
-                ? params.id_dia[0]
-                : params.id_dia || undefined;
-    
-            const request = await sync.getProduction(Number(id_dia))            
+        async function getProductions(id_dia: number) {
+            const request = await sync.getProduction(id_dia)            
             setProductionList(request.response)
         }
     
@@ -70,8 +66,13 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
+            const id_dia = Array.isArray(params.id_dia)
+            ? params.id_dia[0]
+            : params.id_dia || undefined;
 
-            getProductions()
+            if (id_dia) {
+                getProductions(Number(id_dia))
+            } 
         }
         return () => {
             setMode(undefined);

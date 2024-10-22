@@ -77,7 +77,7 @@ export default function Profile() {
     daysPosition.value = withTiming(0, {
       duration: 1000,
     })
-  }, [isFocused])
+  }, [])
 
   const headerStyle = useAnimatedStyle(() => {
     return {
