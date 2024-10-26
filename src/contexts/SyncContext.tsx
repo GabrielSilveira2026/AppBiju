@@ -156,6 +156,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function getPendingPayment(id_pessoa?: number) {
     const response = await getPendingRemote(id_pessoa);
 
+    console.log("Paymente sync", response);
+    
+
     if (response.status === 571) {
       const response = await pendingPaymentDatabase.getPendingPayment(id_pessoa)
       return { response: response, origemDados: "Local" }
