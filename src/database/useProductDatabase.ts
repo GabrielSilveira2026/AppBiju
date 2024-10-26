@@ -6,17 +6,58 @@ export default function useProductDatabase() {
 
     const database = useSQLiteContext()
 
-    async function getProduct() {
+    async function getProduct(id_produto?: string) {
         try {
-            const result = "SELECT * FROM produto ORDER BY nome ASC"
-
-            const response = await database.getAllAsync<ProductType>(result)
-
-            return response
+            const result = id_produto
+                ? `SELECT 
+                       p.id_produto, 
+                       p.cod_referencia, 
+                       p.nome, 
+                       p.descricao,
+                       p.preco, 
+                       p.tempo_minuto, 
+                       p.data_modificado, 
+                       p.modificado_por, 
+                       p.ultimo_valor,
+                       (IFNULL(par.valor, 0) / 60 * p.tempo_minuto + p.preco) AS valor_unidade
+                   FROM 
+                       produto p
+                   LEFT JOIN 
+                       parametro par 
+                       ON par.id_parametro = 1
+                   WHERE 
+                       p.id_produto = ?
+                   ORDER BY 
+                       p.nome ASC`
+                : `SELECT 
+                       p.id_produto, 
+                       p.cod_referencia, 
+                       p.nome, 
+                       p.descricao,
+                       p.preco, 
+                       p.tempo_minuto, 
+                       p.data_modificado, 
+                       p.modificado_por, 
+                       p.ultimo_valor,
+                       (IFNULL(par.valor, 0) / 60 * p.tempo_minuto + p.preco) AS valor_unidade
+                   FROM 
+                       produto p
+                   LEFT JOIN 
+                       parametro par 
+                       ON par.id_parametro = 1
+                   ORDER BY 
+                       p.nome ASC`;
+    
+            const response = id_produto
+                ? await database.getAllAsync<ProductType>(result, [id_produto])
+                : await database.getAllAsync<ProductType>(result);
+    
+            return response;
         } catch (error) {
-            throw error
+            throw error;
         }
     }
+    
 
     async function postProduct(product: ProductType) {
         const statement = await database.prepareAsync(`

@@ -54,6 +54,13 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
         }));
     };
 
+    function handleSelectProduct(selectedProduct: ProductType){
+        handleInputChange('nome_produto', selectedProduct.nome)
+        handleInputChange('id_produto', selectedProduct.id_produto)
+        handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
+        handleInputChange('historico_preco_unidade', selectedProduct.valor_unidade || 0)
+    }
+
     if (modeCard === "view") {
         return (
             <Pressable
@@ -95,11 +102,9 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                         <SelectDropdown
                             data={productList}
                             onSelect={(selectedProduct: ProductType) => {
-                                console.log(selectedProduct);
-                                handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
-                                handleInputChange('id_produto', selectedProduct.id_produto)
+                                handleSelectProduct(selectedProduct)
                             }}
-                            renderButton={(selectedItem: ProductType, isOpened) => {
+                            renderButton={(selectedProduct: ProductType, isOpened) => {
                                 return (
                                     <View style={stylesCreateAndEdit.dropdownButtonStyle}>
                                         <Text
@@ -107,7 +112,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                                                 stylesCreateAndEdit.dropdownButtonTxtStyle,
                                                 { color: productionValues.nome_produto ? colors.text : colors.textInput }
                                             ]}>
-                                            {(selectedItem && selectedItem.nome) || productionValues.nome_produto || 'Selecione um produto'}
+                                            {(selectedProduct && selectedProduct.nome) || productionValues.nome_produto || 'Selecione um produto'}
                                         </Text>
                                         <Ionicons name={isOpened ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
                                     </View>
@@ -146,7 +151,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                             </Text>
                         </View>
                     }
-                    <View style={{ justifyContent: "space-between", flex: 1, flexDirection: "row", paddingVertical: 8 }}>
+                    <View style={stylesCreateAndEdit.bottomLine}>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
@@ -307,6 +312,13 @@ const stylesCreateAndEdit = StyleSheet.create({
 
     dropdownItemStyle: {
         padding: 8
+    },
+
+    bottomLine:{
+        justifyContent: "space-between",
+        flex: 1,
+        flexDirection: "row",
+        paddingVertical: 8 
     },
 
     buttonsContainer: {

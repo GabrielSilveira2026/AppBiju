@@ -207,7 +207,9 @@ export default function DayDetails() {
                             onPress={handleCreateProduct}
                             name="add-circle-outline"
                             color={colors.primary}
-                            size={50} />
+                            size={50}
+                            disabled={isAdding}
+                        />
                     </View>
                 </View>
                 {mode && mode !== 'view' && <Button title={"Salvar"} onPress={createDay} />}

@@ -16,7 +16,8 @@ export type ProductType = {
     tempo_minuto: number;
     data_modificado: string | null;
     modificado_por: number | null;
-    ultimo_valor: number | null
+    ultimo_valor: number | null;
+    valor_unidade?: number
 }
 
 export type DayType = {
