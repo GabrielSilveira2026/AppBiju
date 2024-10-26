@@ -15,8 +15,7 @@ import CardProduct from "@/src/components/Products/CardProduct";
 import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
 import { getProduction } from "@/src/httpservices/production";
-import 'react-native-get-random-values'
-import { customAlphabet } from 'nanoid'
+
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
     pessoa: string;
@@ -26,7 +25,6 @@ export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
     const sync = useSync();
-    const nanoid = customAlphabet('1234567890abcdef', 10)
     
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -95,7 +93,7 @@ export default function DayDetails() {
 
         if (selectedDate) {
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), nanoid());
+            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), sync.nanoid());
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { ...response.response, pessoa: params.pessoa }

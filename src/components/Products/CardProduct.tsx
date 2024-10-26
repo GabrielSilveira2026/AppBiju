@@ -123,8 +123,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     }
     ]}>
       <View style={[styles.line, { paddingHorizontal: 8 }]}>
-        <Text style={{ color: "white" }}>ID: {product.id_produto ? product.id_produto : "null"}</Text>
-
         {
           modeCard === "details"
           &&

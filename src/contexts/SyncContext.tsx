@@ -17,6 +17,9 @@ import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
 import useParamDatabase from '../database/useParamDatabase';
 import { Text, View } from 'react-native';
+import 'react-native-get-random-values'
+import { customAlphabet } from 'nanoid'
+
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
@@ -31,7 +34,8 @@ type SyncContextType = {
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
-  getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
+  getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>,
+  nanoid: (size?: number) => string
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -39,12 +43,16 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
+  const nanoid = customAlphabet('1234567890abcdef', 6)
+  
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
   const paramDatabase = useParamDatabase();
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
+
+
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -210,6 +218,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await productDatabase.getProduct()
       return { response: request, origemDados: "Local" }
     }
+    
     await productDatabase.updateProductList(request.data.items)
 
     const localData = await productDatabase.getProduct()
@@ -270,11 +279,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function getProduction(id_dia?: string) {
     const request = await getProductionRemote(id_dia) 
 
-    return { response: request.data.items, origemDados: "Remoto" };
+    return { response: request.data?.items, origemDados: "Remoto" };
   }
 
   return (
-    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

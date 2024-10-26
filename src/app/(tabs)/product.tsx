@@ -12,13 +12,9 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import 'react-native-get-random-values'
-import { customAlphabet } from 'nanoid'
-
 
 export default function Product() {
   const sync = useSync();
-  const nanoid = customAlphabet('1234567890abcdef', 10)
   const { user } = useAuthContext()
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
@@ -102,7 +98,7 @@ export default function Product() {
     setIsCreating(true)
 
     if (product.id_produto === "") {
-      product.id_produto = nanoid()
+      product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
 
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
