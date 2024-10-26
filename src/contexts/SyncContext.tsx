@@ -156,9 +156,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function getPendingPayment(id_pessoa?: number) {
     const response = await getPendingRemote(id_pessoa);
 
-    console.log("Paymente sync", response);
-    
-
     if (response.status === 571) {
       const response = await pendingPaymentDatabase.getPendingPayment(id_pessoa)
       return { response: response, origemDados: "Local" }
@@ -250,10 +247,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-
-    console.log(body);
-    
-
+ 
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });

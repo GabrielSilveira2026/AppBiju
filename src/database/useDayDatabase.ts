@@ -15,7 +15,7 @@ export default function useDayDatabase() {
                         d.ID_PESSOA,
                         p.NOME AS Nome_Pessoa,
                         d.DATA_dia_producao,
-                        IFNULL(SUM(pr.QUANTIDADE * pr.historico_preco_unidade), 0) AS Valor_producao
+                        IFNULL(SUM(pr.QUANTIDADE * pr.historico_preco_unidade), 0) AS valor_dia
                     FROM 
                         dia d
                     INNER JOIN 

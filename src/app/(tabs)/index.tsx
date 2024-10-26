@@ -41,8 +41,6 @@ export default function Profile() {
     async function getDataHeader() {
       const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
 
-      console.log("Paymente Index:", response);
-
       let { nome, total, ultimo_pagamento } = response.response[0];
 
       ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
@@ -52,7 +50,6 @@ export default function Profile() {
 
     async function getDataDays() {
       const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
-      console.log("Days: ", JSON.stringify(response));
       
       setDayList(response.response);
     }
