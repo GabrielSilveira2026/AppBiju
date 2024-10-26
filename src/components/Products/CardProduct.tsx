@@ -115,15 +115,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     }
   }
 
-  function checkEditable() {
-    if (formValues.id_produto) {
-      setModeCard("edit")
-    }
-    else {
-      Alert.alert("Produto ainda não sincronizado", "Este produto ainda não foi sincronizado, por favor tente sincronizar os dados")
-    }
-  }
-
   return (
     <View style={[globalStyles.cardContainer,
     {
@@ -132,11 +123,13 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     }
     ]}>
       <View style={[styles.line, { paddingHorizontal: 8 }]}>
+        <Text style={{ color: "white" }}>ID: {product.id_produto ? product.id_produto : "null"}</Text>
+
         {
           modeCard === "details"
           &&
           <>
-            <Ionicons onPress={checkEditable} name={"create-outline"} size={35} color={colors.primary} />
+            <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
             <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </>
         }

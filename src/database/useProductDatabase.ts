@@ -44,7 +44,7 @@ export default function useProductDatabase() {
         `)
         try {
             const result = await statement.executeAsync({
-                $id_produto: product.id_produto || null,
+                $id_produto: product.id_produto,
                 $cod_referencia: product.cod_referencia,
                 $nome: product.nome,
                 $descricao: product.descricao,
@@ -71,8 +71,7 @@ export default function useProductDatabase() {
     async function updateProduct(productData: ProductType, dataInicio: string) {
         const [day, month, year] = dataInicio.split('/');
         const v_data_inicio = new Date(`${year}-${month}-${day}`).toISOString();
-        if (productData.id_produto) {
-            const statementUpdateProduct = await database.prepareAsync(`
+        const statementUpdateProduct = await database.prepareAsync(`
                 UPDATE produto
                 SET 
                     cod_referencia = $cod_referencia,
@@ -86,7 +85,7 @@ export default function useProductDatabase() {
                     WHERE id_produto  = $id_produto
                 `);
 
-            const statementUpdateProducao = await database.prepareAsync(`
+        const statementUpdateProducao = await database.prepareAsync(`
                 UPDATE producao
                 SET historico_preco_unidade = 
                 (
@@ -100,45 +99,41 @@ export default function useProductDatabase() {
                 AND id_produto = $id_produto
             `);
 
-            try {
-                await statementUpdateProduct.executeAsync({
-                    $cod_referencia: productData.cod_referencia,
-                    $nome: productData.nome,
-                    $descricao: productData.descricao,
-                    $preco: productData.preco,
-                    $tempo_minuto: productData.tempo_minuto,
-                    $modificado_por: productData.modificado_por,
-                    $ultimo_valor: productData.ultimo_valor,
-                    $id_produto: productData.id_produto
-                });
+        try {
+            await statementUpdateProduct.executeAsync({
+                $id_produto: productData.id_produto,
+                $cod_referencia: productData.cod_referencia,
+                $nome: productData.nome,
+                $descricao: productData.descricao,
+                $preco: productData.preco,
+                $tempo_minuto: productData.tempo_minuto,
+                $modificado_por: productData.modificado_por,
+                $ultimo_valor: productData.ultimo_valor
+            });
 
-                const valorHoraResult = `SELECT valor FROM parametro WHERE id_parametro = 1`
-                const valorHoraDB = await database.getAllAsync<ParamType>(valorHoraResult)
-                const valorHora = valorHoraDB[0] ? valorHoraDB[0].valor : 0;
+            const valorHoraResult = `SELECT valor FROM parametro WHERE id_parametro = 1`
+            const valorHoraDB = await database.getAllAsync<ParamType>(valorHoraResult)
+            const valorHora = valorHoraDB[0] ? valorHoraDB[0].valor : 0;
 
-                await statementUpdateProducao.executeAsync({
-                    $valor_hora: valorHora,
-                    $tempo_minuto: productData.tempo_minuto,
-                    $preco: productData.preco,
-                    $data_inicio: v_data_inicio,
-                    $id_produto: productData.id_produto || null
-                });
+            await statementUpdateProducao.executeAsync({
+                $valor_hora: valorHora,
+                $tempo_minuto: productData.tempo_minuto,
+                $preco: productData.preco,
+                $data_inicio: v_data_inicio,
+                $id_produto: productData.id_produto
+            });
 
-                const result = `SELECT * FROM produto WHERE id_produto = ${productData.id_produto}`
+            const result = `SELECT * FROM produto WHERE id_produto = ${productData.id_produto}`
 
-                const response = await database.getAllAsync<ProductType>(result)
+            const response = await database.getAllAsync<ProductType>(result)
 
-                return response
+            return response
 
-            } catch (error) {
-                throw error;
-            } finally {
-                await statementUpdateProduct.finalizeAsync();
-                await statementUpdateProducao.finalizeAsync();
-            }
-        }
-        else{
-            return []
+        } catch (error) {
+            throw error;
+        } finally {
+            await statementUpdateProduct.finalizeAsync();
+            await statementUpdateProducao.finalizeAsync();
         }
     }
 
@@ -196,6 +191,6 @@ export default function useProductDatabase() {
             await statement.finalizeAsync()
         }
     }
-    
+
     return { postProduct, getProduct, updateProduct, updateProductList }
 }

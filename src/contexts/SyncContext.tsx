@@ -220,17 +220,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const url = `${baseUrl}/produto/${produto.id_produto}?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
     const response: any = await axios.post(url).catch(function (error) {
-      if (error.response) {
-        console.log(error.response)
-        return
-      } else if (error.request) {
-        console.log(error.request)
-        return
-      } else {
-        console.log(error.message)
-        return
-      }
-      
       return { status: 571 }
     });
 
@@ -247,12 +236,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const url = `${baseUrl}/produto/${product.id_produto}`
 
     const body = JSON.stringify({
-      "id_produto": product.id_produto,
       "cod_referencia": product.cod_referencia,
       "data_modificado": product.data_modificado,
-      "descricao": product.descricao.trim(),
+      "descricao": product.descricao?.trim(),
       "modificado_por": product.modificado_por,
-      "nome": product.nome.trim(),
+      "nome": product.nome?.trim(),
       "preco": product.preco,
       "tempo_minuto": product.tempo_minuto,
       "ultimo_valor": product.ultimo_valor,
