@@ -8,8 +8,7 @@ export type UserType = {
 };
 
 export type ProductType = {
-    id_produto_local: number,
-    id_produto?: number;
+    id_produto: string;
     cod_referencia: number | string;
     nome: string;
     descricao: string;

@@ -12,6 +12,9 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import 'react-native-get-random-values'
+import { customAlphabet } from 'nanoid'
+const nanoid = customAlphabet('1234567890abcdef', 10)
 
 export default function log() {
   const pendingPaymentDatabase = usePendingPaymentDatabase();
@@ -72,6 +75,12 @@ export default function log() {
 
   }
 
+  function geraID() {
+
+    const teste = nanoid()
+    console.log(teste)
+
+  }
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -84,6 +93,7 @@ export default function log() {
         <Text>Vc esta esta logado</Text>
         <Button onPress={logout} title={"Sign Out"} style={{ backgroundColor: "black" }} />
         <Button onPress={cleanData} title={"Limpar tabelas"} style={{ backgroundColor: "black" }} />
+        <Button onPress={geraID} title={"Gera ID"} style={{ backgroundColor: "black" }} />
         <Text>
           Produtos:{JSON.stringify(log1, 0, 2)}
           {"\n"}

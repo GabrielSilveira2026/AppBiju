@@ -12,9 +12,13 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import 'react-native-get-random-values'
+import { customAlphabet } from 'nanoid'
+
 
 export default function Product() {
   const sync = useSync();
+  const nanoid = customAlphabet('1234567890abcdef', 10)
   const { user } = useAuthContext()
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
@@ -75,9 +79,9 @@ export default function Product() {
   function handleCreateProduct() {
     if (!isCreating) {
       setIsCreating(true)
+
       const newProduct: ProductType = {
-        id_produto_local: 0,
-        id_produto: undefined,
+        id_produto: "",
         cod_referencia: "",
         nome: '',
         descricao: '',
@@ -97,12 +101,13 @@ export default function Product() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
-    if (!product.id_produto) {
+    if (product.id_produto === "") {
+      product.id_produto = nanoid()
       const request = await sync.postProduct(product)
 
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
 
-      setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto_local !== 0));
+      setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
       await sync.uptdateProduct(initialDate.toLocaleDateString(), product)
@@ -111,9 +116,9 @@ export default function Product() {
     setIsCreating(false)
   }
 
-  function handleRemoveProduct(productId: number) {
+  function handleRemoveProduct(productId: string) {
     setIsCreating(false)
-    setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto_local !== productId));
+    setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
   }
 
   return (
@@ -123,7 +128,10 @@ export default function Product() {
           <FlatList
             data={productList}
             refreshing={false}
-            onRefresh={() => getProductList()}
+            onRefresh={() => {
+              setIsCreating(false)
+              getProductList()
+            }}
             style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
@@ -147,11 +155,11 @@ export default function Product() {
             }
             renderItem={({ item }) =>
               <CardProduct
-                mode={item.id_produto_local ? "view" : "create"}
+                mode={item.id_produto ? "view" : "create"}
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
-                onCancel={() => handleRemoveProduct(item.id_produto_local)}
+                onCancel={() => handleRemoveProduct(item.id_produto)}
               />
             }
           />

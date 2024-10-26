@@ -94,11 +94,11 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
     if (onSave) {
       setAlert("");
-      if (formValues.id_produto_local === 0) {
+      if (formValues.id_produto === "") {
         setModeCard("view");
         onSave(formValues, initialDate);
       }
-      else{
+      else {
         Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
@@ -137,7 +137,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           &&
           <>
             <Ionicons onPress={checkEditable} name={"create-outline"} size={35} color={colors.primary} />
-            <Ionicons style={{flex:1, textAlign: "right"}} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+            <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </>
         }
         {

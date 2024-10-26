@@ -24,7 +24,7 @@ type SyncContextType = {
   isConnected: boolean | null;
   syncData: () => Promise<void>;
   uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
-  postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
+  postProduct: (product:ProductType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getProduction: (id_dia?: number) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
@@ -217,9 +217,20 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postProduct(produto: ProductType) {
-    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
+    const url = `${baseUrl}/produto/${produto.id_produto}?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
     const response: any = await axios.post(url).catch(function (error) {
+      if (error.response) {
+        console.log(error.response)
+        return
+      } else if (error.request) {
+        console.log(error.request)
+        return
+      } else {
+        console.log(error.message)
+        return
+      }
+      
       return { status: 571 }
     });
 
