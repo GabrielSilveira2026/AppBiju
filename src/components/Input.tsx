@@ -10,6 +10,7 @@ type InputProps = {
   placeholder?: string;
   secureTextEntry?: boolean;
   containerStyle?: ViewStyle;
+  lineStyle?: TextStyle;
   inputStyle?: TextStyle;
 } & TextInputProps;
 
@@ -21,6 +22,7 @@ export const Input: React.FC<InputProps> = ({
   secureTextEntry,
   containerStyle,
   inputStyle,
+  lineStyle,
   textContentType,
   ...rest
 }, ref) => {
@@ -31,7 +33,7 @@ export const Input: React.FC<InputProps> = ({
       flexGrow: 1
     }}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputLine}>
+      <View style={[lineStyle, styles.inputLine]}>
         <TextInput
           style={[inputStyle, styles.input]}
           value={value}

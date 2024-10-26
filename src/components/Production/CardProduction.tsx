@@ -31,7 +31,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
 
     useEffect(() => {
         setModeCard(mode)
-        if (mode === "create") {            
+        if (mode === "create") {
             getProductList()
         }
         setProductionValues(production)
@@ -54,7 +54,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
         }));
     };
 
-    function handleSelectProduct(selectedProduct: ProductType){
+    function handleSelectProduct(selectedProduct: ProductType) {
         handleInputChange('nome_produto', selectedProduct.nome)
         handleInputChange('id_produto', selectedProduct.id_produto)
         handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
@@ -127,21 +127,43 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                             }}
                             dropdownStyle={stylesCreateAndEdit.dropdownMenuStyle}
                         />
-                        <Input
-                            inputStyle={{ flex: 1 }}
-                            onChangeText={(text) => handleInputChange('quantidade', text)}
-                            placeholder="Qtde"
-                            value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
-                        />
-                    </View>
-                    <View>
-                        <Input
-                            inputStyle={{ flex: 1 }}
-                            onChangeText={(text) => handleInputChange('observacao', text)}
-                            multiline
-                            placeholder="Digite uma anotação"
-                            value={productionValues.observacao || ""}
-                        />
+                        {
+                            productionValues.id_produto !== "32a0df" &&
+                            <>
+                                <Input
+                                    inputStyle={{ flex: 1, textAlign: "center" }}
+                                    lineStyle={{ flex: 1 }}
+                                    onChangeText={(text) => handleInputChange('quantidade', text)}
+                                    placeholder="Qtde"
+                                    keyboardType='numeric'
+                                    selectTextOnFocus={true}
+                                    value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
+                                />
+                                <View style={{ gap: 8, justifyContent: "center" }}>
+                                    < Ionicons
+                                        onPress={() => {
+                                            handleInputChange('quantidade', Number(productionValues.quantidade) + 1)
+                                        }}
+                                        name={"add-outline"}
+                                        style={styles.buttonIcon}
+                                        size={30} color={colors.primary}
+                                    />
+
+                                    < Ionicons
+                                        onPress={() => {
+                                            if (productionValues.quantidade > 0) {
+                                                handleInputChange('quantidade', productionValues.quantidade - 1)
+                                            }
+                                        }}
+                                        name={"remove-outline"}
+                                        size={30}
+                                        style={styles.buttonIcon}
+                                        color={colors.primary}
+                                    />
+
+                                </View>
+                            </>
+                        }
                     </View>
                     {
                         productionValues.id_produto === "32a0df" &&
@@ -151,6 +173,15 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                             </Text>
                         </View>
                     }
+                    <View>
+                        <Input
+                            inputStyle={{ flex: 1 }}
+                            onChangeText={(text) => handleInputChange('observacao', text)}
+                            multiline
+                            placeholder="Digite uma anotação"
+                            value={productionValues.observacao || ""}
+                        />
+                    </View>
                     <View style={stylesCreateAndEdit.bottomLine}>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
@@ -177,7 +208,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                         style={{ flex: 1 }}
                         title="Salvar"
                         onPress={() => {
-                            
+
                         }} />
                 </View>
             </View>
@@ -242,7 +273,12 @@ const styles = StyleSheet.create({
         color: colors.text,
         fontSize: 16
     },
-
+    buttonIcon: {
+        textAlignVertical: "center",
+        backgroundColor: colors.backgroundInput,
+        padding: 4,
+        borderRadius: 4
+    }
 })
 
 const stylesView = StyleSheet.create({
@@ -314,11 +350,11 @@ const stylesCreateAndEdit = StyleSheet.create({
         padding: 8
     },
 
-    bottomLine:{
+    bottomLine: {
         justifyContent: "space-between",
         flex: 1,
         flexDirection: "row",
-        paddingVertical: 8 
+        paddingVertical: 8
     },
 
     buttonsContainer: {

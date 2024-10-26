@@ -39,7 +39,7 @@ export default function Profile() {
 
   useEffect(() => {
     async function getDataHeader() {
-      const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
+      const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
 
       let { nome, total, ultimo_pagamento } = response.response[0];
 
@@ -49,6 +49,8 @@ export default function Profile() {
     }
 
     async function getDataDays() {
+      await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
+
       const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
       
       setDayList(response.response);

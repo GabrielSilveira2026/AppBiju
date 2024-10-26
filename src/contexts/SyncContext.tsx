@@ -27,9 +27,10 @@ type SyncContextType = {
   isConnected: boolean | null;
   syncData: () => Promise<void>;
   uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
-  postProduct: (product:ProductType) => Promise<any>,
+  postProduct: (product: ProductType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   getProduction: (id_dia?: string) => Promise<any>,
+  getPeople: (id_pessoa?: number | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
@@ -44,7 +45,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
-  
+
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
@@ -151,6 +152,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
+
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
       return { response: response, origemDados: "Local" }
@@ -158,7 +160,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await peopleDatabase.updatePeopleList(response.data.items)
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    const localData = await peopleDatabase.getPeople(id_pessoa)
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
   async function getPendingPayment(id_pessoa?: number) {
@@ -175,7 +179,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function getDay(id_pessoa?: number) {
-
     const request = await getDayRemote(id_pessoa);
 
     if (request.status === 571) {
@@ -186,6 +189,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     await dayDatabase.updateDiaList(request.data.items, id_pessoa)
 
     const localData = await dayDatabase.getDay(id_pessoa)
+    console.log(localData);
 
     return { response: localData, origemDados: "Remoto" };
   }
@@ -193,10 +197,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
     const url = `${baseUrl}/dia/?id_dia=${id_dia}&id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
 
-    const response: any = await axios.post(url).catch(function (error) {      
+    const response: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
     });
-    
+
 
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
@@ -218,7 +222,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await productDatabase.getProduct()
       return { response: request, origemDados: "Local" }
     }
-    
+
     await productDatabase.updateProductList(request.data.items)
 
     const localData = await productDatabase.getProduct()
@@ -256,7 +260,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
- 
+
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
@@ -277,13 +281,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function getProduction(id_dia?: string) {
-    const request = await getProductionRemote(id_dia) 
+    const request = await getProductionRemote(id_dia)
 
     return { response: request.data?.items, origemDados: "Remoto" };
   }
 
   return (
-    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );
