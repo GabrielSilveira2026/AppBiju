@@ -8,6 +8,7 @@ import { Input } from '../Input';
 import { useSync } from '@/src/contexts/SyncContext';
 import { useIsFocused } from '@react-navigation/native';
 import SelectDropdown from 'react-native-select-dropdown'
+import Button from '../Button';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -16,7 +17,8 @@ type CardProductionProps = {
     onSave?: (production: ProductionType) => void;
 };
 
-export default function CardProduction({ production, mode, onSave, onCancel }: CardProductionProps) {
+export default function CardProduction({ onSave, onCancel, production, mode }: CardProductionProps) {
+
     const sync = useSync();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
     const [productionValues, setProductionValues] = useState<ProductionType>(production);
@@ -28,7 +30,10 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
     }
 
     useEffect(() => {
-        getProductList
+        setModeCard(mode)
+        if (mode === "create") {            
+            getProductList()
+        }
         setProductionValues(production)
     }, [production])
 
@@ -72,25 +77,27 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
         )
 
     }
-    else if (modeCard === "edit" || modeCard === "create") {
+    else if (modeCard === "create" || modeCard === "edit") {
         return (
             <View
-                style={globalStyles.cardContainer}
+                style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}
             >
-                <Ionicons onPress={() => {
-                    setModeCard("details")
-                    setProductionValues(production)
-                }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                {
+                    modeCard === "edit"
+                    &&
+                    < Ionicons onPress={() => {
+                        setModeCard("details")
+                        setProductionValues(production)
+                    }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                }
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <SelectDropdown
                             data={productList}
-                            onSelect={(selectedItem: ProductType, index) => {
-                                console.log(selectedItem, index);
-                                handleInputChange('tempo_minuto', selectedItem.tempo_minuto)
-                                if (selectedItem.id_produto) {
-                                    handleInputChange('id_produto', selectedItem.id_produto)
-                                }
+                            onSelect={(selectedProduct: ProductType) => {
+                                console.log(selectedProduct);
+                                handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
+                                handleInputChange('id_produto', selectedProduct.id_produto)
                             }}
                             renderButton={(selectedItem: ProductType, isOpened) => {
                                 return (
@@ -119,7 +126,7 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                             inputStyle={{ flex: 1 }}
                             onChangeText={(text) => handleInputChange('quantidade', text)}
                             placeholder="Qtde"
-                            value={productionValues.quantidade.toString() || ""}
+                            value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
                         />
                     </View>
                     <View>
@@ -148,6 +155,26 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                         </Text>
                     </View>
                 </View>
+                <View style={stylesCreateAndEdit.buttonsContainer}>
+                    {
+                        modeCard === "create" &&
+                        <Button
+                            style={{ flex: 1 }}
+                            title="Cancelar"
+                            onPress={async () => {
+                                if (onCancel) {
+                                    onCancel();
+                                }
+                            }}
+                        />
+                    }
+                    <Button
+                        style={{ flex: 1 }}
+                        title="Salvar"
+                        onPress={() => {
+                            
+                        }} />
+                </View>
             </View>
         )
     }
@@ -157,12 +184,12 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                 style={globalStyles.cardContainer}
             >
                 <View style={stylesDetails.headerButtons}>
-                    <Ionicons style={{flex: 1}} onPress={() => {
+                    <Ionicons style={{ flex: 1 }} onPress={() => {
                         getProductList()
                         setModeCard("edit")
                     }} name={"create-outline"} size={35} color={colors.primary} />
 
-                    <Ionicons style={{flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+                    <Ionicons style={{ flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
                 </View>
 
                 <View style={stylesDetails.contentContainer}>
@@ -209,7 +236,8 @@ const styles = StyleSheet.create({
     text: {
         color: colors.text,
         fontSize: 16
-    }
+    },
+
 })
 
 const stylesView = StyleSheet.create({
@@ -246,6 +274,10 @@ const stylesDetails = StyleSheet.create({
 })
 
 const stylesCreateAndEdit = StyleSheet.create({
+    cardContainer: {
+        borderColor: colors.primary,
+        borderWidth: 1
+    },
 
     dropdownButtonStyle: {
         flex: 4,
@@ -275,5 +307,10 @@ const stylesCreateAndEdit = StyleSheet.create({
 
     dropdownItemStyle: {
         padding: 8
+    },
+
+    buttonsContainer: {
+        flexDirection: "row",
+        gap: 8,
     },
 })

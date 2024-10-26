@@ -45,7 +45,7 @@ export const globalStyles = StyleSheet.create({
         fontWeight: "regular",
         color: colors.text
     },
-    bottomDias: {
+    bottomAdd: {
         flexDirection: "row",
         justifyContent: "flex-end",
         borderTopWidth: 1,

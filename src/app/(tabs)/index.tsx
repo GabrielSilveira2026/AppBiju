@@ -152,7 +152,7 @@ export default function Profile() {
           />
           {
             !userId &&
-            <View style={globalStyles.bottomDias}>
+            <View style={globalStyles.bottomAdd}>
               <Ionicons
                 onPress={() => {
                   router.navigate({

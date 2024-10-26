@@ -25,14 +25,19 @@ export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
     const sync = useSync();
-    
+
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [showPicker, setShowPicker] = useState<boolean>(false);
-    
+    const [isAdding, setIsAdding] = useState<boolean>(false);
+
     const [productionList, setProductionList] = useState<ProductionType[]>([])
-    
+
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    const id_dia = Array.isArray(params.id_dia)
+        ? params.id_dia[0]
+        : params.id_dia;
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -42,7 +47,7 @@ export default function DayDetails() {
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             setKeyboardVisible(false);
         });
-        
+
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
@@ -52,12 +57,9 @@ export default function DayDetails() {
     useEffect(() => {
         async function getProductions(id_dia: string) {
             const request = await sync.getProduction(id_dia)
-
-            console.log(request);
-                      
             setProductionList(request.response)
         }
-    
+
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao)
                 ? params?.data_dia_producao[0]
@@ -69,16 +71,14 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            const id_dia = Array.isArray(params.id_dia)
-            ? params.id_dia[0]
-            : params.id_dia || undefined;
 
             if (id_dia) {
                 getProductions(id_dia)
-            } 
+            }
         }
         return () => {
             setMode(undefined);
+            setIsAdding(false)
             setSelectedDate(undefined);
             setProductionList([])
         };
@@ -107,17 +107,25 @@ export default function DayDetails() {
         }
     }
 
-    const produtoTeste = {
-        id_produto_local: 0,
-        id_produto: 50,
-        cod_referencia: "",
-        nome: '',
-        descricao: '',
-        preco: 0,
-        tempo_minuto: 0,
-        data_modificado: null,
-        modificado_por: null,
-        ultimo_valor: null
+    function handleCreateProduct() {
+        if (!isAdding) {
+            setIsAdding(true)
+
+            const newProduction: ProductionType = {
+                id_producao: "",
+                id_dia: id_dia,
+                id_produto: "",
+                tempo_minuto: 0,
+                nome_produto: "",
+                quantidade: 0,
+                observacao: "",
+                historico_preco_unidade: 0,
+            };
+            setProductionList((prevProductList) => [newProduction, ...prevProductList]);
+        }
+        else {
+            setIsAdding(false)
+        }
     }
 
     return (
@@ -185,15 +193,18 @@ export default function DayDetails() {
                             </View>
                         }
                         data={productionList}
-                        renderItem={({item}) =>
-                            <CardProduction production={item} mode="view"/>
+                        renderItem={({ item }) =>
+                            <CardProduction
+                                production={item}
+                                mode={item.id_producao !== "" ? "view" : "create"}
+                            />
                         }
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    <View style={globalStyles.bottomDias}>
+                    <View style={globalStyles.bottomAdd}>
                         <Ionicons
-                            onPress={() => { }}
+                            onPress={handleCreateProduct}
                             name="add-circle-outline"
                             color={colors.primary}
                             size={50} />

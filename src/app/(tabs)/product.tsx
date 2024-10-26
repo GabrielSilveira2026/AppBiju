@@ -159,7 +159,7 @@ export default function Product() {
               />
             }
           />
-          <View style={globalStyles.bottomDias}>
+          <View style={globalStyles.bottomAdd}>
             <Ionicons
               onPress={handleCreateProduct}
               name="add-circle-outline"
