@@ -132,7 +132,7 @@ export default function CardProduction({ production, mode, onSave, onCancel }: C
                         />
                     </View>
                     {
-                        productionValues.id_produto === 1 &&
+                        productionValues.id_produto === "32a0df" &&
                         <View>
                             <Text style={{ color: "white" }}>
                                 Hora

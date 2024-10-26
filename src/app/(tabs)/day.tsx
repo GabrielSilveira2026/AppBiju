@@ -51,7 +51,10 @@ export default function DayDetails() {
 
     useEffect(() => {
         async function getProductions(id_dia: string) {
-            const request = await sync.getProduction(id_dia)            
+            const request = await sync.getProduction(id_dia)
+
+            console.log(request);
+                      
             setProductionList(request.response)
         }
     
