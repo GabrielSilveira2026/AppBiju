@@ -75,10 +75,9 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS producao (
-            id_producao_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_producao INTEGER,
-            id_dia INTEGER NOT NULL,
-            id_produto INTEGER NOT NULL,
+            id_producao TEXT NOT NULL,
+            id_dia TEXT NOT NULL,
+            id_produto TEXT NOT NULL,
             quantidade REAL NOT NULL,
             observacao TEXT NOT NULL,
             historico_preco_unidade REAL NOT NULL,

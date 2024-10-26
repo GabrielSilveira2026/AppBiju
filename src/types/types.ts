@@ -44,8 +44,7 @@ export type PaymentType = {
 };
 
 export interface ProductionType {
-    id_producao_local: number;
-    id_producao?: number;
+    id_producao: string;
     id_dia: number;
     id_produto: number;
     tempo_minuto: number,

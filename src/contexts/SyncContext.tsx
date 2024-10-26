@@ -26,7 +26,7 @@ type SyncContextType = {
   uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   postProduct: (product:ProductType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
-  getProduction: (id_dia?: number) => Promise<any>,
+  getProduction: (id_dia?: string) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
@@ -266,7 +266,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
-  async function getProduction(id_dia?: number) {
+  async function getProduction(id_dia?: string) {
     const request = await getProductionRemote(id_dia) 
 
     return { response: request.data.items, origemDados: "Remoto" };
