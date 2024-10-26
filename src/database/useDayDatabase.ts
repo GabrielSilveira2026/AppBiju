@@ -9,38 +9,60 @@ export default function useDayDatabase() {
     async function getDay(id_pessoa?: number) {
         try {
             const result = id_pessoa
-                ? `SELECT * FROM dia WHERE id_pessoa = $id_pessoa ORDER BY data_dia_producao DESC`
+                ? `
+                    SELECT 
+                        d.ID_dia,
+                        d.ID_PESSOA,
+                        p.NOME AS Nome_Pessoa,
+                        d.DATA_dia_producao,
+                        IFNULL(SUM(pr.QUANTIDADE * pr.historico_preco_unidade), 0) AS Valor_producao
+                    FROM 
+                        dia d
+                    INNER JOIN 
+                        pessoa p ON p.ID_PESSOA = d.ID_PESSOA
+                    LEFT JOIN 
+                        producao pr ON pr.ID_dia = d.ID_dia
+                    WHERE 
+                        d.ID_PESSOA = $id_pessoa
+                    GROUP BY 
+                        d.ID_dia, 
+                        d.ID_PESSOA, 
+                        p.NOME, 
+                        d.DATA_dia_producao
+                    ORDER BY 
+                        d.DATA_dia_producao DESC
+                  `
                 : `SELECT * FROM dia ORDER BY data_dia_producao DESC`;
-
+    
             const response = id_pessoa
                 ? await database.getAllAsync<DayType>(result, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<DayType>(result);
-
+    
             return response;
         } catch (error) {
             throw error;
         }
     }
-
-    async function postDay(id_pessoa: number, data_dia_producao: string, valor_dia: number) {
+    
+    async function postDay(dia: DayType) {
         const statement = await database.prepareAsync(`
             INSERT INTO dia (
+                id_dia,
                 id_pessoa,
-                data_dia_producao,
-                valor_dia
+                data_dia_producao
             )
             VALUES (
+                $id_dia,
                 $id_pessoa,
-                $data_dia_producao,
-                $valor_dia
+                $data_dia_producao
             )
         `);
 
         try {
             const result = await statement.executeAsync({
-                $id_pessoa: id_pessoa,
-                $data_dia_producao: data_dia_producao,
-                $valor_dia: valor_dia
+                $id_dia: dia.id_dia,
+                $id_pessoa: dia.id_pessoa,
+                $data_dia_producao: dia.data_dia_producao
             });
 
             const insertedRowId = result.lastInsertRowId.toLocaleString()
@@ -78,16 +100,12 @@ export default function useDayDatabase() {
             INSERT INTO dia (
                 id_dia,
                 id_pessoa,
-                pessoa,
-                data_dia_producao,
-                valor_dia
+                data_dia_producao
             )
             VALUES (
                 $id_dia,
                 $id_pessoa,
-                $pessoa,
-                $data_dia_producao,
-                $valor_dia
+                $data_dia_producao
             )
         `);
 
@@ -96,9 +114,7 @@ export default function useDayDatabase() {
                 await statementInsert.executeAsync({
                     $id_dia: dia.id_dia || null,
                     $id_pessoa: dia.id_pessoa,
-                    $pessoa: dia.pessoa,
-                    $data_dia_producao: dia.data_dia_producao,
-                    $valor_dia: dia.valor_dia
+                    $data_dia_producao: dia.data_dia_producao
                 });
             }
         } catch (error) {

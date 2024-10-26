@@ -30,7 +30,7 @@ type SyncContextType = {
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
-  postDay: (id_pessoa: number, data_dia_producao: string) => Promise<any>,
+  postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
 };
 
@@ -182,12 +182,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: localData, origemDados: "Remoto" };
   }
 
-  async function postDay(id_pessoa: number, data_dia_producao: string) {
-    const url = `${baseUrl}/dia/?id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
+  async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
+    const url = `${baseUrl}/dia/?id_dia=${id_dia}&id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
 
-    const response: any = await axios.post(url).catch(function (error) {
+    const response: any = await axios.post(url).catch(function (error) {      
       return { status: 571 }
     });
+    
 
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
@@ -246,6 +247,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
+
+    console.log(body);
+    
 
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }

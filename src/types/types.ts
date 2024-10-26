@@ -20,8 +20,7 @@ export type ProductType = {
 }
 
 export type DayType = {
-    id_dia_local: number;
-    id_dia?: number;
+    id_dia: string;
     data_dia_producao: string;
     id_pessoa: number;
     pessoa: string;

@@ -15,7 +15,8 @@ import CardProduct from "@/src/components/Products/CardProduct";
 import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
 import { getProduction } from "@/src/httpservices/production";
-
+import 'react-native-get-random-values'
+import { customAlphabet } from 'nanoid'
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
     pessoa: string;
@@ -25,13 +26,14 @@ export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
     const sync = useSync();
-
+    const nanoid = customAlphabet('1234567890abcdef', 10)
+    
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [showPicker, setShowPicker] = useState<boolean>(false);
-
+    
     const [productionList, setProductionList] = useState<ProductionType[]>([])
-
+    
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
@@ -42,7 +44,7 @@ export default function DayDetails() {
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             setKeyboardVisible(false);
         });
-
+        
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
@@ -50,15 +52,15 @@ export default function DayDetails() {
     }, []);
 
     useEffect(() => {
-        async function getProductions(id_dia: number) {
+        async function getProductions(id_dia: string) {
             const request = await sync.getProduction(id_dia)            
             setProductionList(request.response)
         }
     
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao)
-                ? params.data_dia_producao[0]
-                : params.data_dia_producao || undefined;
+                ? params?.data_dia_producao[0]
+                : params?.data_dia_producao || undefined;
             if (data) {
                 setMode("view");
                 setSelectedDate(new Date(data));
@@ -71,7 +73,7 @@ export default function DayDetails() {
             : params.id_dia || undefined;
 
             if (id_dia) {
-                getProductions(Number(id_dia))
+                getProductions(id_dia)
             } 
         }
         return () => {
@@ -93,7 +95,7 @@ export default function DayDetails() {
 
         if (selectedDate) {
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-            const response = await sync.postDay(parseInt(userId), localDate.toISOString());
+            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), nanoid());
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { ...response.response, pessoa: params.pessoa }

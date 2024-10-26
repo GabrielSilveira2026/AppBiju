@@ -3,12 +3,9 @@ import { type SQLiteDatabase } from "expo-sqlite";
 export async function initializeDatabase(database: SQLiteDatabase) {
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS dia (
-            id_dia_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_dia INTEGER,
-            id_pessoa INTEGER NOT NULL,
-            pessoa VARCHAR(100) NOT NULL,
+            id_dia TEXT NOT NULL,
+            id_pessoa TEXT NOT NULL,
             data_dia_producao DATE NOT NULL,
-            valor_dia DECIMAL(38, 18) NOT NULL,
             CONSTRAINT fk_pessoa FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
         );
     `);
