@@ -94,6 +94,7 @@ export default function log() {
         <Button onPress={logout} title={"Sign Out"} style={{ backgroundColor: "black" }} />
         <Button onPress={cleanData} title={"Limpar tabelas"} style={{ backgroundColor: "black" }} />
         <Button onPress={geraID} title={"Gera ID"} style={{ backgroundColor: "black" }} />
+        
         <Text>
           Produtos:{JSON.stringify(log1, 0, 2)}
           {"\n"}

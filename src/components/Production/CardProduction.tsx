@@ -112,7 +112,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                 {
                     modeCard === "edit"
                     &&
-                    <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                         < Ionicons onPress={() => {
                             setModeCard("details")
                             setProductionValues(production)
@@ -126,6 +126,8 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <SelectDropdown
                             data={productList}
+                            search
+                            searchInputStyle={stylesCreateAndEdit.dropdownButtonStyle}
                             onSelect={(selectedProduct: ProductType) => {
                                 handleSelectProduct(selectedProduct)
                             }}

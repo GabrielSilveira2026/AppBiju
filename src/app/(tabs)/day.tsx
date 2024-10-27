@@ -150,7 +150,7 @@ export default function DayDetails() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                <Text style={{color: "white"}}>{id_dia}</Text>
+                {/* <Text style={{color: "white"}}>{id_dia}</Text> */}
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>
