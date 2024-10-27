@@ -37,33 +37,29 @@ export default function Profile() {
 
   const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
+  async function getDataHeader() {
+    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
+
+    let { nome, total, ultimo_pagamento } = response.response[0];
+
+    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+
+    setUserData({ nome, total, ultimo_pagamento });
+  }
+
+  async function getDataDays() {
+    await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
+
+    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
+
+    for (const day of response.response) {
+      await sync.getProduction(day.id_dia);
+    }
+
+    setDayList(response.response);
+  }
+
   useEffect(() => {
-    async function getDataHeader() {
-      const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
-
-      let { nome, total, ultimo_pagamento } = response.response[0];
-
-      ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
-
-      setUserData({ nome, total, ultimo_pagamento });
-    }
-
-    async function getDataDays() {
-      await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
-
-      const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
-
-      for (const day of response.response) {
-        // console.log("Dia:", day);
-        const request = await sync.getProduction(day.id_dia); // Corrigido aqui
-        // console.log(`Produções do dia ${day.id_dia}:`, request);
-      }
-
-      // const response2 = await sync.getDay(parseInt(userId) || user?.id_pessoa);
-
-      setDayList(response.response);
-    }
-
     if (isFocused) {
       getDataHeader();
       getDataDays();
@@ -154,6 +150,10 @@ export default function Profile() {
             }
           </View>
           <FlatList
+            refreshing={false}
+            onRefresh={() => {
+              getDataDays()
+            }}
             data={isSearch ? dayList : dayList?.slice(0, 15)}
             ListEmptyComponent={<Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text>}
             contentContainerStyle={{ gap: 12 }}
@@ -169,8 +169,7 @@ export default function Profile() {
                     pathname: '../(tabs)/day',
                     params: {
                       id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome,
-                      id_dia: sync.nanoid()
+                      pessoa: user?.nome
                     },
                   });
                 }}

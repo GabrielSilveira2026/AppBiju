@@ -71,8 +71,9 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-
-            getProductions(id_dia)
+            if (id_dia) {
+                getProductions(id_dia)
+            }
         }
         return () => {
             setMode(undefined);
@@ -140,13 +141,16 @@ export default function DayDetails() {
         }
         setIsAdding(false)
     }
+
     function handleRemoveProduct(productionId: string) {
         setIsAdding(false)
         setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_producao !== productionId));
     }
+    
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
+                <Text style={{color: "white"}}>{id_dia}</Text>
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>

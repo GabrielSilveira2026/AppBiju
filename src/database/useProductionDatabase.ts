@@ -98,8 +98,6 @@ export default function useProductionDatabase() {
     }
     
     async function updateProductionList(productionList: ProductionType[], id_dia?: string) {
-        console.log("Dia", id_dia);
-        console.log("producoes:", productionList);
         
         const statement = await database.prepareAsync(`
             INSERT INTO producao (
@@ -140,7 +138,6 @@ export default function useProductionDatabase() {
     
         try {
             for await (const production of productionList) {
-                console.log(production.id_producao);
                 
                 await statement.executeAsync({
                     $id_producao: production.id_producao,

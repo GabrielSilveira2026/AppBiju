@@ -73,25 +73,27 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isConnected]);
 
-  const syncData = async () => {
-    
+  async function syncData() {
+
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
       if (operacaoPendente.metodo === "POST") {
 
-        await axios.post(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
-          if (error.response) {
-            console.warn(error.response)
-            return
-          } else if (error.request) {
-            console.warn(error.request)
-            return
-          } else {
-            console.warn(error.message)
-            return
-          }
-        });
+        await axios.post(operacaoPendente.url)
+          .catch(function (error) {
+            if (error.response) {
+              // A resposta foi recebida, mas o status é de erro
+              console.warn("Erro de resposta:", error.response.status, error.response.data);
+            } else if (error.request) {
+              // A requisição foi feita, mas nenhuma resposta foi recebida
+              console.warn("Erro de requisição:", error.request);
+            } else {
+              // Outro erro aconteceu na configuração da requisição
+              console.warn("Erro:", error.message);
+            }
+          });
+
 
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
@@ -195,7 +197,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     const localData = await dayDatabase.getDay(id_pessoa)
 
-    return { response: localData, origemDados: "Remoto" };
+    return { response: request.data.items, origemDados: "Remoto" };
   }
 
   async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
@@ -207,7 +209,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      return await dayDatabase.postDay({id_pessoa, data_dia_producao, id_dia});
+      return await dayDatabase.postDay({ id_pessoa, data_dia_producao, id_dia });
     }
 
     await getDay(id_pessoa)
@@ -294,7 +296,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await productionDatabase.updateProductionList(requestRemote.data.items, id_dia)
-    
+
     const localData = await productionDatabase.getProduction(id_dia)
 
     return { response: localData, origemDados: "Remoto" };
