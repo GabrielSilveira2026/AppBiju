@@ -146,7 +146,7 @@ export default function DayDetails() {
         setIsAdding(false)
         setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_producao !== productionId));
     }
-    
+
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
@@ -221,6 +221,7 @@ export default function DayDetails() {
                                 onSave={handleSaveProduction}
                             />
                         }
+                        style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />

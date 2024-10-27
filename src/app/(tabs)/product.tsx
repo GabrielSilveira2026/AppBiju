@@ -128,7 +128,7 @@ export default function Product() {
               setIsCreating(false)
               getProductList()
             }}
-            style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
+            style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             ListHeaderComponent={<>
