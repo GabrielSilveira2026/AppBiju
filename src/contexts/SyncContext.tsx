@@ -54,7 +54,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const paramDatabase = useParamDatabase();
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
-  const productionOperationDatabase = useProductionDatabase()
+  const productionDatabase = useProductionDatabase()
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -283,28 +283,28 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function getProduction(id_dia?: string) {
     const request = await getProductionRemote(id_dia)
 
-    return { response: request.data?.items, origemDados: "Remoto" };
+    if (request.status === 571) {
+      const request = await productionDatabase.getProduction()
+      return { response: request, origemDados: "Local" }
+    }
+
+    await productionDatabase.updateProductionList(request.data.items)
+    
+    const localData = await productionDatabase.getProduction()
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
   async function postProduction(production: ProductionType) {
     const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao}`
 
     const request: any = await axios.post(url).catch(function (error) {
-      if (error.response) {
-        console.log(error.response)
-        return
-      } else if (error.request) {
-        console.log(error.request)
-        return
-      } else {
-        console.log(error.message)
-        return
-      }
+      return { status: 571 }
     });
 
     if (request.status === 571) {
       await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      const request = await productionOperationDatabase.postProduction(production);
+      const request = await productionDatabase.postProduction(production);
       return { response: request, origemDados: "Local" }
     }
 

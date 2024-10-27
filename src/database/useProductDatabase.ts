@@ -58,7 +58,6 @@ export default function useProductDatabase() {
         }
     }
     
-
     async function postProduct(product: ProductType) {
         const statement = await database.prepareAsync(`
             INSERT INTO produto (
