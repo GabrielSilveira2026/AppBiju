@@ -21,6 +21,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
 
     const sync = useSync();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
+    const [alert, setAlert] = useState<string>("")
     const [productionValues, setProductionValues] = useState<ProductionType>(production);
     const [productList, setProductList] = useState<ProductType[]>([]);
 
@@ -55,10 +56,28 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
     };
 
     function handleSelectProduct(selectedProduct: ProductType) {
-        handleInputChange('nome_produto', selectedProduct.nome)
         handleInputChange('id_produto', selectedProduct.id_produto)
+        handleInputChange('nome_produto', selectedProduct.nome)
         handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
         handleInputChange('historico_preco_unidade', selectedProduct.valor_unidade || 0)
+    }
+
+    async function saveProduction() {
+        if (productionValues.id_produto === "") {
+            setAlert("Selecione um produto");
+            return;
+        }
+
+        if (!productionValues.quantidade) {
+            setAlert("Selecione uma quantidade");
+            return;
+        }
+
+        setAlert("");
+        if (onSave) {
+            onSave(productionValues)
+        }
+
     }
 
     if (modeCard === "view") {
@@ -89,6 +108,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
             <View
                 style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}
             >
+                {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
                 {
                     modeCard === "edit"
                     &&
@@ -207,9 +227,7 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                     <Button
                         style={{ flex: 1 }}
                         title="Salvar"
-                        onPress={() => {
-
-                        }} />
+                        onPress={saveProduction} />
                 </View>
             </View>
         )
@@ -317,7 +335,8 @@ const stylesDetails = StyleSheet.create({
 const stylesCreateAndEdit = StyleSheet.create({
     cardContainer: {
         borderColor: colors.primary,
-        borderWidth: 1
+        borderWidth: 1,
+        gap: 8
     },
 
     dropdownButtonStyle: {

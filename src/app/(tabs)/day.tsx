@@ -126,17 +126,23 @@ export default function DayDetails() {
         }
     }
 
-    function handleSaveProduction(production: ProductionType) {
+    async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
+
         if (production.id_producao === "") {
             production.id_producao = sync.nanoid()
-            // const request = await sync.
+            const request = await sync.postProduction(production)
+            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+
+            setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+        }
+        else {
         }
         setIsAdding(false)
     }
     function handleRemoveProduct(productionId: string) {
         setIsAdding(false)
-        setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_produto !== productionId));
+        setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_producao !== productionId));
     }
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -208,6 +214,7 @@ export default function DayDetails() {
                                 production={item}
                                 mode={item.id_producao !== "" ? "view" : "create"}
                                 onCancel={() => handleRemoveProduct(item.id_producao)}
+                                onSave={handleSaveProduction}
                             />
                         }
                         keyExtractor={(item, index) => index.toString()}

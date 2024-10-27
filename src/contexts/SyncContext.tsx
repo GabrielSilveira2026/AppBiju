@@ -19,13 +19,14 @@ import useParamDatabase from '../database/useParamDatabase';
 import { Text, View } from 'react-native';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
+import useProductionDatabase from '../database/useProductionDatabase';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
-  syncData: () => Promise<void>;
-  isConnected: boolean | null;
-  nanoid: (size?: number) => string;
+  syncData: () => Promise<void>,
+  isConnected: boolean | null,
+  nanoid: (size?: number) => string,
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
@@ -37,6 +38,7 @@ type SyncContextType = {
   postProduct: (product: ProductType) => Promise<any>,
   uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   getProduction: (id_dia?: string) => Promise<any>,
+  postProduction: (production: ProductionType) => Promise<any>
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -52,8 +54,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const paramDatabase = useParamDatabase();
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
-
-
+  const productionOperationDatabase = useProductionDatabase()
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -232,17 +233,17 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   async function postProduct(produto: ProductType) {
     const url = `${baseUrl}/produto/${produto.id_produto}?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
 
-    const response: any = await axios.post(url).catch(function (error) {
+    const request: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
     });
 
-    if (response.status === 571) {
+    if (request.status === 571) {
       await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      const response = await productDatabase.postProduct(produto);
-      return { response: response, origemDados: "Local" }
+      const request = await productDatabase.postProduct(produto);
+      return { response: request, origemDados: "Local" }
     }
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    return { response: request.data.items, origemDados: "Remoto" };
   }
 
   async function uptdateProduct(data_inicio: string, product: ProductType) {
@@ -285,8 +286,33 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: request.data?.items, origemDados: "Remoto" };
   }
 
+  async function postProduction(production: ProductionType) {
+    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao}`
+
+    const request: any = await axios.post(url).catch(function (error) {
+      if (error.response) {
+        console.log(error.response)
+        return
+      } else if (error.request) {
+        console.log(error.request)
+        return
+      } else {
+        console.log(error.message)
+        return
+      }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      const request = await productionOperationDatabase.postProduction(production);
+      return { response: request, origemDados: "Local" }
+    }
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{ getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ postProduction, getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

@@ -76,7 +76,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id_dia TEXT NOT NULL,
             id_produto TEXT NOT NULL,
             quantidade REAL NOT NULL,
-            observacao TEXT NOT NULL,
+            observacao TEXT,
             historico_preco_unidade REAL NOT NULL,
             CONSTRAINT fk_dia FOREIGN KEY (id_dia) REFERENCES dia(id_dia),
             CONSTRAINT fk_producao FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
