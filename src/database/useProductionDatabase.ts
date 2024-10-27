@@ -97,7 +97,10 @@ export default function useProductionDatabase() {
         }
     }
     
-    async function updateProductionList(productionList: ProductionType[]) {
+    async function updateProductionList(productionList: ProductionType[], id_dia?: string) {
+        console.log("Dia", id_dia);
+        console.log("producoes:", productionList);
+        
         const statement = await database.prepareAsync(`
             INSERT INTO producao (
                 id_producao,
@@ -116,10 +119,19 @@ export default function useProductionDatabase() {
                 $historico_preco_unidade
             )
         `);
+        
+        const deleteQuery = id_dia 
+            ? `DELETE FROM producao WHERE id_dia = $id_dia`
+            : `DELETE FROM producao`;
     
-        const statementDelete = await database.prepareAsync(`DELETE FROM producao`);
+        const statementDelete = await database.prepareAsync(deleteQuery);
+    
         try {
-            await statementDelete.executeAsync();
+            if (id_dia) {
+                await statementDelete.executeAsync({ $id_dia: id_dia });
+            } else {
+                await statementDelete.executeAsync();
+            }
         } catch (error) {
             throw error;
         } finally {
@@ -128,6 +140,8 @@ export default function useProductionDatabase() {
     
         try {
             for await (const production of productionList) {
+                console.log(production.id_producao);
+                
                 await statement.executeAsync({
                     $id_producao: production.id_producao,
                     $id_dia: production.id_dia,
@@ -143,6 +157,7 @@ export default function useProductionDatabase() {
             await statement.finalizeAsync();
         }
     }
+    
     
 
     return { getProduction, postProduction, updateProductionList };

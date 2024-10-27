@@ -54,9 +54,9 @@ export default function Profile() {
       const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
 
       for (const day of response.response) {
-        console.log("Dia:", day);
+        // console.log("Dia:", day);
         const request = await sync.getProduction(day.id_dia); // Corrigido aqui
-        console.log(`Produções do dia ${day.id_dia}:`, request);
+        // console.log(`Produções do dia ${day.id_dia}:`, request);
       }
 
       // const response2 = await sync.getDay(parseInt(userId) || user?.id_pessoa);

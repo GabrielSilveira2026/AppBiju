@@ -61,7 +61,7 @@ export default function log() {
     let response = await productDatabase.getProduct()
     setLog1(response)
 
-    response = await productionDatabase.getProduction('66dffa')
+    response = await productionDatabase.getProduction()
     setLog2(response)
 
     response = await peopleDatabase.getPeople()

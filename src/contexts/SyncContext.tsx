@@ -150,6 +150,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: { status: response.status }, origemDados: "Local" };
     }
 
+    await getHourValue()
+
     return { response: { status: response.status }, origemDados: "Remoto" };
   }
 
@@ -203,17 +205,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { status: 571 }
     });
 
-
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      // return await dayDatabase.postDay(id_pessoa, data_dia_producao);
+      return await dayDatabase.postDay({id_pessoa, data_dia_producao, id_dia});
     }
-    let data = {
-      "data_dia_producao": response.data.data_dia_producao,
-      "id_dia": response.data.id_dia,
-      "id_pessoa": response.data.id_pessoa
-    }
-    return { response: data, origemDados: "Remoto" };
+
+    await getDay(id_pessoa)
+
+    return { response: response, origemDados: "Remoto" };
   }
 
   async function getProduct(name?: String) {
@@ -244,6 +243,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await productDatabase.postProduct(produto);
       return { response: request, origemDados: "Local" }
     }
+
+    await getProduct()
 
     return { response: request.data.items, origemDados: "Remoto" };
   }
@@ -279,6 +280,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: [], origemDados: "Local" }
     }
 
+    await getProduct()
+
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
@@ -290,7 +293,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: request, origemDados: "Local" }
     }
 
-    await productionDatabase.updateProductionList(requestRemote.data.items)
+    await productionDatabase.updateProductionList(requestRemote.data.items, id_dia)
     
     const localData = await productionDatabase.getProduction(id_dia)
 
