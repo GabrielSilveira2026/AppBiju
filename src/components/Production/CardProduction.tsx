@@ -141,7 +141,9 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         <SelectDropdown
                             data={productList}
                             search
-                            searchInputStyle={stylesCreateAndEdit.dropdownButtonStyle}
+                            searchInputStyle={{backgroundColor: colors.backgroundTertiary}}
+                            searchInputTxtStyle={{fontSize: 18}}
+                            searchInputTxtColor='white'
                             onSelect={(selectedProduct: ProductType) => {
                                 handleSelectProduct(selectedProduct)
                             }}

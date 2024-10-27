@@ -131,6 +131,7 @@ export default function Product() {
             style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
+            keyboardShouldPersistTaps= 'handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
                 <Ionicons

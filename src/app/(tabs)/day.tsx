@@ -226,6 +226,7 @@ export default function DayDetails() {
                                 <Text style={globalStyles.title}>Produtos</Text>
                             </View>
                         }
+                        keyboardShouldPersistTaps= 'handled'
                         data={productionList}
                         renderItem={({ item }) =>
                             <CardProduction
