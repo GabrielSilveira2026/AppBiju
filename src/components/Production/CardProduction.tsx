@@ -1,6 +1,6 @@
 import { colors } from '@/styles/color'
 import { Ionicons } from '@expo/vector-icons'
-import { View, Text, StyleSheet, Pressable, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Pressable, FlatList, Alert } from 'react-native'
 import { ProductionType, ProductType } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { globalStyles } from '@/styles/styles';
@@ -15,9 +15,10 @@ type CardProductionProps = {
     mode: "view" | "details" | "create" | "edit";
     onCancel?: () => void;
     onSave?: (production: ProductionType) => void;
+    onRemove: (production: ProductionType) => void;
 };
 
-export default function CardProduction({ onSave, onCancel, production, mode }: CardProductionProps) {
+export default function CardProduction({ onSave, onRemove, onCancel, production, mode }: CardProductionProps) {
 
     const sync = useSync();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
@@ -80,6 +81,20 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
 
     }
 
+    async function deleteProduction() {
+        Alert.alert("Excluir produto?", "Deseja realmente excluir esse produto desse dia?", [
+            {
+                text: "Cancelar"
+            },
+            {
+                text: "Confirmar",
+                onPress: async () => {
+                    onRemove(production);
+                }
+            }
+        ])
+    }
+
     if (modeCard === "view") {
         return (
             <Pressable
@@ -117,9 +132,8 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                             setModeCard("details")
                             setProductionValues(production)
                         }} name={"arrow-back-outline"} size={35} color={colors.primary} />
-                        <Ionicons onPress={() => {
-                            console.log("Excluindo");
-                        }} name={"trash-outline"} size={35} color={colors.error} />
+                        <Ionicons onPress={deleteProduction}
+                            name={"trash-outline"} size={35} color={colors.error} />
                     </View>
                 }
                 <View style={{ gap: 8 }}>

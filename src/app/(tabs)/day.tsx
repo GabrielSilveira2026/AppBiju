@@ -30,6 +30,7 @@ export default function DayDetails() {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
     const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isAdding, setIsAdding] = useState<boolean>(false);
+    const [total, setTotal] = useState<number>()
 
     const [productionList, setProductionList] = useState<ProductionType[]>([])
 
@@ -53,6 +54,14 @@ export default function DayDetails() {
             keyboardDidHideListener.remove();
         };
     }, []);
+
+    useEffect(() => {
+        const calculatedTotal = productionList.reduce((sum, production) => {
+            return sum + (production.historico_preco_unidade * production.quantidade);
+        }, 0);
+        setTotal(calculatedTotal);
+
+    }, [productionList]);
 
     useEffect(() => {
         async function getProductions(id_dia: string) {
@@ -142,7 +151,12 @@ export default function DayDetails() {
         setIsAdding(false)
     }
 
-    function handleRemoveProduct(productionId: string) {
+    async function handleDeleteProduction(productionRemove: ProductionType) {
+       await sync.deleteProduction(productionRemove)
+       setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
+    }
+
+    function handleCancelProduction(productionId: string) {
         setIsAdding(false)
         setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_producao !== productionId));
     }
@@ -199,7 +213,7 @@ export default function DayDetails() {
                                 )}
                             </View>
                             <View style={styles.secondLine}>
-                                <Text style={styles.textValue}>R${params.valor_dia || '0,00'}</Text>
+                                <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
                                 <Text style={styles.textValue}>{params?.pessoa}</Text>
                             </View>
                         </View>
@@ -217,8 +231,9 @@ export default function DayDetails() {
                             <CardProduction
                                 production={item}
                                 mode={item.id_producao !== "" ? "view" : "create"}
-                                onCancel={() => handleRemoveProduct(item.id_producao)}
+                                onCancel={() => handleCancelProduction(item.id_producao)}
                                 onSave={handleSaveProduction}
+                                onRemove={handleDeleteProduction}
                             />
                         }
                         style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
