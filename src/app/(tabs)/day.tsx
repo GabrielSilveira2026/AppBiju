@@ -72,9 +72,7 @@ export default function DayDetails() {
                 setSelectedDate(new Date());
             }
 
-            if (id_dia) {
-                getProductions(id_dia)
-            }
+            getProductions(id_dia)
         }
         return () => {
             setMode(undefined);
@@ -128,6 +126,18 @@ export default function DayDetails() {
         }
     }
 
+    function handleSaveProduction(production: ProductionType) {
+        setIsAdding(true)
+        if (production.id_producao === "") {
+            production.id_producao = sync.nanoid()
+            // const request = await sync.
+        }
+        setIsAdding(false)
+    }
+    function handleRemoveProduct(productionId: string) {
+        setIsAdding(false)
+        setProductionList((prevProductionList) => prevProductionList.filter((production) => production.id_produto !== productionId));
+    }
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
@@ -197,6 +207,7 @@ export default function DayDetails() {
                             <CardProduction
                                 production={item}
                                 mode={item.id_producao !== "" ? "view" : "create"}
+                                onCancel={() => handleRemoveProduct(item.id_producao)}
                             />
                         }
                         keyExtractor={(item, index) => index.toString()}

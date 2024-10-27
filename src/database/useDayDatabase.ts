@@ -7,7 +7,6 @@ export default function useDayDatabase() {
     const database = useSQLiteContext()
 
     async function getDay(id_pessoa?: number) {
-        console.log(id_pessoa);
         
         try {
             const result = id_pessoa

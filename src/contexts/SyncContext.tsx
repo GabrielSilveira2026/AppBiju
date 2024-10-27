@@ -23,20 +23,20 @@ import { customAlphabet } from 'nanoid'
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
-  setIsConnected: Dispatch<SetStateAction<boolean | null>>,
-  isConnected: boolean | null;
   syncData: () => Promise<void>;
-  uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
-  postProduct: (product: ProductType) => Promise<any>,
-  getProduct: (name?: String | undefined) => Promise<any>,
-  getProduction: (id_dia?: string) => Promise<any>,
-  getPeople: (id_pessoa?: number | undefined) => Promise<any>,
-  getDay: (id_pessoa?: number | undefined) => Promise<any>,
-  updateHourValue: (valor: number, data_inicio: string) => Promise<any>
+  isConnected: boolean | null;
+  nanoid: (size?: number) => string;
+  setIsConnected: Dispatch<SetStateAction<boolean | null>>,
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
-  postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
+  updateHourValue: (valor: number, data_inicio: string) => Promise<any>
+  getPeople: (id_pessoa?: number | undefined) => Promise<any>,
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>,
-  nanoid: (size?: number) => string
+  getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
+  getProduct: (name?: String | undefined) => Promise<any>,
+  postProduct: (product: ProductType) => Promise<any>,
+  uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
+  getProduction: (id_dia?: string) => Promise<any>,
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -189,7 +189,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     await dayDatabase.updateDiaList(request.data.items, id_pessoa)
 
     const localData = await dayDatabase.getDay(id_pessoa)
-    console.log(localData);
 
     return { response: localData, origemDados: "Remoto" };
   }
