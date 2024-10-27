@@ -4,9 +4,9 @@ import { ProductionType } from "../types/types";
 export default function useProductionDatabase() {
     const database = useSQLiteContext();
 
-    async function getProduction(id_producao?: string) {
+    async function getProduction(id_dia?: string) {
         try {
-            const query = id_producao
+            const query = id_dia
                 ? `
                     SELECT 
                         p.id_producao, 
@@ -22,7 +22,7 @@ export default function useProductionDatabase() {
                     INNER JOIN 
                         produto pr ON p.id_produto = pr.id_produto
                     WHERE 
-                        p.id_producao = $id_producao
+                        p.id_dia = $id_dia
                     ORDER BY 
                         p.id_producao DESC
                 `
@@ -44,8 +44,8 @@ export default function useProductionDatabase() {
                         p.id_producao DESC
                 `;
     
-            const response = id_producao
-                ? await database.getAllAsync(query, { $id_producao: id_producao })
+            const response = id_dia
+                ? await database.getAllAsync(query, { $id_dia: id_dia })
                 : await database.getAllAsync(query);
     
             return response;
@@ -53,7 +53,6 @@ export default function useProductionDatabase() {
             throw error;
         }
     }
-    
     
     async function postProduction(production: ProductionType) {
         const statement = await database.prepareAsync(`

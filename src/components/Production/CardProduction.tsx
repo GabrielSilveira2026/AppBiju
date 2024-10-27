@@ -112,10 +112,15 @@ export default function CardProduction({ onSave, onCancel, production, mode }: C
                 {
                     modeCard === "edit"
                     &&
-                    < Ionicons onPress={() => {
-                        setModeCard("details")
-                        setProductionValues(production)
-                    }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
+                        < Ionicons onPress={() => {
+                            setModeCard("details")
+                            setProductionValues(production)
+                        }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                        <Ionicons onPress={() => {
+                            console.log("Excluindo");
+                        }} name={"trash-outline"} size={35} color={colors.error} />
+                    </View>
                 }
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>

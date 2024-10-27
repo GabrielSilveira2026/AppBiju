@@ -15,9 +15,7 @@ export default function ProductionContainer({ id_dia, production }: ProductionPr
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [productionList, setProductionList] = useState<ProductionType[]>(production)
 
-    useEffect(() => {
-        console.log(production);
-        
+    useEffect(() => {        
         setProductionList(production)
     }, [])
 

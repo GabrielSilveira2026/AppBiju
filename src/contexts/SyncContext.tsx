@@ -60,7 +60,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-    syncData();
+    // syncData();
 
     return () => {
       unsubscribe();
@@ -74,6 +74,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isConnected]);
 
   const syncData = async () => {
+    
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
@@ -119,6 +120,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
     await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
+    await getHourValue();
     await getProduct();
   };
 
@@ -281,16 +283,16 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function getProduction(id_dia?: string) {
-    const request = await getProductionRemote(id_dia)
+    const requestRemote = await getProductionRemote(id_dia)
 
-    if (request.status === 571) {
-      const request = await productionDatabase.getProduction()
+    if (requestRemote.status === 571) {
+      const request = await productionDatabase.getProduction(id_dia)
       return { response: request, origemDados: "Local" }
     }
 
-    await productionDatabase.updateProductionList(request.data.items)
+    await productionDatabase.updateProductionList(requestRemote.data.items)
     
-    const localData = await productionDatabase.getProduction()
+    const localData = await productionDatabase.getProduction(id_dia)
 
     return { response: localData, origemDados: "Remoto" };
   }
@@ -307,6 +309,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await productionDatabase.postProduction(production);
       return { response: request, origemDados: "Local" }
     }
+
+    await getProduction(production.id_dia)
 
     return { response: request.data.items, origemDados: "Remoto" };
   }
