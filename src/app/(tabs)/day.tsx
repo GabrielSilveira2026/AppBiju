@@ -150,7 +150,7 @@ export default function DayDetails() {
         }
         else {
             const request = await sync.updateProduction(production)
-            setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== production.id_producao));
+            setProductionList((prevProductionList) => prevProductionList.filter(item => item.id_producao !== production.id_producao));
 
             setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
         }
