@@ -106,7 +106,7 @@ export default function Product() {
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
-      await sync.uptdateProduct(initialDate.toLocaleDateString(), product)
+      await sync.updateProduct(initialDate.toLocaleDateString(), product)
     }
 
     setIsCreating(false)

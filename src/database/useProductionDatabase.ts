@@ -84,9 +84,24 @@ export default function useProductionDatabase() {
                 $historico_preco_unidade: production.historico_preco_unidade
             })
 
-            const insertedRowId = result.lastInsertRowId.toLocaleString()
-
-            const response = await database.getAllAsync<ProductionType>(`SELECT * FROM producao WHERE rowid = ${insertedRowId}`)
+            const query = `
+                SELECT 
+                    p.id_producao, 
+                    p.id_dia, 
+                    p.id_produto, 
+                    pr.nome AS nome_produto,
+                    pr.tempo_minuto,
+                    p.quantidade, 
+                    p.observacao, 
+                    p.historico_preco_unidade
+                FROM 
+                    producao p
+                INNER JOIN 
+                    produto pr ON p.id_produto = pr.id_produto
+                WHERE 
+                    p.id_producao = $id_producao
+            `;
+            const response = await database.getAllAsync(query, { $id_producao: production.id_producao });
 
             return response
 
@@ -116,7 +131,41 @@ export default function useProductionDatabase() {
         }
     }
 
+    async function updateProduction(production: ProductionType) {
+        console.log(production);
+        
+        const statementUpdateProduction = await database.prepareAsync(`
+            UPDATE producao
+            SET 
+                id_dia = $id_dia,
+                id_produto = $id_produto,
+                quantidade = $quantidade,
+                observacao = $observacao,
+                historico_preco_unidade = $historico_preco_unidade
+            WHERE id_producao = $id_producao
+        `);
 
+        try {
+            await statementUpdateProduction.executeAsync({
+                $id_dia: production.id_dia,
+                $id_produto: production.id_produto,
+                $quantidade: production.quantidade,
+                $observacao: production.observacao,
+                $historico_preco_unidade: production.historico_preco_unidade,
+                $id_producao: production.id_producao
+            });
+
+            const result = await database.getAllAsync(`
+                SELECT * FROM producao WHERE id_producao = $id_producao
+            `, { $id_producao: production.id_producao });
+
+            return result;
+        } catch (error) {
+            throw error;
+        } finally {
+            await statementUpdateProduction.finalizeAsync();
+        }
+    }
 
     async function updateProductionList(productionList: ProductionType[], id_dia?: string) {
 
@@ -176,7 +225,5 @@ export default function useProductionDatabase() {
         }
     }
 
-
-
-    return { getProduction, postProduction, deleteProduction, updateProductionList };
+    return { getProduction, postProduction, updateProduction, deleteProduction, updateProductionList };
 }

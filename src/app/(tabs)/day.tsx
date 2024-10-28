@@ -25,6 +25,7 @@ export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
     const sync = useSync();
+    const controller = new AbortController();
 
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -89,6 +90,7 @@ export default function DayDetails() {
             setIsAdding(false)
             setSelectedDate(undefined);
             setProductionList([])
+            controller.abort();
         };
     }, [isFocused]);
 
@@ -147,6 +149,10 @@ export default function DayDetails() {
             setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
         }
         else {
+            const request = await sync.updateProduction(production)
+            setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== production.id_producao));
+
+            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
         }
         setIsAdding(false)
     }
@@ -223,7 +229,7 @@ export default function DayDetails() {
                     <FlatList
                         ListHeaderComponent={
                             <View style={styles.headerProducts}>
-                                <Text style={globalStyles.title}>Produtos</Text>
+                                <Text style={globalStyles.title}>Produções</Text>
                             </View>
                         }
                         keyboardShouldPersistTaps= 'handled'

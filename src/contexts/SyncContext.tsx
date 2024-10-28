@@ -36,9 +36,10 @@ type SyncContextType = {
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
-  uptdateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
+  updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   getProduction: (id_dia?: string) => Promise<any>,
   postProduction: (production: ProductionType) => Promise<any>,
+  updateProduction: (production: ProductionType) => Promise<any>,
   deleteProduction: (production: ProductionType) => Promise<any>,
 };
 
@@ -117,6 +118,20 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
       } else if (operacaoPendente.metodo === "DELETE") {
+        await axios.delete(operacaoPendente.url).catch(function (error) {
+          if (error.response) {
+            console.warn(error.response)
+            return
+          } else if (error.request) {
+            console.warn(error.request)
+            return
+          } else {
+            console.warn(error.message)
+            return
+          }
+        });
+
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
       }
     }
@@ -252,7 +267,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: request.data.items, origemDados: "Remoto" };
   }
 
-  async function uptdateProduct(data_inicio: string, product: ProductType) {
+  async function updateProduct(data_inicio: string, product: ProductType) {
     const url = `${baseUrl}/produto/${product.id_produto}`
 
     const body = JSON.stringify({
@@ -321,6 +336,34 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: request.data.items, origemDados: "Remoto" };
   }
 
+  async function updateProduction(production: ProductionType) {
+    const url = `${baseUrl}/producao/${production.id_producao}`
+
+    const body = JSON.stringify({
+      "id_dia": production.id_dia,
+      "id_produto": production.id_produto,
+      "quantidade": production.quantidade,
+      "observacao": production.observacao?.trim()
+    })
+
+    const response: any = await axios.put(url, body).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (response.status === 571) {
+
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+
+      const response = await productionDatabase.updateProduction(production)
+
+      return { response: response, origemDados: "Local" }
+    }
+
+    await getProduction(production.id_dia)
+
+    return { response: response.data.items, origemDados: "Remoto" };
+  }
+
   async function deleteProduction(production: ProductionType) {
     const url = `${baseUrl}/producao/${production.id_producao}`
 
@@ -340,7 +383,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ deleteProduction, postProduction, getProduction, uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

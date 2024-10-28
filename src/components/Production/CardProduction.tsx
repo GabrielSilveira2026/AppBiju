@@ -76,6 +76,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
 
         setAlert("");
         if (onSave) {
+            setModeCard("view")
             onSave(productionValues)
         }
 
