@@ -17,6 +17,7 @@ export default function Select({ list, label, onSelect }: SelectProps) {
     const [filteredData, setFilteredData] = useState(list);
     const [search, setSearch] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
+    const [isSearching, setisSearching] = useState<boolean>(false)
 
     useEffect(() => {
         setFilteredData(list);
@@ -48,7 +49,6 @@ export default function Select({ list, label, onSelect }: SelectProps) {
                     transparent={true}
                     visible={showModal}
                     onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
                         setShowModal(!showModal);
                     }}>
                     <Pressable onPress={() => setShowModal(!showModal)} style={styles.centeredView}>
@@ -61,6 +61,7 @@ export default function Select({ list, label, onSelect }: SelectProps) {
                             />
                             <FlatList
                                 data={filteredData}
+                                keyboardShouldPersistTaps='handled'
                                 keyExtractor={(item) => item.id_produto}
                                 style={{ width: "100%" }}
                                 contentContainerStyle={{ gap: 8 }}
@@ -81,6 +82,7 @@ export default function Select({ list, label, onSelect }: SelectProps) {
     );
 }
 
+
 const styles = StyleSheet.create({
     centeredView: {
         flex: 1,
@@ -97,21 +99,28 @@ const styles = StyleSheet.create({
         padding: 8,
         alignItems: 'center',
         width: "100%",
-        gap: 8
-    },
-    textButton: {
-        flex: 1,
-        fontSize: 16,
+        height: "60%",
+        gap: 16
     },
     button: {
-        flex: 4,
+        flex: 1,
         flexDirection: "row",
         alignItems: "center",
-        padding: 8,
+        padding: 12,
         backgroundColor: colors.backgroundInput,
         borderBottomColor: colors.text,
         borderBottomWidth: 1,
-        borderRadius: 4,
+        borderRadius: 4
     },
-    item: { width: "100%", backgroundColor: colors.backgroundInput , padding: 12, borderRadius: 4 }
+    textButton: {
+        flex: 1,
+        fontSize: 16
+    },
+    item: {
+        width: "100%",
+        paddingHorizontal: 8,
+        paddingVertical: 16,
+        borderRadius: 4,
+        backgroundColor: colors.backgroundInput
+    }
 });
