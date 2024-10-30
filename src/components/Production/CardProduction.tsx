@@ -9,6 +9,7 @@ import { useSync } from '@/src/contexts/SyncContext';
 import { useIsFocused } from '@react-navigation/native';
 import SelectDropdown from 'react-native-select-dropdown'
 import Button from '../Button';
+import Select from '../Select';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -56,7 +57,9 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
         }));
     };
 
-    function handleSelectProduct(selectedProduct: ProductType) {
+    function selectProduct(selectedProduct: ProductType) {
+        console.log(selectedProduct);
+
         handleInputChange('id_produto', selectedProduct.id_produto)
         handleInputChange('nome_produto', selectedProduct.nome)
         handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
@@ -139,14 +142,14 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 }
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
-                        <SelectDropdown
+                        {/* <SelectDropdown
                             data={productList}
                             search
                             searchInputStyle={{backgroundColor: colors.backgroundTertiary}}
                             searchInputTxtStyle={{fontSize: 18}}
                             searchInputTxtColor='white'
                             onSelect={(selectedProduct: ProductType) => {
-                                handleSelectProduct(selectedProduct)
+                                selectProduct(selectedProduct)
                             }}
                             renderButton={(selectedProduct: ProductType, isOpened) => {
                                 return (
@@ -170,7 +173,10 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                 );
                             }}
                             dropdownStyle={stylesCreateAndEdit.dropdownMenuStyle}
-                        />
+                        /> */}
+                        <View style={{ flex: 5 }}>
+                            <Select list={productList} label="nome" onSelect={selectProduct} />
+                        </View>
                         {
                             productionValues.id_produto !== "32a0df" &&
                             <>
