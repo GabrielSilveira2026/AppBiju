@@ -9,15 +9,15 @@ const { width } = Dimensions.get('window');
 type SelectProps = {
     list: any[],
     label: string,
+    initialText?: string,
     onSelect: (item: any) => void
 }
 
-export default function Select({ list, label, onSelect }: SelectProps) {
+export default function Select({ initialText, list, label, onSelect }: SelectProps) {
     const [showModal, setShowModal] = useState(false);
     const [filteredData, setFilteredData] = useState(list);
     const [search, setSearch] = useState('');
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [isSearching, setisSearching] = useState<boolean>(false)
+    const [selectedItem, setSelectedItem] = useState(initialText ? { [label]: initialText } : null);
 
     useEffect(() => {
         setFilteredData(list);
@@ -25,7 +25,11 @@ export default function Select({ list, label, onSelect }: SelectProps) {
 
     function handleSearch(text: string) {
         setSearch(text);
-        setFilteredData(list.filter(item => item.nome.toLowerCase().includes(text.toLowerCase())));
+        setFilteredData(
+            list.filter(item =>
+                item.nome.toLowerCase().includes(text.toLowerCase())
+            )
+        );
     };
 
     function handleSelect(item: any) {
@@ -70,7 +74,7 @@ export default function Select({ list, label, onSelect }: SelectProps) {
                                         onPress={() => handleSelect(item)}
                                         style={styles.item}
                                     >
-                                        <Text style={{ color: "white" }}>{item[label]}</Text>
+                                        <Text style={styles.label}>{item[label]}</Text>
                                     </TouchableOpacity>
                                 )}
                             />
@@ -117,10 +121,16 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     item: {
+        flexDirection: "row",
         width: "100%",
-        paddingHorizontal: 8,
+        paddingHorizontal: 12,
         paddingVertical: 16,
         borderRadius: 4,
-        backgroundColor: colors.backgroundInput
+        backgroundColor: colors.backgroundInput,
+    },
+    label: {
+        flex: 1,
+        textAlign: "center",
+        color: "white"
     }
 });

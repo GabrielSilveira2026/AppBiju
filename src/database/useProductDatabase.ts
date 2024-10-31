@@ -47,17 +47,17 @@ export default function useProductDatabase() {
                        ON par.id_parametro = 1
                    ORDER BY 
                        p.nome ASC`;
-    
+
             const response = id_produto
                 ? await database.getAllAsync<ProductType>(result, [id_produto])
                 : await database.getAllAsync<ProductType>(result);
-    
+
             return response;
         } catch (error) {
             throw error;
         }
     }
-    
+
     async function postProduct(product: ProductType) {
         const statement = await database.prepareAsync(`
             INSERT INTO produto (
@@ -128,9 +128,7 @@ export default function useProductDatabase() {
         const statementUpdateProducao = await database.prepareAsync(`
                 UPDATE producao
                 SET historico_preco_unidade = 
-                (
-                    $valor_hora / 60 * $tempo_minuto + $preco
-                )
+                $preco_unidade
                 WHERE id_dia IN (
                     SELECT id_dia
                     FROM dia
@@ -155,19 +153,20 @@ export default function useProductDatabase() {
             const valorHoraDB = await database.getAllAsync<ParamType>(valorHoraResult)
             const valorHora = valorHoraDB[0] ? valorHoraDB[0].valor : 0;
 
+            const preco_unidade = Number((valorHora / 60) * productData.tempo_minuto) + Number(productData.preco);
+
             await statementUpdateProducao.executeAsync({
                 $valor_hora: valorHora,
                 $tempo_minuto: productData.tempo_minuto,
                 $preco: productData.preco,
                 $data_inicio: v_data_inicio,
-                $id_produto: productData.id_produto
+                $id_produto: productData.id_produto,
+                $preco_unidade: preco_unidade
             });
 
-            const result = `SELECT * FROM produto WHERE id_produto = ${productData.id_produto}`
+            const response = await getProduct(productData.id_produto)
 
-            const response = await database.getAllAsync<ProductType>(result)
-
-            return response
+            return response[0]
 
         } catch (error) {
             throw error;

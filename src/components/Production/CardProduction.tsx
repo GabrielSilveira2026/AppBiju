@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react';
 import { globalStyles } from '@/styles/styles';
 import { Input } from '../Input';
 import { useSync } from '@/src/contexts/SyncContext';
-import { useIsFocused } from '@react-navigation/native';
-import SelectDropdown from 'react-native-select-dropdown'
 import Button from '../Button';
 import Select from '../Select';
 
@@ -118,7 +116,6 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 </View>
             </Pressable>
         )
-
     }
     else if (modeCard === "create" || modeCard === "edit") {
         return (
@@ -141,10 +138,10 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <View style={{ flex: 5 }}>
-                            <Select list={productList} label="nome" onSelect={selectProduct} />
+                            <Select list={productList} label="nome" onSelect={selectProduct} initialText={production.nome_produto} />
                         </View>
                         {
-                            productionValues.id_produto !== "32a0df" &&
+                            productionValues.id_produto !== "111111" &&
                             <>
                                 <Input
                                     inputStyle={{ flex: 1, textAlign: "center" }}
@@ -182,7 +179,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         }
                     </View>
                     {
-                        productionValues.id_produto === "32a0df" &&
+                        productionValues.id_produto === "111111" &&
                         <View>
                             <Text style={{ color: "white" }}>
                                 Hora

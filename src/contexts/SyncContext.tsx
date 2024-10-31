@@ -282,11 +282,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "data_inicio": data_inicio
     })
 
-    const response: any = await axios.put(url, body).catch(function (error) {
-      return { status: 571 }
-    });
+    // const response: any = await axios.put(url, body).catch(function (error) {
+    //   return { status: 571 }
+    // });
 
-    if (response.status === 571) {
+    // if (response.status === 571) {
       if (product?.id_produto) {
 
         await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
@@ -296,11 +296,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         return { response: response, origemDados: "Local" }
       }
       return { response: [], origemDados: "Local" }
-    }
+    // }
 
-    await getProduct()
+    // await getProduct()
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    // return { response: response.data.items, origemDados: "Remoto" };
   }
 
   async function getProduction(id_dia?: string) {
