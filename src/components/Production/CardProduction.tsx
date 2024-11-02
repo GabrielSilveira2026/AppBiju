@@ -9,6 +9,7 @@ import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
 import Select from '../Select';
 import { formatMinutesToHours } from '@/src/utils/utils';
+import InputDuration from '../InputDuration';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -172,7 +173,10 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     {
                         productionValues.id_produto === "111111" &&
                         <View>
-                            <Text>Hora</Text>
+                            <InputDuration
+                                value={productionValues.quantidade * 60}
+                                onChange={(timeMinutes) => handleInputChange('quantidade', timeMinutes / 60)}
+                            />
                         </View>
                     }
                     <View>

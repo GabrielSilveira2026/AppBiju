@@ -117,7 +117,7 @@ export default function DayDetails() {
         }
     }
 
-    function handleCreateProduct() {
+    function handleCreateProduction() {
         if (!isAdding) {
             setIsAdding(true)
 
@@ -249,7 +249,7 @@ export default function DayDetails() {
                     />
                     <View style={globalStyles.bottomAdd}>
                         <Ionicons
-                            onPress={handleCreateProduct}
+                            onPress={handleCreateProduction}
                             name="add-circle-outline"
                             color={colors.primary}
                             size={50}

@@ -56,26 +56,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
-  function handleTimeInputChange(value: string): void {
-    const cleanValue = value.replace(/\D/g, '');
-
-    const numValue = cleanValue.slice(-4);
-
-    let minutes = 0;
-    let seconds = 0;
-
-    if (numValue.length <= 2) {
-      seconds = parseInt(numValue, 10) || 0;
-    } else {
-      minutes = parseInt(numValue.slice(0, numValue.length - 2), 10) || 0;
-      seconds = parseInt(numValue.slice(-2), 10) || 0;
-    }
-
-    const tempoMinuto = minutes * 60 + seconds;
-
-    handleInputChange('tempo_minuto', tempoMinuto);
-  }
-
   async function saveProduct() {
 
     if (!formValues.nome.trim()) {
@@ -206,13 +186,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     value={formValues.tempo_minuto}
                     onChange={(value) => handleInputChange('tempo_minuto', value)}
                   />
-                  {/* <Input
-                    placeholder="Tempo"
-                    value={formatTime(formValues.tempo_minuto)}
-                    onChangeText={handleTimeInputChange}
-                    keyboardType="numeric"
-                    style={[styles.inputValue, { textAlign: "center" }]}
-                  /> */}
                 </View>
 
                 <View style={styles.valueVertical}>

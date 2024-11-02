@@ -18,6 +18,9 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
         onChange(Number(tempo))
     }
 
+    console.log(value);
+    
+
     return (
         <View style={{ flex: 1 }}>
             <Pressable onPress={() => setShowPicker(!showPicker)}>
