@@ -99,8 +99,8 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.nome_produto}</Text>
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.observacao}</Text>
                         </View>
-                        <View style={{ justifyContent: "space-between" }}>
-                            <Text style={styles.text}>Qtde {productionValues.quantidade}</Text>
+                        <View style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
+                            <Text style={styles.text}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : formatMinutesToHours(productionValues.quantidade * 60)}</Text>
                             <Text style={styles.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
                         </View>
                     </View>
@@ -133,55 +133,52 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             <Select list={productList} label="nome" onSelect={selectProduct} initialText={production.nome_produto} />
                         </View>
                         {
-                            productionValues.id_produto !== "111111" &&
-                            <>
-                                <Input
-                                    inputStyle={{ flex: 1, textAlign: "center" }}
-                                    lineStyle={{ flex: 1 }}
-                                    onChangeText={(text) => handleInputChange('quantidade', text)}
-                                    placeholder="Qtde"
-                                    keyboardType='numeric'
-                                    selectTextOnFocus={true}
-                                    value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
-                                />
-                                <View style={{ gap: 8, justifyContent: "center" }}>
-                                    < Ionicons
-                                        onPress={() => {
-                                            handleInputChange('quantidade', Number(productionValues.quantidade) + 1)
-                                        }}
-                                        name={"add-outline"}
-                                        style={styles.buttonIcon}
-                                        size={30} color={colors.primary}
+                            productionValues.id_produto !== "111111" ?
+                                <>
+                                    <Input
+                                        inputStyle={{ flex: 1, textAlign: "center" }}
+                                        lineStyle={{ flex: 1 }}
+                                        onChangeText={(text) => handleInputChange('quantidade', text)}
+                                        placeholder="Qtde"
+                                        keyboardType='numeric'
+                                        selectTextOnFocus={true}
+                                        value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
                                     />
+                                    <View style={{ gap: 8, justifyContent: "center" }}>
+                                        < Ionicons
+                                            onPress={() => {
+                                                handleInputChange('quantidade', Number(productionValues.quantidade) + 1)
+                                            }}
+                                            name={"add-outline"}
+                                            style={styles.buttonIcon}
+                                            size={30} color={colors.primary}
+                                        />
 
-                                    < Ionicons
-                                        onPress={() => {
-                                            if (productionValues.quantidade > 0) {
-                                                handleInputChange('quantidade', productionValues.quantidade - 1)
-                                            }
-                                        }}
-                                        name={"remove-outline"}
-                                        size={30}
-                                        style={styles.buttonIcon}
-                                        color={colors.primary}
+                                        < Ionicons
+                                            onPress={() => {
+                                                if (productionValues.quantidade > 0) {
+                                                    handleInputChange('quantidade', productionValues.quantidade - 1)
+                                                }
+                                            }}
+                                            name={"remove-outline"}
+                                            size={30}
+                                            style={styles.buttonIcon}
+                                            color={colors.primary}
+                                        />
+
+                                    </View>
+                                </>
+                                :
+                                <View style={{ flex: 2, height: "100%" }}>
+                                    <InputDuration
+                                        value={productionValues.quantidade * 60}
+                                        onChange={(timeMinutes) => handleInputChange('quantidade', timeMinutes / 60)}
                                     />
-
                                 </View>
-                            </>
                         }
                     </View>
-                    {
-                        productionValues.id_produto === "111111" &&
-                        <View>
-                            <InputDuration
-                                value={productionValues.quantidade * 60}
-                                onChange={(timeMinutes) => handleInputChange('quantidade', timeMinutes / 60)}
-                            />
-                        </View>
-                    }
                     <View>
                         <Input
-                            inputStyle={{ flex: 1 }}
                             onChangeText={(text) => handleInputChange('observacao', text)}
                             multiline
                             placeholder="Digite uma anotação"
@@ -192,9 +189,12 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
-                        <Text style={[styles.text, { textAlign: "center" }]}>
-                            ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
-                        </Text>
+                        {
+                            productionValues.id_produto !== "111111" &&
+                            <Text style={[styles.text, { textAlign: "center" }]}>
+                                ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
+                            </Text>
+                        }
                     </View>
                 </View>
                 <View style={stylesCreateAndEdit.buttonsContainer}>
@@ -252,13 +252,16 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
 
 
                     <View style={{ justifyContent: "space-around", flex: 1, gap: 16 }}>
-                        <Text style={[styles.text, { textAlign: "center" }]}>Qtde {productionValues.quantidade}</Text>
+                        <Text style={[styles.text, { textAlign: "center" }]}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : `${formatMinutesToHours(productionValues.quantidade * 60)}h`}</Text>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
-                        <Text style={[styles.text, { textAlign: "center" }]}>
-                            ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
-                        </Text>
+                        {
+                            productionValues.id_produto !== "111111" &&
+                            <Text style={[styles.text, { textAlign: "center" }]}>
+                                ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
+                            </Text>
+                        }
                     </View>
                 </View>
 
