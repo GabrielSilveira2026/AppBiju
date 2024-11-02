@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles } from '@/styles/styles';
+import InputDuration from '../InputDuration';
 
 type CardProductProps = {
   product: ProductType;
@@ -192,6 +193,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
                     value={formValues.preco.toString()}
                     onChangeText={handlePriceInputChange}
                     keyboardType="numbers-and-punctuation"
+                    selectTextOnFocus={true}
                     style={[styles.inputValue, { textAlign: "center" }]}
                     placeholderTextColor={colors.textInput}
                   />
@@ -200,13 +202,17 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
                 <View style={styles.valueVertical}>
                   <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-                  <Input
+                  <InputDuration
+                    value={formValues.tempo_minuto}
+                    onChange={(value) => handleInputChange('tempo_minuto', value)}
+                  />
+                  {/* <Input
                     placeholder="Tempo"
                     value={formatTime(formValues.tempo_minuto)}
                     onChangeText={handleTimeInputChange}
                     keyboardType="numeric"
                     style={[styles.inputValue, { textAlign: "center" }]}
-                  />
+                  /> */}
                 </View>
 
                 <View style={styles.valueVertical}>
@@ -367,6 +373,7 @@ const styles = StyleSheet.create({
   },
   valueVertical: {
     padding: 8,
+    gap: 8,
     alignItems: "center",
   },
   buttonOpen: {

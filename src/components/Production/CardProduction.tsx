@@ -8,6 +8,7 @@ import { Input } from '../Input';
 import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
 import Select from '../Select';
+import { formatMinutesToHours } from '@/src/utils/utils';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -37,16 +38,6 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
         }
         setProductionValues(production)
     }, [production])
-
-    function formatMinutesToHours(totalMinutes: number) {
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-
-        const formattedHours = String(hours).padStart(2, '0');
-        const formattedMinutes = String(minutes).padStart(2, '0');
-
-        return `${formattedHours}:${formattedMinutes}`;
-    };
 
     const handleInputChange = (field: keyof ProductionType, value: string | number) => {
         setProductionValues(prev => ({
@@ -181,9 +172,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     {
                         productionValues.id_produto === "111111" &&
                         <View>
-                            <Text style={{ color: "white" }}>
-                                Hora
-                            </Text>
+                            <Text>Hora</Text>
                         </View>
                     }
                     <View>

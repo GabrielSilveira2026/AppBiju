@@ -10,10 +10,14 @@ import useProductionDatabase from '@/src/database/useProductionDatabase';
 import { useIsFocused } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, ScrollView } from 'react-native'
+import { View, Text, FlatList, ScrollView, TouchableOpacity, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
+import { TimerPickerModal } from "react-native-timer-picker";
+import { Input } from '@/src/components/Input';
+import { formatMinutesToHours } from '@/src/utils/utils';
+import HourContainer from '@/src/components/Products/HourContainer';
 const nanoid = customAlphabet('1234567890abcdef', 10)
 
 export default function log() {
@@ -87,6 +91,16 @@ export default function log() {
     getTable()
   }, [isFocused])
 
+  const [showPicker, setShowPicker] = useState(false);
+  const [alarmString, setAlarmString] = useState<
+    string
+  >("");
+
+  function formatTimer({ hours, minutes, seconds }: { hours: number, minutes: number, seconds: number }) {
+    const tempo = String((hours * 60) + (minutes))
+    setAlarmString(tempo)
+  }
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -94,7 +108,35 @@ export default function log() {
         <Button onPress={logout} title={"Sign Out"} style={{ backgroundColor: "black" }} />
         <Button onPress={cleanData} title={"Limpar tabelas"} style={{ backgroundColor: "black" }} />
         <Button onPress={geraID} title={"Gera ID"} style={{ backgroundColor: "black" }} />
-        
+
+
+        <Button onPress={() => setShowPicker(!showPicker)} title={"Timer"} style={{ backgroundColor: "black" }} />
+
+        <Pressable onPress={() => setShowPicker(!showPicker)}>
+          <Input
+            value={""}
+            placeholder="Tempo"
+            onChangeText={() => { }}
+            editable={false}
+            keyboardType="numeric"
+            style={[{ textAlign: "center" }]}
+          />
+        </Pressable>
+
+        <TimerPickerModal
+          visible={showPicker}
+          setIsVisible={setShowPicker}
+          onConfirm={(pickedDuration) => {
+            formatTimer(pickedDuration);
+          }}
+          onCancel={() => setShowPicker(false)}
+          closeOnOverlayPress
+          hideSeconds
+          styles={{
+            theme: "dark",
+          }}
+        />
+
         <Text>
           Produtos:{JSON.stringify(log1, 0, 2)}
           {"\n"}

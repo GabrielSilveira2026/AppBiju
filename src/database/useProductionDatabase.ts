@@ -132,8 +132,6 @@ export default function useProductionDatabase() {
     }
 
     async function updateProduction(production: ProductionType) {
-        console.log(production);
-        
         const statementUpdateProduction = await database.prepareAsync(`
             UPDATE producao
             SET 
