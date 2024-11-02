@@ -134,15 +134,15 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
       <View style={globalStyles.cardContainer}>
         <View style={styles.cardOpenedDetails}>
           <View style={styles.line}>
-            <Ionicons onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
-            <Ionicons style={{ flex: 1, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+            <Ionicons style={{ flex: 1 }} onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
+            <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </View>
           <View style={styles.line}>
             <Text style={[styles.textValue, { flex: 1 }]}>{formValues.nome}</Text>
             <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{formValues.cod_referencia}</Text>
           </View>
           <View style={styles.line}>
-            <View style={styles.textDescription}>
+            <View style={stylesCreateAndEdit.textDescription}>
               <Text style={[styles.textValue, { fontSize: 14 }]}>{formValues.descricao}</Text>
             </View>
           </View>
@@ -214,7 +214,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             value={formValues.descricao}
             label="Descrição"
             multiline
-            style={[styles.inputValue, styles.textDescription]}
+            style={[styles.inputValue, stylesCreateAndEdit.textDescription]}
             onChangeText={value => handleInputChange('descricao', value)}
             placeholderTextColor={colors.textInput}
           />
@@ -231,7 +231,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
               style={[styles.inputValue, { textAlign: "center" }]}
               placeholderTextColor={colors.textInput}
             />
-
           </View>
 
           <View style={styles.valueVertical}>
@@ -299,7 +298,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   }
 }
 
-
 const styles = StyleSheet.create({
   container: {
     borderRadius: 4,
@@ -316,12 +314,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
   },
-
-  valueVertical: {
-    padding: 8,
-    gap: 8,
-    alignItems: "center",
-  },
   buttonOpen: {
     padding: 8
   },
@@ -329,11 +321,10 @@ const styles = StyleSheet.create({
     padding: 8,
     gap: 8
   },
-  textDescription: {
-    borderBottomColor: "white",
-    borderBottomWidth: 1,
-    minHeight: 80,
-    flex: 1
+  valueVertical: {
+    padding: 8,
+    gap: 8,
+    alignItems: "center",
   },
   titleText: {
     fontSize: 16,
@@ -365,6 +356,15 @@ const styles = StyleSheet.create({
   dataText: {
     fontSize: 16,
     color: colors.text,
+  },
+})
+
+const stylesCreateAndEdit = StyleSheet.create({
+  textDescription: {
+    borderBottomColor: "white",
+    borderBottomWidth: 1,
+    minHeight: 80,
+    flex: 1
   },
 })
 

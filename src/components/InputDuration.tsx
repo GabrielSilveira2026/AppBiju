@@ -19,6 +19,9 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
         setShowPicker(false)
     };
 
+    console.log(value);
+    
+
     const togglePicker = () => setShowPicker(prev => !prev);
 
     return (
@@ -38,7 +41,7 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
                 onConfirm={handleTimeSelection}
                 onCancel={() => setShowPicker(false)}
                 hideSeconds
-                initialHours={22}
+                initialHours={value}
                 cancelButtonText='Cancelar'
                 confirmButtonText='  Salvar  '
                 styles={{
