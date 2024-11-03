@@ -79,6 +79,38 @@ export default function useDayDatabase() {
         }
     }
 
+    async function updateDay(dia: DayType) {
+        const statement = await database.prepareAsync(`
+            UPDATE dia
+            SET
+                id_pessoa = $id_pessoa,
+                data_dia_producao = $data_dia_producao
+            WHERE
+                id_dia = $id_dia
+        `);
+    
+        try {
+            const result = await statement.executeAsync({
+                $id_dia: dia.id_dia,
+                $id_pessoa: dia.id_pessoa,
+                $data_dia_producao: dia.data_dia_producao
+            });
+
+            const updatedResponse = await database.getAllAsync<DayType>(
+                `SELECT * FROM dia WHERE id_dia = $id_dia`,
+                { $id_dia: dia.id_dia }
+            );
+    
+            return updatedResponse;
+        } catch (error) {
+            console.error("Erro ao atualizar dia:", error);
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+        }
+    }
+    
+
     async function updateDiaList(diaList: DayType[], id_pessoa?: number) {
 
         const statementDelete = id_pessoa
@@ -125,5 +157,5 @@ export default function useDayDatabase() {
         }
     }
 
-    return { getDay, updateDiaList, postDay }
+    return { getDay, updateDay, updateDiaList, postDay }
 }

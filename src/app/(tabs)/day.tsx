@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
 import AddContainer from "@/src/components/AddContainer";
+import { useAuthContext } from "@/src/contexts/AuthContext";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -23,11 +24,12 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 export default function DayDetails() {
     const params = useLocalSearchParams();
     const isFocused = useIsFocused();
+    const { user } = useAuthContext()
     const sync = useSync();
     const controller = new AbortController();
 
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
@@ -36,7 +38,9 @@ export default function DayDetails() {
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-    const id_dia = Array.isArray(params.id_dia)
+    const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+
+    const id_diaParams = Array.isArray(params.id_dia)
         ? params.id_dia[0]
         : params.id_dia;
 
@@ -80,14 +84,13 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            if (id_dia) {
-                getProductions(id_dia)
+            if (id_diaParams) {
+                getProductions(id_diaParams)
             }
         }
         return () => {
             setMode(undefined);
             setIsAdding(false)
-            setSelectedDate(undefined);
             setProductionList([])
             controller.abort();
         };
@@ -104,12 +107,12 @@ export default function DayDetails() {
         if (mode === "edit") {
             setMode("view");
         } else {
-            if (!id_dia && productionList.length > 0) {
+            if (!id_diaParams && productionList.length > 0) {
                 Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja salva-las?", [
                     {
                         text: "Salvar",
                         onPress: async () => {
-                            createDay();
+                            saveSay();
                         }
                     },
                     {
@@ -129,12 +132,10 @@ export default function DayDetails() {
         }
     }
 
-    async function createDay() {
-        const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
-
-        if (selectedDate) {
+    async function saveSay() {
+        const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+        if (!id_diaParams) {
             const id_dia = sync.nanoid()
-            const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
             const response = await sync.postDay(parseInt(userId), localDate.toISOString(), id_dia);
             for (const production of productionList) {
                 production.id_dia = id_dia
@@ -144,10 +145,23 @@ export default function DayDetails() {
                 pathname: '../(tabs)/day',
                 params: { ...response.response, pessoa: params.pessoa, id_dia: id_dia }
             });
-            setMode("view");
-        } else {
-            Alert.alert("Data inválida", "Por favor, selecione um dia");
         }
+        else {
+            const day: DayType = {
+                id_dia: id_diaParams,
+                id_pessoa: Number(params.id_pessoa),
+                data_dia_producao: localDate.toISOString()
+            }
+
+            const request = await sync.updateDay(day)
+
+            router.replace({
+                pathname: '../(tabs)/day',
+                params: { ...request.response, pessoa: params.pessoa, id_dia: id_diaParams }
+            });
+        }
+        setMode("view");
+
     }
 
     function handleCreateProduction() {
@@ -156,7 +170,7 @@ export default function DayDetails() {
 
             const newProduction: ProductionType = {
                 id_producao: "",
-                id_dia: id_dia,
+                id_dia: id_diaParams,
                 id_produto: "",
                 tempo_minuto: 0,
                 nome_produto: "",
@@ -213,7 +227,6 @@ export default function DayDetails() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                {/* <Text style={{ color: "white" }}>{id_dia}</Text> */}
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>
@@ -246,7 +259,7 @@ export default function DayDetails() {
                                         />
                                     )}
                                 </View>
-                                {mode && mode !== "create" && (
+                                {mode && mode !== "create" && Number(userId) === user?.id_pessoa && (
                                     <Ionicons
                                         onPress={() => setMode("edit")}
                                         name={mode === "view" ? "create-outline" : "trash-outline"}
@@ -284,30 +297,25 @@ export default function DayDetails() {
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
+                    {mode && mode !== "edit" && Number(userId) === user?.id_pessoa
+                        &&
+                        < AddContainer
+                            text="Adicionar produção"
+                            disable={isAdding}
+                            onPress={handleCreateProduction}
+                        />
+                    }
+                </View>
 
-                    <AddContainer
-                        text="Adicionar produção"
-                        disable={isAdding}
-                        onPress={handleCreateProduction}
-                    />
-                    {/* <View style={globalStyles.containerButtonBottom}>
-                        <TouchableOpacity>
-                            <Text style={{ color: colors.primary, textDecorationLine: "underline" }}>Adicionar um novo dia</Text>
-                            <Ionicons
-                                onPress={handleCreateProduction}
-                                name="add-circle-outline"
-                                color={colors.primary}
-                                size={50}
-                                disabled={isAdding}
-                            />
-                        </TouchableOpacity>
-                    </View> */}
-                </View>
-                <View style={{ flexDirection: "row", width: "100%" }}>
-                    {mode && mode !== 'view' && <Button style={{ flex: 1 }} title={"Salvar"} onPress={createDay} />}
-                </View>
+                {
+                    mode && mode !== 'view' &&
+                    <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
+                        <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
+                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveSay} />
+                    </View>
+                }
             </SafeAreaView>
-        </ImageBackground>
+        </ImageBackground >
     );
 }
 

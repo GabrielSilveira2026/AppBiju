@@ -9,7 +9,7 @@ import { getProduction as getProductionRemote } from '../httpservices/production
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
-import { ProductionType, ProductType } from '../types/types';
+import { DayType, ProductionType, ProductType } from '../types/types';
 import { useAuthContext } from './AuthContext';
 import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
@@ -34,6 +34,7 @@ type SyncContextType = {
   getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>,
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
+  updateDay: (dia: DayType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
   updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
@@ -237,6 +238,39 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response, origemDados: "Remoto" };
   }
 
+  async function updateDay(day: DayType) {
+    const url = `${baseUrl}/dia/${day.id_dia}`
+
+    const body = JSON.stringify({
+      id_pessoa: day.id_pessoa,
+      data_dia_producao: day.data_dia_producao
+    })
+
+    const request: any = await axios.put(url, body, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+      const response = await dayDatabase.updateDay(day);
+      return { response: response, origemDados: "Local" }
+    }
+
+    const responseData: DayType = {
+      data_dia_producao: request.data.data_dia_producao,
+      id_dia: request.data.id_dia,
+      id_pessoa: request.id_pessoa
+    }
+
+    await getDay(day.id_pessoa)
+
+    return { response: responseData, origemDados: "Remoto" };
+  }
+
   async function getProduct(name?: String) {
 
     const request = await getProductRemote();
@@ -291,15 +325,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (response.status === 571) {
-      if (product?.id_produto) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
 
-        await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+      const response = await productDatabase.updateProduct(product, data_inicio)
 
-        const response = await productDatabase.updateProduct(product, data_inicio)
-
-        return { response: response, origemDados: "Local" }
-      }
-      return { response: [], origemDados: "Local" }
+      return { response: response, origemDados: "Local" }
     }
 
     await getProduct()
@@ -405,7 +435,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

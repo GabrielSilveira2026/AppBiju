@@ -37,10 +37,10 @@ export default function Profile() {
   const isFocused = useIsFocused();
   const controller = new AbortController();
 
-  const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
+  const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
   async function getDataHeader() {
-    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
+    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(id_pessoa_params));
 
     let { nome, total, ultimo_pagamento } = response.response[0];
 
@@ -52,7 +52,7 @@ export default function Profile() {
   async function getDataDays() {
     await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
 
-    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
+    const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
 
     for (const day of response.response) {
       await sync.getProduction(day.id_dia);
@@ -106,7 +106,7 @@ export default function Profile() {
     }
   })
 
-  if (user?.perfil === "Administrador" && !userId) {
+  if (user?.perfil === "Administrador" && !id_pessoa_params) {
     return <Redirect href={"/employees"} />
   }
 
@@ -167,7 +167,7 @@ export default function Profile() {
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {
-            !userId &&
+            !id_pessoa_params &&
             <AddContainer
               text="Adicionar novo dia"
               disable={isAdding}
