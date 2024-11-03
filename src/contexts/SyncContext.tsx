@@ -88,11 +88,14 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
             if (error.response) {
               // A resposta foi recebida, mas o status é de erro
               console.warn("Erro de resposta:", error.response.status, error.response.data);
+              return
             } else if (error.request) {
               // A requisição foi feita, mas nenhuma resposta foi recebida
               console.warn("Erro de requisição:", error.request);
+              return
             } else {
               // Outro erro aconteceu na configuração da requisição
+              return
               console.warn("Erro:", error.message);
             }
           });
