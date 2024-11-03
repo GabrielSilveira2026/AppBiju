@@ -92,12 +92,41 @@ export default function DayDetails() {
         };
     }, [isFocused]);
 
-    const handleDateChange = (event: any, date: Date | undefined) => {
+    function handleDateChange(event: any, date: Date | undefined) {
         setShowPicker(false);
         if (date) {
             setSelectedDate(date);
         }
     };
+
+    function goBack() {
+        if (mode === "edit") {
+            setMode("view");
+        } else {
+            if (!id_dia && productionList.length > 0) {
+                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja salva-las?", [
+                    {
+                        text: "Salvar",
+                        onPress: async () => {
+                            createDay();
+                        }
+                    },
+                    {
+                        text: "Não salvar",
+                        onPress: async () => {
+                            router.navigate("/");
+                        }
+                    },
+                    {
+                        text: "Cancelar"
+                    }
+                ])
+            }
+            else {
+                router.navigate("/");
+            }
+        }
+    }
 
     async function createDay() {
         const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
@@ -191,13 +220,7 @@ export default function DayDetails() {
                             <View style={styles.firstLine}>
                                 <View style={styles.backAndData}>
                                     <Ionicons
-                                        onPress={() => {
-                                            if (mode === "edit") {
-                                                setMode("view");
-                                            } else {
-                                                router.navigate("/");
-                                            }
-                                        }}
+                                        onPress={goBack}
                                         name="arrow-back-outline"
                                         size={35}
                                         color={colors.primary}
@@ -270,8 +293,8 @@ export default function DayDetails() {
                         />
                     </View>
                 </View>
-                <View style={{flexDirection: "row", width: "100%"}}>
-                    {mode && mode !== 'view' && <Button style={{flex:1}} title={"Salvar"} onPress={createDay} />}
+                <View style={{ flexDirection: "row", width: "100%" }}>
+                    {mode && mode !== 'view' && <Button style={{ flex: 1 }} title={"Salvar"} onPress={createDay} />}
                 </View>
             </SafeAreaView>
         </ImageBackground>
