@@ -40,11 +40,9 @@ export default function DayDetails() {
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
-    const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+    const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
 
-    const id_diaParams = Array.isArray(params.id_dia)
-        ? params.id_dia[0]
-        : params.id_dia;
+    const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -77,9 +75,7 @@ export default function DayDetails() {
         }
 
         if (isFocused) {
-            const data = Array.isArray(params.data_dia_producao)
-                ? params?.data_dia_producao[0]
-                : params?.data_dia_producao || undefined;
+            const data = Array.isArray(params.data_dia_producao) ? params?.data_dia_producao[0] : params?.data_dia_producao || undefined;
             if (data) {
                 setMode("view");
                 setSelectedDate(new Date(data));
@@ -87,8 +83,8 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            if (id_diaParams) {
-                getProductions(id_diaParams)
+            if (id_dia_params) {
+                getProductions(id_dia_params)
             }
         }
         return () => {
@@ -110,12 +106,12 @@ export default function DayDetails() {
         if (mode === "edit") {
             setMode("view");
         } else {
-            if (!id_diaParams && productionList.length > 0) {
+            if (!id_dia_params && productionList.length > 0) {
                 Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja salva-las?", [
                     {
                         text: "Salvar",
                         onPress: async () => {
-                            saveSay();
+                            saveDay();
                         }
                     },
                     {
@@ -135,15 +131,17 @@ export default function DayDetails() {
         }
     }
 
-    async function saveSay() {
-        if (!id_diaParams) {
-            const id_dia = sync.nanoid()
-            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), id_dia);
-            for (const production of productionList) {
-                production.id_dia = id_dia
-                await sync.postProduction(production)
-            }
+    async function saveDay(new_id?: string) {
+        if (!id_dia_params) {
+            const id_dia = new_id ? new_id : sync.nanoid()
+            const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
+            // for (const production of productionList) {
+            //     production.id_dia = id_dia
+            //     await sync.postProduction(production)
+            // }
             setMode("view")
+            console.log({ id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia });
+
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia }
@@ -151,18 +149,18 @@ export default function DayDetails() {
         }
         else {
             const day: DayType = {
-                id_dia: id_diaParams,
+                id_dia: id_dia_params,
                 id_pessoa: Number(params.id_pessoa),
                 data_dia_producao: localDate.toISOString()
             }
 
             await sync.updateDay(day)
-            
+
             setMode("view")
 
             router.replace({
                 pathname: '../(tabs)/day',
-                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_diaParams }
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia_params }
             });
         }
         setMode("view");
@@ -178,7 +176,7 @@ export default function DayDetails() {
                 text: "Confirmar",
                 onPress: async () => {
                     const day: DayType = {
-                        id_dia: id_diaParams,
+                        id_dia: id_dia_params,
                         id_pessoa: Number(params.id_pessoa),
                         data_dia_producao: localDate.toISOString()
                     }
@@ -195,7 +193,7 @@ export default function DayDetails() {
 
             const newProduction: ProductionType = {
                 id_producao: "",
-                id_dia: id_diaParams,
+                id_dia: id_dia_params,
                 id_produto: "",
                 tempo_minuto: 0,
                 nome_produto: "",
@@ -213,17 +211,18 @@ export default function DayDetails() {
     async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
         if (production.id_producao === "") {
-            production.id_producao = sync.nanoid()
-            if (production.id_dia) {
-                const request = await sync.postProduction(production)
-                setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
 
-                setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+            if (!production.id_dia) {
+                const id = sync.nanoid()
+                await saveDay(id)
+                production.id_dia = id
             }
-            else {
-                setProductionList((prevProductionList) => [production, ...prevProductionList]);
-                setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
-            }
+
+            production.id_producao = sync.nanoid()
+            const request = await sync.postProduction(production)
+            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+
+            setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
         }
         else {
             if (production.id_dia) {
@@ -285,7 +284,7 @@ export default function DayDetails() {
                                     )}
                                 </View>
                                 {
-                                    mode && Number(userId) === user?.id_pessoa &&
+                                    mode && Number(id_pessoa_params) === user?.id_pessoa &&
                                         mode === "edit" ?
                                         (
                                             <Ionicons
@@ -333,7 +332,7 @@ export default function DayDetails() {
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    {mode && mode !== "edit" && Number(userId) === user?.id_pessoa
+                    {mode && mode !== "edit" && Number(id_pessoa_params) === user?.id_pessoa
                         &&
                         < AddContainer
                             text="Adicionar produção"
@@ -344,10 +343,10 @@ export default function DayDetails() {
                 </View>
 
                 {
-                    mode && mode !== 'view'  && Number(userId) === user?.id_pessoa && 
+                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa &&
                     <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
                         <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
-                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveSay} />
+                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveDay} />
                     </View>
                 }
             </SafeAreaView>
