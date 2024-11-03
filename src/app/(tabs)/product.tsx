@@ -97,9 +97,6 @@ export default function Product() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
-    console.log(product);
-    
-
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
@@ -165,6 +162,7 @@ export default function Product() {
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
                 onCancel={() => handleRemoveProduct(item.id_produto)}
+                onDelete={() => handleDeleteProduct(item.id_produto)}
               />
             }
           />

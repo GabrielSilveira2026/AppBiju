@@ -181,7 +181,7 @@ export default function useProductDatabase() {
 
     async function deleteProduct(id_produto: string) {
         const statement = await database.prepareAsync(`
-            DELETE FROM producao 
+            DELETE FROM produto 
             WHERE id_produto = $id_produto
         `);
 

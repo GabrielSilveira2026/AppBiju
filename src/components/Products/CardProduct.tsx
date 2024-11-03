@@ -17,7 +17,7 @@ type CardProductProps = {
   hourValue: number;
   onCancel?: () => void;
   onSave?: (product: ProductType, initialDate: Date) => void;
-  onDelete?: (id_product: string) => void
+  onDelete: (id_product: string) => void
 };
 
 export default function CardProduct({ onSave, onCancel, onDelete, hourValue, product, mode = "view" }: CardProductProps) {
@@ -93,6 +93,21 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     }
   }
 
+  async function deleteProduct() {
+    if (productValues.id_produto !== "") {
+      Alert.alert("Deletar produto?", `Deseja realmente deletar esse produto?`, [
+        {
+          text: "Cancelar"
+        },
+        {
+          text: "Confirmar",
+          onPress: async () => {
+            onDelete(productValues.id_produto);
+          }
+        }
+      ])
+    }
+  }
 
   if (modeCard === "view") {
     return (
@@ -185,10 +200,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             }} name={"arrow-back-outline"} size={35} color={colors.primary} />
             {
               user?.id_perfil === 1 &&
-              < Ionicons onPress={() => {
-                setFormValues(product)
-                setModeCard("details")
-              }} name={"trash-outline"} size={35} color={colors.error} />
+              < Ionicons onPress={deleteProduct} name={"trash-outline"} size={35} color={colors.error} />
             }
           </View>
         }

@@ -305,7 +305,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function deleteProduct(id_produto: string) {
-    const url = `${baseUrl}/producao/${id_produto}`
+    const url = `${baseUrl}/produto/${id_produto}`
 
     const request: any = await axios.delete(url).catch(function (error) {
       return { status: 571 }
