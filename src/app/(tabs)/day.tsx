@@ -70,6 +70,8 @@ export default function DayDetails() {
     useEffect(() => {
         async function getProductions(id_dia: string) {
             const request = await sync.getProduction(id_dia)
+            console.log(request);
+            
             setProductionList(request.response)
         }
 
@@ -84,7 +86,7 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            if (id_diaParams) {
+            if (id_diaParams) {                
                 getProductions(id_diaParams)
             }
         }
