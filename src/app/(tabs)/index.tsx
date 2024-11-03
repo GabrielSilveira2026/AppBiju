@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -15,6 +15,7 @@ import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import AddContainer from "@/src/components/AddContainer";
 
 type UserType = {
   nome: string;
@@ -31,6 +32,7 @@ export default function Profile() {
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
   const [searchDay, setSearchDay] = useState<string>("");
   const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [isAdding, setIsAdding] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
   const controller = new AbortController();
@@ -166,21 +168,21 @@ export default function Profile() {
           />
           {
             !userId &&
-            <View style={globalStyles.bottomAdd}>
-              <Ionicons
-                onPress={() => {
-                  router.navigate({
-                    pathname: '../(tabs)/day',
-                    params: {
-                      id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome,
-                    },
-                  });
-                }}
-                name="add-circle-outline"
-                color={colors.primary}
-                size={50} />
-            </View>
+            <AddContainer
+              text="Adicionar novo dia"
+              disable={isAdding}
+              onPress={() => {
+                setIsAdding(true)
+                router.navigate({
+                  pathname: '../(tabs)/day',
+                  params: {
+                    id_pessoa: user?.id_pessoa,
+                    pessoa: user?.nome,
+                  },
+                });
+                setIsAdding(false)
+              }}
+            />
           }
         </Animated.View>
       </SafeAreaView>

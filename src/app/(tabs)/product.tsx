@@ -1,3 +1,4 @@
+import AddContainer from "@/src/components/AddContainer";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -116,7 +117,7 @@ export default function Product() {
     await sync.deleteProduct(id_product)
     setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== id_product));
   }
-  
+
   function handleRemoveProduct(productId: string) {
     setIsCreating(false)
     setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
@@ -136,7 +137,7 @@ export default function Product() {
             style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
-            keyboardShouldPersistTaps= 'handled'
+            keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
                 <Ionicons
@@ -166,15 +167,11 @@ export default function Product() {
               />
             }
           />
-          <View style={globalStyles.bottomAdd}>
-            <Ionicons
-              onPress={handleCreateProduct}
-              name="add-circle-outline"
-              color={colors.primary}
-              size={50}
-              disabled={isCreating}
-            />
-          </View>
+          <AddContainer
+            text="Adicionar produto"
+            disable={isCreating}
+            onPress={handleCreateProduct}
+          />
         </View>
       </SafeAreaView>
     </ImageBackground>

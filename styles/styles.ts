@@ -23,7 +23,7 @@ export const globalStyles = StyleSheet.create({
         width: "100%",
         gap: 16,
     },
-    cardContainer:{
+    cardContainer: {
         borderRadius: 4,
         padding: 8,
         backgroundColor: colors.backgroundTertiary
@@ -45,11 +45,16 @@ export const globalStyles = StyleSheet.create({
         fontWeight: "regular",
         color: colors.text
     },
-    bottomAdd: {
+    containerButtonBottom: {
         flexDirection: "row",
         justifyContent: "flex-end",
         borderTopWidth: 1,
         borderTopColor: colors.primary,
         paddingTop: 8,
     },
+    buttonAdd: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4
+    }
 });

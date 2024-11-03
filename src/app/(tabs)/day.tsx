@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -13,6 +13,7 @@ import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
+import AddContainer from "@/src/components/AddContainer";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -283,15 +284,24 @@ export default function DayDetails() {
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    <View style={globalStyles.bottomAdd}>
-                        <Ionicons
-                            onPress={handleCreateProduction}
-                            name="add-circle-outline"
-                            color={colors.primary}
-                            size={50}
-                            disabled={isAdding}
-                        />
-                    </View>
+
+                    <AddContainer
+                        text="Adicionar produção"
+                        disable={isAdding}
+                        onPress={handleCreateProduction}
+                    />
+                    {/* <View style={globalStyles.containerButtonBottom}>
+                        <TouchableOpacity>
+                            <Text style={{ color: colors.primary, textDecorationLine: "underline" }}>Adicionar um novo dia</Text>
+                            <Ionicons
+                                onPress={handleCreateProduction}
+                                name="add-circle-outline"
+                                color={colors.primary}
+                                size={50}
+                                disabled={isAdding}
+                            />
+                        </TouchableOpacity>
+                    </View> */}
                 </View>
                 <View style={{ flexDirection: "row", width: "100%" }}>
                     {mode && mode !== 'view' && <Button style={{ flex: 1 }} title={"Salvar"} onPress={createDay} />}
