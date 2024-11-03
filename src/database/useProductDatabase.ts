@@ -179,6 +179,25 @@ export default function useProductDatabase() {
         }
     }
 
+    async function deleteProduct(id_produto: string) {
+        const statement = await database.prepareAsync(`
+            DELETE FROM producao 
+            WHERE id_produto = $id_produto
+        `);
+
+        try {
+            const result = await statement.executeAsync({
+                $id_produto: id_produto
+            });
+
+            return result.changes > 0;
+        } catch (error) {
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+        }
+    }
+
     async function updateProductList(productList: ProductType[]) {
         const statement = await database.prepareAsync(`
             INSERT INTO produto (
@@ -234,5 +253,5 @@ export default function useProductDatabase() {
         }
     }
 
-    return { postProduct, getProduct, updateProduct, updateProductList }
+    return { getProduct, postProduct, updateProduct, deleteProduct, updateProductList }
 }

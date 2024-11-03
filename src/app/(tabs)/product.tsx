@@ -115,6 +115,11 @@ export default function Product() {
     setIsCreating(false)
   }
 
+  async function handleDeleteProduct(id_product: string) {
+    await sync.deleteProduct(id_product)
+    setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== id_product));
+  }
+  
   function handleRemoveProduct(productId: string) {
     setIsCreating(false)
     setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));

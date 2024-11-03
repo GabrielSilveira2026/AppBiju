@@ -37,6 +37,7 @@ type SyncContextType = {
   getProduct: (name?: String | undefined) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
   updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
+  deleteProduct: (id_produto: string) => Promise<any>,
   getProduction: (id_dia?: string) => Promise<any>,
   postProduction: (production: ProductionType) => Promise<any>,
   updateProduction: (production: ProductionType) => Promise<any>,
@@ -303,6 +304,24 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
+  async function deleteProduct(id_produto: string) {
+    const url = `${baseUrl}/producao/${id_produto}`
+
+    const request: any = await axios.delete(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "DELETE", url: url });
+      const request = await productDatabase.deleteProduct(id_produto);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getProduct()
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   async function getProduction(id_dia?: string) {
     const requestRemote = await getProductionRemote(id_dia)
 
@@ -383,7 +402,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

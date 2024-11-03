@@ -3,7 +3,7 @@ import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "re
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -103,6 +103,10 @@ export default function Profile() {
       ]
     }
   })
+
+  if (user?.perfil === "Administrador" && !userId) {
+    return <Redirect href={"/employees"} />
+  }
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>

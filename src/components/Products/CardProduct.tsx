@@ -9,6 +9,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles } from '@/styles/styles';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
+import { useAuthContext } from '@/src/contexts/AuthContext';
 
 type CardProductProps = {
   product: ProductType;
@@ -16,9 +17,11 @@ type CardProductProps = {
   hourValue: number;
   onCancel?: () => void;
   onSave?: (product: ProductType, initialDate: Date) => void;
+  onDelete?: (id_product: string) => void
 };
 
-export default function CardProduct({ onSave, onCancel, hourValue, product, mode = "view" }: CardProductProps) {
+export default function CardProduct({ onSave, onCancel, onDelete, hourValue, product, mode = "view" }: CardProductProps) {
+  const { user } = useAuthContext()
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
   const [showPicker, setShowPicker] = useState<boolean>(false);
@@ -175,10 +178,19 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
       <View style={[globalStyles.cardContainer, { gap: 8 }]}>
         {
           modeCard === "edit" &&
-          < Ionicons onPress={() => {
-            setFormValues(product)
-            setModeCard("details")
-          }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+          <View style={styles.line}>
+            < Ionicons onPress={() => {
+              setFormValues(product)
+              setModeCard("details")
+            }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+            {
+              user?.id_perfil === 1 &&
+              < Ionicons onPress={() => {
+                setFormValues(product)
+                setModeCard("details")
+              }} name={"trash-outline"} size={35} color={colors.error} />
+            }
+          </View>
         }
         {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
         <View style={styles.line}>
@@ -232,7 +244,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
           <View style={styles.valueVertical}>
             <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-            <View style={{flexDirection: "row"}}>
+            <View style={{ flexDirection: "row" }}>
               <InputDuration
                 value={productValues.tempo_minuto}
                 onChange={(value) => handleInputChange('tempo_minuto', value)}
@@ -249,7 +261,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Text
               style={styles.textValue}>R$
               {
-                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2) 
+                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2)
               }
             </Text>
           </View>
