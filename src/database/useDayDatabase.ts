@@ -110,6 +110,34 @@ export default function useDayDatabase() {
         }
     }
     
+    async function deleteDay(dia: DayType) {
+        const statement = await database.prepareAsync(`
+            DELETE FROM dia 
+            WHERE id_dia = $id_dia
+        `);
+
+        const statementProduction = await database.prepareAsync(`
+            DELETE FROM producao 
+            WHERE id_dia = $id_dia
+        `);
+
+        try {
+            await statementProduction.executeAsync({
+                $id_dia: dia.id_dia
+            });
+            
+            const result = await statement.executeAsync({
+                $id_dia: dia.id_dia
+            });
+
+            return result.changes > 0;
+        } catch (error) {
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+            await statementProduction.finalizeAsync();
+        }
+    }
 
     async function updateDiaList(diaList: DayType[], id_pessoa?: number) {
 
@@ -157,5 +185,5 @@ export default function useDayDatabase() {
         }
     }
 
-    return { getDay, updateDay, updateDiaList, postDay }
+    return { deleteDay, getDay, updateDay, updateDiaList, postDay }
 }

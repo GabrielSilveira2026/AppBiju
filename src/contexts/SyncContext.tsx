@@ -35,6 +35,7 @@ type SyncContextType = {
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   updateDay: (dia: DayType) => Promise<any>,
+  deleteDay:(dia: DayType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
   updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
@@ -271,6 +272,25 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: responseData, origemDados: "Remoto" };
   }
 
+  async function deleteDay(day: DayType) {
+    const url = `${baseUrl}/dia/${day.id_dia}`
+
+    const request: any = await axios.delete(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "DELETE", url: url });
+      const request = await dayDatabase.deleteDay(day);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getDay(day.id_pessoa)
+    await getProduct()
+    await getProduction(day.id_dia)
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   async function getProduct(name?: String) {
 
     const request = await getProductRemote();
@@ -435,7 +455,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

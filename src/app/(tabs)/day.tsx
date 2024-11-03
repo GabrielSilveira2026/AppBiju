@@ -23,13 +23,15 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 
 export default function DayDetails() {
     const params = useLocalSearchParams();
-    const isFocused = useIsFocused();
     const { user } = useAuthContext()
+    const isFocused = useIsFocused();
     const sync = useSync();
     const controller = new AbortController();
 
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+
     const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
@@ -70,8 +72,7 @@ export default function DayDetails() {
     useEffect(() => {
         async function getProductions(id_dia: string) {
             const request = await sync.getProduction(id_dia)
-            console.log(request);
-            
+
             setProductionList(request.response)
         }
 
@@ -86,7 +87,7 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            if (id_diaParams) {                
+            if (id_diaParams) {
                 getProductions(id_diaParams)
             }
         }
@@ -135,7 +136,6 @@ export default function DayDetails() {
     }
 
     async function saveSay() {
-        const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
         if (!id_diaParams) {
             const id_dia = sync.nanoid()
             const response = await sync.postDay(parseInt(userId), localDate.toISOString(), id_dia);
@@ -143,9 +143,10 @@ export default function DayDetails() {
                 production.id_dia = id_dia
                 await sync.postProduction(production)
             }
+            setMode("view")
             router.replace({
                 pathname: '../(tabs)/day',
-                params: { ...response.response, pessoa: params.pessoa, id_dia: id_dia }
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia }
             });
         }
         else {
@@ -155,15 +156,37 @@ export default function DayDetails() {
                 data_dia_producao: localDate.toISOString()
             }
 
-            const request = await sync.updateDay(day)
+            await sync.updateDay(day)
+            
+            setMode("view")
 
             router.replace({
                 pathname: '../(tabs)/day',
-                params: { ...request.response, pessoa: params.pessoa, id_dia: id_diaParams }
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_diaParams }
             });
         }
         setMode("view");
 
+    }
+
+    async function deleteDay() {
+        Alert.alert("Excluir Dia?", `Deseja realmente excluir esse dia e todas as produções dele?`, [
+            {
+                text: "Cancelar"
+            },
+            {
+                text: "Confirmar",
+                onPress: async () => {
+                    const day: DayType = {
+                        id_dia: id_diaParams,
+                        id_pessoa: Number(params.id_pessoa),
+                        data_dia_producao: localDate.toISOString()
+                    }
+                    await sync.deleteDay(day)
+                    router.replace("/")
+                }
+            }
+        ])
     }
 
     function handleCreateProduction() {
@@ -261,14 +284,25 @@ export default function DayDetails() {
                                         />
                                     )}
                                 </View>
-                                {mode && mode !== "create" && Number(userId) === user?.id_pessoa && (
-                                    <Ionicons
-                                        onPress={() => setMode("edit")}
-                                        name={mode === "view" ? "create-outline" : "trash-outline"}
-                                        size={35}
-                                        color={mode === "view" ? colors.primary : colors.error}
-                                    />
-                                )}
+                                {
+                                    mode && Number(userId) === user?.id_pessoa &&
+                                        mode === "edit" ?
+                                        (
+                                            <Ionicons
+                                                onPress={deleteDay}
+                                                name={"trash-outline"}
+                                                size={35}
+                                                color={colors.error}
+                                            />
+                                        ) :
+                                        (
+                                            <Ionicons
+                                                onPress={() => setMode("edit")}
+                                                name={"create-outline"}
+                                                size={35}
+                                                color={colors.primary}
+                                            />
+                                        )}
                             </View>
                             <View style={styles.secondLine}>
                                 <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
@@ -310,7 +344,7 @@ export default function DayDetails() {
                 </View>
 
                 {
-                    mode && mode !== 'view' &&
+                    mode && mode !== 'view'  && Number(userId) === user?.id_pessoa && 
                     <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
                         <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
                         <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveSay} />
