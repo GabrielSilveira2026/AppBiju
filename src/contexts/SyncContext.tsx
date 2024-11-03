@@ -35,7 +35,7 @@ type SyncContextType = {
   getDay: (id_pessoa?: number | undefined) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   updateDay: (dia: DayType) => Promise<any>,
-  deleteDay:(dia: DayType) => Promise<any>,
+  deleteDay: (dia: DayType) => Promise<any>,
   getProduct: (name?: String | undefined) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
   updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
@@ -108,7 +108,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
       else if (operacaoPendente.metodo === "PUT") {
 
-        await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+        await axios.put(operacaoPendente.url, operacaoPendente.body, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).catch(function (error) {
           if (error.response) {
             console.warn(error.response)
             return
@@ -334,7 +338,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       "descricao": product.descricao?.trim(),
       "modificado_por": product.modificado_por,
       "nome": product.nome?.trim(),
-      "preco": product.preco,
+      "preco": product.preco || 0,
       "tempo_minuto": product.tempo_minuto,
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio

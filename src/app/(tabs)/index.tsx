@@ -40,7 +40,7 @@ export default function Profile() {
   const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
   async function getDataHeader() {
-    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(id_pessoa_params));
+    const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
 
     let { nome, total, ultimo_pagamento } = response.response[0];
 
@@ -151,7 +151,7 @@ export default function Profile() {
                   setIsSearch(!isSearch)
                 }}
               >
-                <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
+                {/* <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text> */}
               </Pressable>
             }
           </View>

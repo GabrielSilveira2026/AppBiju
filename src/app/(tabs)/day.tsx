@@ -28,7 +28,11 @@ export default function DayDetails() {
     const sync = useSync();
     const controller = new AbortController();
 
-    const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
+    const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+
+    const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
+
+    const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(id_dia_params ? "view" : "create");
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
 
@@ -39,10 +43,6 @@ export default function DayDetails() {
     const [productionList, setProductionList] = useState<ProductionType[]>([])
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
-    const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
-
-    const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -107,21 +107,15 @@ export default function DayDetails() {
             setMode("view");
         } else {
             if (!id_dia_params && productionList.length > 0) {
-                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja salva-las?", [
+                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja sair sem salva-las?", [
                     {
-                        text: "Salvar",
-                        onPress: async () => {
-                            saveDay();
-                        }
+                         text: "Cancelar"
                     },
                     {
-                        text: "Não salvar",
+                        text: "Sair sem salvar",
                         onPress: async () => {
                             router.navigate("/");
                         }
-                    },
-                    {
-                        text: "Cancelar"
                     }
                 ])
             }
@@ -135,10 +129,6 @@ export default function DayDetails() {
         if (!id_dia_params) {
             const id_dia = new_id ? new_id : sync.nanoid()
             const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
-            // for (const production of productionList) {
-            //     production.id_dia = id_dia
-            //     await sync.postProduction(production)
-            // }
             setMode("view")
             console.log({ id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia });
 
@@ -294,6 +284,7 @@ export default function DayDetails() {
                                                 color={colors.error}
                                             />
                                         ) :
+                                        mode === "view" &&
                                         (
                                             <Ionicons
                                                 onPress={() => setMode("edit")}
@@ -328,7 +319,7 @@ export default function DayDetails() {
                                 onRemove={handleDeleteProduction}
                             />
                         }
-                        style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
+                        style={{ marginBottom: isKeyboardVisible ? 260 : 0 }}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
