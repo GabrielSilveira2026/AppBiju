@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, Text } from 'react-native';
 import { TimerPickerModal } from 'react-native-timer-picker';
 import { Input } from './Input';
 import { formatMinutesToHours } from '../utils/utils';
@@ -19,21 +19,15 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
         setShowPicker(false)
     };
 
-    console.log(value);
-    
+    const initialHours = Math.floor(value / 60);
+    const initialMinutes = value % 60;
 
     const togglePicker = () => setShowPicker(prev => !prev);
 
     return (
-        <Pressable onPress={togglePicker} style={styles.container}>
-            <Pressable onPress={togglePicker}>
-                <Input
-                    placeholder="Tempo"
-                    value={formatMinutesToHours(value)}
-                    onChangeText={() => { }}
-                    editable={false}
-                    inputStyle={{ flex: 1, textAlign: "center" }}
-                />
+        <View style={styles.container}>
+            <Pressable style={styles.button} onPress={togglePicker}>
+                <Text style={styles.inputValue}>{formatMinutesToHours(value)}</Text>
             </Pressable>
             <TimerPickerModal
                 visible={showPicker}
@@ -41,30 +35,39 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
                 onConfirm={handleTimeSelection}
                 onCancel={() => setShowPicker(false)}
                 hideSeconds
-                initialHours={value}
+                initialHours={initialHours}
+                initialMinutes={initialMinutes}
                 cancelButtonText='Cancelar'
                 confirmButtonText='  Salvar  '
                 styles={{
                     theme: 'dark',
-                    confirmButton: styles.button,
-                    cancelButton: styles.button
+                    confirmButton: styles.buttons,
+                    cancelButton: styles.buttons
                 }}
             />
-        </Pressable>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flexGrow: 1
+    },
+    button: {
+        flex: 1,
+        justifyContent: "center",
+        backgroundColor: colors.backgroundInput,
+        borderBottomColor: colors.text,
+        borderBottomWidth: 1,
+        borderRadius: 4,
     },
     inputValue: {
         fontSize: 16,
         padding: 8,
         color: colors.text,
-        textAlign: 'center', // Centraliza o texto
+        textAlign: 'center',
     },
-    button: {
+    buttons: {
         backgroundColor: "transparent",
         borderColor: colors.primary,
         borderWidth: 1,

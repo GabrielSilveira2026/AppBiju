@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles } from '@/styles/styles';
+import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 
 type CardProductProps = {
@@ -22,7 +23,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
   const [alert, setAlert] = useState<string>("")
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [initialDate, setInitialDate] = useState<Date>(new Date());
-  const [formValues, setFormValues] = useState<ProductType>(product);
+  const [productValues, setFormValues] = useState<ProductType>(product);
 
   useEffect(() => {
     setFormValues(product)
@@ -58,26 +59,26 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
   async function saveProduct() {
 
-    if (!formValues.nome.trim()) {
+    if (!productValues.nome.trim()) {
       setAlert("O campo Nome é obrigatório.");
       return;
     }
 
-    if (!formValues.cod_referencia) {
+    if (!productValues.cod_referencia) {
       setAlert("O campo Código é obrigatório.");
       return;
     }
 
-    if (formValues.tempo_minuto <= 0) {
+    if (productValues.tempo_minuto <= 0) {
       setAlert("O campo Tempo de Produção deve ser maior que zero.");
       return;
     }
 
     if (onSave) {
       setAlert("");
-      if (formValues.id_produto === "") {
+      if (productValues.id_produto === "") {
         setModeCard("view");
-        onSave(formValues, initialDate);
+        onSave(productValues, initialDate);
       }
       else {
         Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
@@ -88,7 +89,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             text: "Confirmar",
             onPress: async () => {
               setModeCard("view");
-              onSave(formValues, initialDate);
+              onSave(productValues, initialDate);
             }
           }
         ])
@@ -103,10 +104,10 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
         <View style={styles.line}>
           <View style={styleViews.nameAndCode}>
             <View style={styleViews.textContainer}>
-              <Text style={styles.textValue}>{formValues.nome}</Text>
+              <Text style={styles.textValue}>{productValues.nome}</Text>
             </View>
             <View style={styleViews.textContainer}>
-              <Text style={styles.textValue}>Cod. {formValues.cod_referencia}</Text>
+              <Text style={styles.textValue}>Cod. {productValues.cod_referencia}</Text>
             </View>
           </View>
           <View style={styles.valueVertical}>
@@ -118,7 +119,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Text
               style={styles.textValue}>R$
               {
-                !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
+                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2)
               }
             </Text>
           </View>
@@ -138,24 +139,24 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
           </View>
           <View style={styles.line}>
-            <Text style={[styles.textValue, { flex: 1 }]}>{formValues.nome}</Text>
-            <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{formValues.cod_referencia}</Text>
+            <Text style={[styles.textValue, { flex: 1 }]}>{productValues.nome}</Text>
+            <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{productValues.cod_referencia}</Text>
           </View>
           <View style={styles.line}>
             <View style={stylesCreateAndEdit.textDescription}>
-              <Text style={[styles.textValue, { fontSize: 14 }]}>{formValues.descricao}</Text>
+              <Text style={[styles.textValue, { fontSize: 14 }]}>{productValues.descricao}</Text>
             </View>
           </View>
           <View style={styles.line}>
 
             <View style={styles.valueVertical}>
               <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
-              <Text style={styles.textValue}>R${(Number(formValues.preco).toFixed(2))}</Text>
+              <Text style={styles.textValue}>R${(Number(productValues.preco).toFixed(2))}</Text>
             </View>
 
             <View style={styles.valueVertical}>
               <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-              <Text style={styles.textValue}>{String(formatTime(formValues.tempo_minuto).padStart(2, '0'))}</Text>
+              <Text style={styles.textValue}>{formatMinutesToHours(productValues.tempo_minuto)}</Text>
             </View>
 
             <View style={styles.valueVertical}>
@@ -167,7 +168,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
               <Text
                 style={styles.textValue}>R$
                 {
-                  !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
+                  !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2)
                 }
               </Text>
             </View>
@@ -176,13 +177,16 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
       </View>
     )
   }
-  else {
+  else { //Create and Edit
     return (
       <View style={[globalStyles.cardContainer, { gap: 8 }]}>
-        <Ionicons onPress={() => {
-          setFormValues(product)
-          setModeCard("details")
-        }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+        {
+          modeCard === "edit" &&
+          < Ionicons onPress={() => {
+            setFormValues(product)
+            setModeCard("details")
+          }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+        }
         {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
         <View style={styles.line}>
           <View style={{ flex: 2 }}>
@@ -190,7 +194,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
               placeholder="Nome do produto"
               label="Nome"
               placeholderTextColor={colors.textInput}
-              value={formValues.nome}
+              value={productValues.nome}
               onChangeText={value => handleInputChange('nome', value)}
               style={[styles.inputValue, { flex: 1 }]}
               multiline
@@ -200,7 +204,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Input
               placeholder="Código"
               label="Código"
-              value={formValues.cod_referencia.toString()}
+              value={productValues.cod_referencia.toString()}
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               keyboardType="numeric"
               style={[styles.inputValue]}
@@ -211,7 +215,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
         <View style={styles.line}>
           <Input
             placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
-            value={formValues.descricao}
+            value={productValues.descricao}
             label="Descrição"
             multiline
             style={[styles.inputValue, stylesCreateAndEdit.textDescription]}
@@ -224,7 +228,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
             <Input
               placeholder="Preço"
-              value={formValues.preco.toString()}
+              value={productValues.preco.toString()}
               onChangeText={handlePriceInputChange}
               keyboardType="numbers-and-punctuation"
               selectTextOnFocus={true}
@@ -236,7 +240,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
           <View style={styles.valueVertical}>
             <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
             <InputDuration
-              value={formValues.tempo_minuto}
+              value={productValues.tempo_minuto}
               onChange={(value) => handleInputChange('tempo_minuto', value)}
             />
           </View>
@@ -250,7 +254,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Text
               style={styles.textValue}>R$
               {
-                !isNaN(formValues.preco) && ((hourValue / 60) * formValues.tempo_minuto + Number(formValues.preco)).toFixed(2)
+                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2)
               }
             </Text>
           </View>
@@ -267,14 +271,16 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             </View>
           </Pressable>
         }
-        {showPicker && (
-          <DateTimePicker
-            value={initialDate || new Date()}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
+        {
+          showPicker && (
+            <DateTimePicker
+              value={initialDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )
+        }
         <View style={styles.buttonsContainer}>
           {
             modeCard === "create" &&
@@ -293,7 +299,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             title="Salvar"
             onPress={saveProduct} />
         </View>
-      </View>
+      </View >
     )
   }
 }
