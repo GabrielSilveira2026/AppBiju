@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Pressable, StyleSheet, Text } from 'react-native';
+import { View, Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { TimerPickerModal } from 'react-native-timer-picker';
 import { Input } from './Input';
 import { formatMinutesToHours } from '../utils/utils';
@@ -26,9 +26,9 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
 
     return (
         <View style={styles.container}>
-            <Pressable style={styles.button} onPress={togglePicker}>
+            <TouchableOpacity style={styles.button} onPress={togglePicker}>
                 <Text style={styles.inputValue}>{formatMinutesToHours(value)}</Text>
-            </Pressable>
+            </TouchableOpacity>
             <TimerPickerModal
                 visible={showPicker}
                 setIsVisible={setShowPicker}

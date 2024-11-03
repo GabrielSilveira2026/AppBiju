@@ -19,7 +19,7 @@ export default function useProductDatabase() {
                        p.data_modificado, 
                        p.modificado_por, 
                        p.ultimo_valor,
-                       (IFNULL(par.valor, 0) / 60 * p.tempo_minuto + p.preco) AS valor_unidade
+                       ROUND((IFNULL(par.valor, 0) / 60 * p.tempo_minuto + p.preco), 2) AS valor_unidade
                    FROM 
                        produto p
                    LEFT JOIN 
@@ -30,23 +30,26 @@ export default function useProductDatabase() {
                    ORDER BY 
                        p.nome ASC`
                 : `SELECT 
-                       p.id_produto, 
-                       p.cod_referencia, 
-                       p.nome, 
-                       p.descricao,
-                       p.preco, 
-                       p.tempo_minuto, 
-                       p.data_modificado, 
-                       p.modificado_por, 
-                       p.ultimo_valor,
-                       (IFNULL(par.valor, 0) / 60 * p.tempo_minuto + p.preco) AS valor_unidade
-                   FROM 
-                       produto p
-                   LEFT JOIN 
-                       parametro par 
-                       ON par.id_parametro = 1
-                   ORDER BY 
-                       p.nome ASC`;
+                        p.ID_PRODUTO, 
+                        p.COD_REFERENCIA, 
+                        p.NOME, 
+                        p.DESCRICAO,
+                        p.PRECO, 
+                        p.TEMPO_MINUTO, 
+                        p.DATA_MODIFICADO, 
+                        p.MODIFICADO_POR, 
+                        p.ULTIMO_VALOR,
+                        ROUND((IFNULL(par.VALOR, 0) / 60 * p.TEMPO_MINUTO + p.PRECO), 2) AS valor_unidade
+                    FROM 
+                        PRODUTO p
+                    LEFT JOIN 
+                        PARAMETRO par 
+                        ON par.ID_PARAMETRO = 1  -- ID do parâmetro especificado
+                    WHERE
+                        (:id_produto IS NULL OR p.ID_PRODUTO = :id_produto)
+                    ORDER BY 
+                        p.NOME ASC;
+                    `;
 
             const response = id_produto
                 ? await database.getAllAsync<ProductType>(result, [id_produto])

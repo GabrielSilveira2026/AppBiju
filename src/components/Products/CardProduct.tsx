@@ -50,13 +50,6 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
     handleInputChange('preco', formattedValue);
   }
 
-  function formatTime(tempoMinuto: number): string {
-    const minutes = Math.floor(tempoMinuto / 60);
-    const seconds = tempoMinuto % 60;
-
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  }
-
   async function saveProduct() {
 
     if (!productValues.nome.trim()) {
@@ -239,10 +232,12 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
 
           <View style={styles.valueVertical}>
             <Text style={styles.titleText}>Tempo{"\n"}produção:</Text>
-            <InputDuration
-              value={productValues.tempo_minuto}
-              onChange={(value) => handleInputChange('tempo_minuto', value)}
-            />
+            <View style={{flexDirection: "row"}}>
+              <InputDuration
+                value={productValues.tempo_minuto}
+                onChange={(value) => handleInputChange('tempo_minuto', value)}
+              />
+            </View>
           </View>
 
           <View style={styles.valueVertical}>
@@ -254,7 +249,7 @@ export default function CardProduct({ onSave, onCancel, hourValue, product, mode
             <Text
               style={styles.textValue}>R$
               {
-                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2)
+                !isNaN(productValues.preco) && ((hourValue / 60) * productValues.tempo_minuto + Number(productValues.preco)).toFixed(2) 
               }
             </Text>
           </View>

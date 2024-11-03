@@ -97,6 +97,9 @@ export default function Product() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
+    console.log(product);
+    
+
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
