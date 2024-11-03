@@ -7,6 +7,7 @@ import Button from '../Button';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { globalStyles } from '@/styles/styles';
 
 type HourContainerProps = {
     hourValueProp: string;
@@ -51,7 +52,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
     }
 
     return (
-        <View style={styles.hourContainer}>
+        <View style={[globalStyles.cardContainer, { gap: 12 }]}>
             <View style={styles.firstLine}>
                 {modeHourValue === "edit" && (
                     <Ionicons onPress={() => {
@@ -73,7 +74,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                         />
                     </View>
                 )}
-                {user?.id_perfil !== 1 && modeHourValue === "view" && (
+                {user?.id_perfil !== 3 && modeHourValue === "view" && (
                     <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
                 )}
             </View>
@@ -104,12 +105,6 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
 }
 
 const styles = StyleSheet.create({
-    hourContainer: {
-        padding: 8,
-        borderRadius: 4,
-        backgroundColor: colors.backgroundTertiary,
-        gap: 12
-    },
     firstLine: {
         flexDirection: "row",
         justifyContent: "center",

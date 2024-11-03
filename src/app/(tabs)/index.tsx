@@ -3,7 +3,7 @@ import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "re
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -37,22 +37,29 @@ export default function Profile() {
 
   const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
+  async function getDataHeader() {
+    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
+
+    let { nome, total, ultimo_pagamento } = response.response[0];
+
+    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+
+    setUserData({ nome, total, ultimo_pagamento });
+  }
+
+  async function getDataDays() {
+    await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
+
+    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
+
+    for (const day of response.response) {
+      await sync.getProduction(day.id_dia);
+    }
+
+    setDayList(response.response);
+  }
+
   useEffect(() => {
-    async function getDataHeader() {
-      const response = await sync.getPendingPayment(parseInt(userId) || user?.id_pessoa);
-
-      let { nome, total, ultimo_pagamento } = response.response[0];
-
-      ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
-
-      setUserData({ nome, total, ultimo_pagamento });
-    }
-
-    async function getDataDays() {
-      const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
-      setDayList(response.response);
-    }
-
     if (isFocused) {
       getDataHeader();
       getDataDays();
@@ -75,7 +82,7 @@ export default function Profile() {
     daysPosition.value = withTiming(0, {
       duration: 1000,
     })
-  }, [isFocused])
+  }, [])
 
   const headerStyle = useAnimatedStyle(() => {
     return {
@@ -96,6 +103,10 @@ export default function Profile() {
       ]
     }
   })
+
+  if (user?.perfil === "Administrador" && !userId) {
+    return <Redirect href={"/employees"} />
+  }
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -143,15 +154,19 @@ export default function Profile() {
             }
           </View>
           <FlatList
+            refreshing={false}
+            onRefresh={() => {
+              getDataDays()
+            }}
             data={isSearch ? dayList : dayList?.slice(0, 15)}
-            ListEmptyComponent={<Text style={[globalStyles.title, {margin: "auto"}]}>Nenhum dia produzido ainda</Text>}
+            ListEmptyComponent={<Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text>}
             contentContainerStyle={{ gap: 12 }}
-            keyExtractor={(day) => day.id_dia.toString()}
+            keyExtractor={(day) => day?.id_dia}
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {
             !userId &&
-            <View style={globalStyles.bottomDias}>
+            <View style={globalStyles.bottomAdd}>
               <Ionicons
                 onPress={() => {
                   router.navigate({

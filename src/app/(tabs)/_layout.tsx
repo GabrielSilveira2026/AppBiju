@@ -37,8 +37,16 @@ export default function AppLayout() {
         name="index"
         options={{
           headerShown: false,
-          href: user?.perfil === "Funcionario" ? `/?${user?.id_pessoa}` : null,
+          href: user?.perfil !== "Administrador" ? `/?${user?.id_pessoa}` : null,
           tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary} />
+        }}
+      />
+      <Tabs.Screen
+        name="employees"
+        options={{
+          headerShown: false,
+          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary} />
         }}
       />
       <Tabs.Screen
@@ -51,23 +59,15 @@ export default function AppLayout() {
       <Tabs.Screen
         name="day"
         options={{
+          href: null,
           headerShown: false,
           tabBarIcon: () => <Ionicons name="calendar-outline" size={35} color={colors.primary} />,
-        }}
-      />
-      <Tabs.Screen
-        name="employees"
-        options={{
-          headerShown: false,
-          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
-          tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary} />
         }}
       />
       <Tabs.Screen
         name="log"
         options={{
           headerShown: false,
-          // href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />

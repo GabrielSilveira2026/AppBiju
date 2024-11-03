@@ -65,9 +65,6 @@ export default function useParamDatabase() {
         }
     }
     
-
-
-
     async function updateParamList(paramList: ParamType[], id_parametro?: number) {
         const statementDelete = await database.prepareAsync(`DELETE FROM parametro`);
 

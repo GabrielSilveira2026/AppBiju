@@ -4,7 +4,7 @@ import { colors } from '../../styles/color';
 
 type ButtonProps = {
   title: string;
-  onPress?: () => Promise<void>;
+  onPress?: () => Promise<void> | void;
   style?: ViewStyle;
   textStyle?: TextStyle;
 };
@@ -13,7 +13,7 @@ const Button: React.FC<ButtonProps> = ({ title, onPress, style, textStyle }) => 
   const [isloading, setIsloading] = useState(false);
 
   const handlePress = async () => {
-    
+
     if (onPress) {
       setIsloading(true);
       try {
@@ -40,14 +40,14 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderColor: colors.primary,
     borderWidth: 1,
-    paddingVertical: 8,      
-    borderRadius: 4,            
-    alignItems: 'center',       
-    justifyContent: 'center',   
+    paddingVertical: 8,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
-    color: colors.primary,    
-    fontSize: 16,      
+    color: colors.primary,
+    fontSize: 16,
     fontWeight: 'semibold',
   },
 });

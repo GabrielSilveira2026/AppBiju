@@ -4,6 +4,22 @@ import { UserType } from "../types/types";
 export default function usePeopleDatabase() {
     const database = useSQLiteContext();
 
+    async function getPeople(id_pessoa?: number) {
+        try {
+            const result = id_pessoa
+                ? `SELECT * FROM pessoa WHERE id_pessoa = $id_pessoa ORDER BY nome`
+                : `SELECT * FROM pessoa ORDER BY nome`;
+
+            const response = id_pessoa
+                ? await database.getAllAsync<UserType>(result, { $id_pessoa: id_pessoa })
+                : await database.getAllAsync<UserType>(result);
+
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async function postPeople(user: UserType) {
         const statement = await database.prepareAsync(`
             INSERT INTO pessoa (
@@ -34,24 +50,7 @@ export default function usePeopleDatabase() {
         }
     }
     
-
-    async function getPeople(id_pessoa?: number) {
-        try {
-            const result = id_pessoa
-                ? `SELECT * FROM pessoa WHERE id_pessoa = $id_pessoa ORDER BY nome`
-                : `SELECT * FROM pessoa ORDER BY nome`;
-
-            const response = id_pessoa
-                ? await database.getAllAsync<UserType>(result, { $id_pessoa: id_pessoa })
-                : await database.getAllAsync<UserType>(result);
-
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async function updateUser(user: UserType) {
+    async function updatePeople(user: UserType) {
         const statement = await database.prepareAsync(`
             UPDATE pessoa
             SET 
@@ -119,5 +118,5 @@ export default function usePeopleDatabase() {
         }
     }
     
-    return { getPeople, updatePeopleList, updateUser, postPeople };
+    return { getPeople, updatePeopleList, updatePeople, postPeople };
 }

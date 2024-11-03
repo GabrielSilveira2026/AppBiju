@@ -17,20 +17,3 @@ export function getProduct(name?: string) {
     });
   return response
 }
-
-export async function postProduct(url: string) {
-    const response = await axios.post(url).catch(function (error) {
-        return {status: 571}
-        if (error.response) {
-          return error.response
-
-        } else if (error.request) {
-          return error.request;
-
-        } else {
-          return error.message;
-
-        }
-      });
-    return response
-}

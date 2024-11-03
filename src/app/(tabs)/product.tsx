@@ -22,11 +22,12 @@ export default function Product() {
   const [isCreating, setIsCreating] = useState<boolean>(false)
   const controller = new AbortController();
 
+  async function getProductList() {
+    const request = await sync.getProduct();
+    setProductList(request.response);
+  }
+
   useEffect(() => {
-    async function getProductList() {
-      const request = await sync.getProduct();
-      setProductList(request.response);
-    }
 
     async function getHourValue() {
       const request = await sync.getHourValue();
@@ -34,9 +35,9 @@ export default function Product() {
     }
 
     if (isFocused) {
-      getProductList();
-      getHourValue();
       setIsCreating(false)
+      getHourValue();
+      getProductList();
     }
 
     return () => {
@@ -45,7 +46,7 @@ export default function Product() {
       }
       controller.abort();
     };
-  }, [isFocused]);
+  }, []);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -64,7 +65,6 @@ export default function Product() {
     };
   }, []);
 
-
   async function updateHourValue(newHourValue: string, initialDate: string) {
     const request = await sync.updateHourValue(Number(newHourValue), initialDate);
     if (request.response.status === 200) {
@@ -75,8 +75,9 @@ export default function Product() {
   function handleCreateProduct() {
     if (!isCreating) {
       setIsCreating(true)
+
       const newProduct: ProductType = {
-        id_produto: 0,
+        id_produto: "",
         cod_referencia: "",
         nome: '',
         descricao: '',
@@ -96,21 +97,27 @@ export default function Product() {
   async function handleSaveProduct(product: ProductType, initialDate: Date) {
     setIsCreating(true)
 
-    if (product.id_produto === 0) {
+    if (product.id_produto === "") {
+      product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
 
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
 
-      setProductList((prevProductList) => prevProductList.filter(p => p?.id_produto !== 0));
+      setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
-      await sync.uptdateProduct(product.id_produto, initialDate.toLocaleDateString(), product)
+      await sync.updateProduct(initialDate.toLocaleDateString(), product)
     }
 
     setIsCreating(false)
   }
 
-  function handleRemoveProduct(productId: number) {
+  async function handleDeleteProduct(id_product: string) {
+    await sync.deleteProduct(id_product)
+    setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== id_product));
+  }
+  
+  function handleRemoveProduct(productId: string) {
     setIsCreating(false)
     setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
   }
@@ -119,13 +126,17 @@ export default function Product() {
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
-
-
           <FlatList
             data={productList}
-            style={{ marginBottom: productList.length < 3 && isKeyboardVisible ? 280 : 0 }}
+            refreshing={false}
+            onRefresh={() => {
+              setIsCreating(false)
+              getProductList()
+            }}
+            style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
+            keyboardShouldPersistTaps= 'handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
                 <Ionicons
@@ -146,15 +157,16 @@ export default function Product() {
             }
             renderItem={({ item }) =>
               <CardProduct
-                mode={item.id_produto !== 0 ? "view" : "create"}
+                mode={item.id_produto ? "view" : "create"}
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
                 onCancel={() => handleRemoveProduct(item.id_produto)}
+                onDelete={() => handleDeleteProduct(item.id_produto)}
               />
             }
           />
-          <View style={globalStyles.bottomDias}>
+          <View style={globalStyles.bottomAdd}>
             <Ionicons
               onPress={handleCreateProduct}
               name="add-circle-outline"

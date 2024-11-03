@@ -13,6 +13,18 @@ export type PendingOperationType = {
 export default function usePendingOperationDatabase() {
     const database = useSQLiteContext();
 
+    async function getPendingOperation() {
+        try {
+            const result = "SELECT * FROM operacoes_pendentes"
+
+            const response = await database.getAllAsync<PendingOperationType>(result)
+
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
     async function postPendingOperation(operacao: Omit<PendingOperationType, "id_operacoes_pendentes">) {
         const statement = await database.prepareAsync(`
             INSERT INTO operacoes_pendentes (
@@ -48,18 +60,6 @@ export default function usePendingOperationDatabase() {
         }
     }
 
-    async function getPendingOperation() {
-        try {
-            const result = "SELECT * FROM operacoes_pendentes"
-
-            const response = await database.getAllAsync<PendingOperationType>(result)
-
-            return response
-        } catch (error) {
-            throw error
-        }
-    }
-
     async function getPendingOperationNotSinc() {
         try {
             const result = "SELECT * FROM operacoes_pendentes WHERE sincronizado = 0"
@@ -88,5 +88,6 @@ export default function usePendingOperationDatabase() {
             throw error;
         }
     }
+    
     return { postPendingOperation, getPendingOperation, getPendingOperationNotSinc, brandSincPendingOperation };
 }

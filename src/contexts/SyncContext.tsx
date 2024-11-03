@@ -2,33 +2,46 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, 
 import NetInfo from '@react-native-community/netinfo';
 import useProductDatabase from '../database/useProductDatabase';
 import useDayDatabase from '../database/useDayDatabase';
-import { getProduct as getProductRemote, postProduct as postProductRemote } from '../httpservices/product';
+import { getProduct as getProductRemote } from '../httpservices/product';
 import { getDay as getDayRemote } from '../httpservices/day';
 import { getPending as getPendingRemote } from '../httpservices/payment';
+import { getProduction as getProductionRemote } from '../httpservices/production';
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
-import { ProductType } from '../types/types';
+import { ProductionType, ProductType } from '../types/types';
 import { useAuthContext } from './AuthContext';
 import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
 import useParamDatabase from '../database/useParamDatabase';
+import { Text, View } from 'react-native';
+import 'react-native-get-random-values'
+import { customAlphabet } from 'nanoid'
+import useProductionDatabase from '../database/useProductionDatabase';
+
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
 type SyncContextType = {
+  syncData: () => Promise<void>,
+  isConnected: boolean | null,
+  nanoid: (size?: number) => string,
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
-  isConnected: boolean | null;
-  syncData: () => Promise<void>;
-  uptdateProduct: (id_produto: number, data_inicio: string, produto: ProductType) => Promise<any>,
-  postProduct: (product: Omit<ProductType, "id_produto">) => Promise<any>,
-  getProduct: (name?: String | undefined) => Promise<any>,
-  getDay: (id_pessoa?: number | undefined) => Promise<any>,
-  updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getHourValue: (id_parametro?: number | undefined) => Promise<any>,
-  postDay: (id_pessoa: number, data_dia_producao: string) => Promise<any>,
-  getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>
+  updateHourValue: (valor: number, data_inicio: string) => Promise<any>
+  getPeople: (id_pessoa?: number | undefined) => Promise<any>,
+  getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>,
+  getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
+  getProduct: (name?: String | undefined) => Promise<any>,
+  postProduct: (product: ProductType) => Promise<any>,
+  updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
+  deleteProduct: (id_produto: string) => Promise<any>,
+  getProduction: (id_dia?: string) => Promise<any>,
+  postProduction: (production: ProductionType) => Promise<any>,
+  updateProduction: (production: ProductionType) => Promise<any>,
+  deleteProduction: (production: ProductionType) => Promise<any>,
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -36,18 +49,21 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
+  const nanoid = customAlphabet('1234567890abcdef', 6)
+
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
   const paramDatabase = useParamDatabase();
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
+  const productionDatabase = useProductionDatabase()
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-    syncData();
+    // syncData();
 
     return () => {
       unsubscribe();
@@ -60,47 +76,74 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isConnected]);
 
-  const syncData = async () => {
+  async function syncData() {
+
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
-      try {
-        if (operacaoPendente.metodo === "POST") {
-          try {
-            await axios.post(operacaoPendente.url, operacaoPendente?.body)
-            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-          } catch (error) {
-            return;
+      if (operacaoPendente.metodo === "POST") {
+
+        await axios.post(operacaoPendente.url)
+          .catch(function (error) {
+            if (error.response) {
+              // A resposta foi recebida, mas o status é de erro
+              console.warn("Erro de resposta:", error.response.status, error.response.data);
+              return
+            } else if (error.request) {
+              // A requisição foi feita, mas nenhuma resposta foi recebida
+              console.warn("Erro de requisição:", error.request);
+              return
+            } else {
+              // Outro erro aconteceu na configuração da requisição
+              return
+              console.warn("Erro:", error.message);
+            }
+          });
+
+
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+
+      }
+      else if (operacaoPendente.metodo === "PUT") {
+
+        await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
+          if (error.response) {
+            console.warn(error.response)
+            return
+          } else if (error.request) {
+            console.warn(error.request)
+            return
+          } else {
+            console.warn(error.message)
+            return
           }
+        });
 
-        } else if (operacaoPendente.metodo === "PUT") {
-          try {
-            await axios.put(operacaoPendente.url, operacaoPendente.body).catch(function (error) {
-              if (error.response) {
-                console.log(error.response)
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
-              } else if (error.request) {
-                console.log(error.request)
-
-              } else {
-                console.log(error.message)
-              }
-            });
-            pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-          } catch (error) {
-            return;
+      } else if (operacaoPendente.metodo === "DELETE") {
+        await axios.delete(operacaoPendente.url).catch(function (error) {
+          if (error.response) {
+            console.warn(error.response)
+            return
+          } else if (error.request) {
+            console.warn(error.request)
+            return
+          } else {
+            console.warn(error.message)
+            return
           }
+        });
 
-        } else if (operacaoPendente.metodo === "DELETE") {
+        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
-        }
-      } catch (error) {
-        console.error(`Erro ao sincronizar operação pendente: ${error}`);
       }
     }
 
     await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
     await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
+    await getHourValue();
+    await getProduct();
   };
 
   async function getHourValue() {
@@ -126,14 +169,17 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     if (response.status === 571) {
       await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body });
       const response = await paramDatabase.updateParam(1, data_inicio, valor);
-      return { response: { status: response.status }, origemDados: "Remoto" };
+      return { response: { status: response.status }, origemDados: "Local" };
     }
+
+    await getHourValue()
 
     return { response: { status: response.status }, origemDados: "Remoto" };
   }
 
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
+
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
       return { response: response, origemDados: "Local" }
@@ -141,7 +187,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await peopleDatabase.updatePeopleList(response.data.items)
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    const localData = await peopleDatabase.getPeople(id_pessoa)
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
   async function getPendingPayment(id_pessoa?: number) {
@@ -158,21 +206,22 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function getDay(id_pessoa?: number) {
+    const request = await getDayRemote(id_pessoa);
 
-    const response = await getDayRemote(id_pessoa);
-
-    if (response.status === 571) {
-      const response = await dayDatabase.getDay(id_pessoa)
-      return { response: response, origemDados: "Local" }
+    if (request.status === 571) {
+      const localData = await dayDatabase.getDay(id_pessoa)
+      return { response: localData, origemDados: "Local" }
     }
 
-    await dayDatabase.updateDiaList(response.data.items, id_pessoa)
+    await dayDatabase.updateDiaList(request.data.items, id_pessoa)
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    const localData = await dayDatabase.getDay(id_pessoa)
+
+    return { response: request.data.items, origemDados: "Remoto" };
   }
 
-  async function postDay(id_pessoa: number, data_dia_producao: string) {
-    const url = `${baseUrl}/dia/?id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
+  async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
+    const url = `${baseUrl}/dia/?id_dia=${id_dia}&id_pessoa=${id_pessoa}&data_dia_producao=${data_dia_producao}`
 
     const response: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
@@ -180,79 +229,183 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (response.status === 571) {
       pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      // return await dayDatabase.postDay(id_pessoa, data_dia_producao);
-    }
-    let data = {
-      "data_dia_producao": response.data.data_dia_producao,
-      "id_dia": response.data.id_dia,
-      "id_pessoa": response.data.id_pessoa
-    }
-    return { response: data, origemDados: "Remoto" };
-  }
-
-  async function postProduct(produto: Omit<ProductType, "id_produto">) {
-    const url = `${baseUrl}/produto/?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
-
-    const response: any = await axios.post(url).catch(function (error) {
-      return { status: 571 }
-    });
-
-    if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      const response = await productDatabase.postProduct(produto);
-      return { response: response, origemDados: "Local" }
+      return await dayDatabase.postDay({ id_pessoa, data_dia_producao, id_dia });
     }
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    await getDay(id_pessoa)
+
+    return { response: response, origemDados: "Remoto" };
   }
 
   async function getProduct(name?: String) {
 
-    const response = await getProductRemote();
+    const request = await getProductRemote();
 
-    if (response.status === 571) {
-      const response = await productDatabase.getProduct()
-      return { response: response, origemDados: "Local" }
+    if (request.status === 571) {
+      const request = await productDatabase.getProduct()
+      return { response: request, origemDados: "Local" }
     }
 
-    await productDatabase.updateProductList(response.data.items)
+    await productDatabase.updateProductList(request.data.items)
 
-    return { response: response.data.items, origemDados: "Remoto" };
+    const localData = await productDatabase.getProduct()
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
-  async function uptdateProduct(id_produto: number, data_inicio: string, product: ProductType) {
-    const url = `${baseUrl}/produto/${id_produto}`
-    
+  async function postProduct(produto: ProductType) {
+    const url = `${baseUrl}/produto/${produto.id_produto}?nome=${produto.nome}&descricao=${produto.descricao}&preco=${produto.preco}&tempo_minuto=${produto.tempo_minuto}&data_modificado=${produto.data_modificado}&cod_referencia=${produto.cod_referencia}&modificado_por=${produto.modificado_por}`
+
+    const request: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      const request = await productDatabase.postProduct(produto);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getProduct()
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
+  async function updateProduct(data_inicio: string, product: ProductType) {
+    const url = `${baseUrl}/produto/${product.id_produto}`
+
     const body = JSON.stringify({
       "cod_referencia": product.cod_referencia,
       "data_modificado": product.data_modificado,
-      "descricao": product.descricao,
-      "id_produto": product.id_produto,
+      "descricao": product.descricao?.trim(),
       "modificado_por": product.modificado_por,
-      "nome": product.nome,
+      "nome": product.nome?.trim(),
       "preco": product.preco,
       "tempo_minuto": product.tempo_minuto,
       "ultimo_valor": product.ultimo_valor,
       "data_inicio": data_inicio
     })
-      
-    console.log(body);
 
     const response: any = await axios.put(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (response.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
-      const response = await productDatabase.updateProduct(id_produto, product, data_inicio)
-      return { response: response, origemDados: "Local" }
+      if (product?.id_produto) {
+
+        await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+
+        const response = await productDatabase.updateProduct(product, data_inicio)
+
+        return { response: response, origemDados: "Local" }
+      }
+      return { response: [], origemDados: "Local" }
     }
+
+    await getProduct()
 
     return { response: response.data.items, origemDados: "Remoto" };
   }
 
+  async function deleteProduct(id_produto: string) {
+    const url = `${baseUrl}/produto/${id_produto}`
+
+    const request: any = await axios.delete(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "DELETE", url: url });
+      const request = await productDatabase.deleteProduct(id_produto);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getProduct()
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
+  async function getProduction(id_dia?: string) {
+    const requestRemote = await getProductionRemote(id_dia)
+
+    if (requestRemote.status === 571) {
+      const request = await productionDatabase.getProduction(id_dia)
+      return { response: request, origemDados: "Local" }
+    }
+
+    await productionDatabase.updateProductionList(requestRemote.data.items, id_dia)
+
+    const localData = await productionDatabase.getProduction(id_dia)
+
+    return { response: localData, origemDados: "Remoto" };
+  }
+
+  async function postProduction(production: ProductionType) {
+    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao}`
+
+    const request: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      const request = await productionDatabase.postProduction(production);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getProduction(production.id_dia)
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
+  async function updateProduction(production: ProductionType) {
+    const url = `${baseUrl}/producao/${production.id_producao}`
+
+    const body = JSON.stringify({
+      "id_dia": production.id_dia,
+      "id_produto": production.id_produto,
+      "quantidade": production.quantidade,
+      "observacao": production.observacao?.trim()
+    })
+
+    const response: any = await axios.put(url, body).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (response.status === 571) {
+
+      await pendingOperationDatabase.postPendingOperation({ metodo: "PUT", url: url, body: body });
+
+      const response = await productionDatabase.updateProduction(production)
+
+      return { response: response, origemDados: "Local" }
+    }
+
+    await getProduction(production.id_dia)
+
+    return { response: response.data.items, origemDados: "Remoto" };
+  }
+
+  async function deleteProduction(production: ProductionType) {
+    const url = `${baseUrl}/producao/${production.id_producao}`
+
+    const request: any = await axios.delete(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "DELETE", url: url });
+      const request = await productionDatabase.deleteProduction(production.id_producao);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getProduction(production.id_dia)
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{uptdateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getDay, postDay, getPendingPayment, getHourValue }}>
+    <SyncContext.Provider value={{ deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

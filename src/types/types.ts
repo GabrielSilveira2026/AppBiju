@@ -8,7 +8,7 @@ export type UserType = {
 };
 
 export type ProductType = {
-    id_produto: number;
+    id_produto: string;
     cod_referencia: number | string;
     nome: string;
     descricao: string;
@@ -16,15 +16,16 @@ export type ProductType = {
     tempo_minuto: number;
     data_modificado: string | null;
     modificado_por: number | null;
-    ultimo_valor: number | null
+    ultimo_valor: number | null;
+    valor_unidade?: number
 }
 
 export type DayType = {
-    id_dia: number;
+    id_dia: string;
     data_dia_producao: string;
     id_pessoa: number;
-    pessoa: string;
-    valor_dia: number;
+    pessoa?: string;
+    valor_dia?: number;
 };
 
 export type PendingPaymentType = {
@@ -35,22 +36,26 @@ export type PendingPaymentType = {
 };
 
 export type PaymentType = {
-    id_pagamento: number;
+    id_pagamento_local: number;
+    id_pagamento?: number;
     data_pagamento: string;
     id_pessoa: number;
     valor_pagamento: number;
 };
 
 export interface ProductionType {
-    id_producao?: number;
-    id_dia: number;
-    id_produto: number;
+    id_producao: string;
+    id_dia: string;
+    id_produto: string;
+    tempo_minuto: number,
+    nome_produto: string;
     quantidade: number;
     observacao: string;
     historico_preco_unidade: number;
 }
 
 export type ParamType = {
+    id_parametro_local: number;
     id_parametro: number;
     descricao: string;
     valor: number;

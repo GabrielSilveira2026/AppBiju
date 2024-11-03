@@ -74,8 +74,6 @@ export default function usePendingPaymentDatabase() {
         }
     }
     
-
-
     async function updatePendingPaymentList(paymentList: PendingPaymentType[], id_pessoa?: number) {
 
         const statementDelete = id_pessoa
@@ -124,7 +122,6 @@ export default function usePendingPaymentDatabase() {
             await statement.finalizeAsync();
         }
     }
-
 
     return { getPendingPayment, updatePendingPaymentList }
 }
