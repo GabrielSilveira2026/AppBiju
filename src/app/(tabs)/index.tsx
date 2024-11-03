@@ -173,7 +173,7 @@ export default function Profile() {
                     pathname: '../(tabs)/day',
                     params: {
                       id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome
+                      pessoa: user?.nome,
                     },
                   });
                 }}

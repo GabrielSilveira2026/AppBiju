@@ -103,11 +103,16 @@ export default function DayDetails() {
         const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
 
         if (selectedDate) {
+            const id_dia = sync.nanoid()
             const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), sync.nanoid());
+            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), id_dia);
+            for (const production of productionList) {
+                production.id_dia = id_dia
+                await sync.postProduction(production)
+            }
             router.replace({
                 pathname: '../(tabs)/day',
-                params: { ...response.response, pessoa: params.pessoa }
+                params: { ...response.response, pessoa: params.pessoa, id_dia: id_dia }
             });
             setMode("view");
         } else {
@@ -138,26 +143,36 @@ export default function DayDetails() {
 
     async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
-
         if (production.id_producao === "") {
             production.id_producao = sync.nanoid()
-            const request = await sync.postProduction(production)
-            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+            if (production.id_dia) {
+                const request = await sync.postProduction(production)
+                setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
 
-            setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+                setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+            }
+            else {
+                setProductionList((prevProductionList) => [production, ...prevProductionList]);
+                setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+            }
         }
         else {
-            const request = await sync.updateProduction(production)
+            if (production.id_dia) {
+                const request = await sync.updateProduction(production)
+                setProductionList((prevProductionList) => prevProductionList.filter(item => item.id_producao !== production.id_producao));
+                setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+            }
+
             setProductionList((prevProductionList) => prevProductionList.filter(item => item.id_producao !== production.id_producao));
 
-            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+            setProductionList((prevProductionList) => [production, ...prevProductionList]);
         }
         setIsAdding(false)
     }
 
     async function handleDeleteProduction(productionRemove: ProductionType) {
-       await sync.deleteProduction(productionRemove)
-       setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
+        await sync.deleteProduction(productionRemove)
+        setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
     }
 
     function handleCancelProduction(productionId: string) {
@@ -168,7 +183,7 @@ export default function DayDetails() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                {/* <Text style={{color: "white"}}>{id_dia}</Text> */}
+                {/* <Text style={{ color: "white" }}>{id_dia}</Text> */}
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>
@@ -230,7 +245,7 @@ export default function DayDetails() {
                                 <Text style={globalStyles.title}>Produções</Text>
                             </View>
                         }
-                        keyboardShouldPersistTaps= 'handled'
+                        keyboardShouldPersistTaps='handled'
                         data={productionList}
                         renderItem={({ item }) =>
                             <CardProduction
@@ -255,7 +270,9 @@ export default function DayDetails() {
                         />
                     </View>
                 </View>
-                {mode && mode !== 'view' && <Button title={"Salvar"} onPress={createDay} />}
+                <View style={{flexDirection: "row", width: "100%"}}>
+                    {mode && mode !== 'view' && <Button style={{flex:1}} title={"Salvar"} onPress={createDay} />}
+                </View>
             </SafeAreaView>
         </ImageBackground>
     );
