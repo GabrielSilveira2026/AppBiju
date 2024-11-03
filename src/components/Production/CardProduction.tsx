@@ -52,6 +52,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
         handleInputChange('nome_produto', selectedProduct.nome)
         handleInputChange('tempo_minuto', selectedProduct.tempo_minuto)
         handleInputChange('historico_preco_unidade', selectedProduct.valor_unidade || 0)
+        handleInputChange('quantidade', 0)
     }
 
     async function saveProduction() {

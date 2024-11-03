@@ -48,10 +48,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   };
 
   function handlePriceInputChange(value: string) {
-    const formattedValue = value.replace(/[^0-9.,-]/g, '');
-
+    let formattedValue = value.replace(/[^0-9,.-]/g, '');
+  
+    formattedValue = formattedValue.replace(',', '.');
+  
     handleInputChange('preco', formattedValue);
   }
+  
 
   async function saveProduct() {
 

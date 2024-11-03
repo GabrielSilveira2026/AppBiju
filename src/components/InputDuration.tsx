@@ -4,6 +4,7 @@ import { TimerPickerModal } from 'react-native-timer-picker';
 import { Input } from './Input';
 import { formatMinutesToHours } from '../utils/utils';
 import { colors } from '@/styles/color';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type InputDurationProps = {
     value: number;
@@ -21,6 +22,10 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
 
     const initialHours = Math.floor(value / 60);
     const initialMinutes = value % 60;
+    const initialDate = new Date();
+    initialDate.setHours(initialHours);
+    initialDate.setMinutes(initialMinutes);
+    initialDate.setSeconds(0); // Opcional, se quiser zerar os segundos
 
     const togglePicker = () => setShowPicker(prev => !prev);
 
@@ -29,22 +34,21 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
             <TouchableOpacity style={styles.button} onPress={togglePicker}>
                 <Text style={styles.inputValue}>{formatMinutesToHours(value)}</Text>
             </TouchableOpacity>
-            <TimerPickerModal
-                visible={showPicker}
-                setIsVisible={setShowPicker}
-                onConfirm={handleTimeSelection}
-                onCancel={() => setShowPicker(false)}
-                hideSeconds
-                initialHours={initialHours}
-                initialMinutes={initialMinutes}
-                cancelButtonText='Cancelar'
-                confirmButtonText='  Salvar  '
-                styles={{
-                    theme: 'dark',
-                    confirmButton: styles.buttons,
-                    cancelButton: styles.buttons
-                }}
-            />
+            {
+                showPicker &&
+                <DateTimePicker
+                    value={initialDate || new Date()}
+                    mode="time"
+                    is24Hour={true} // Adicione esta linha para usar o formato de 24 horas
+                    onChange={(event, selectedDate) => {
+                        if (selectedDate) {
+                            const date = new Date(selectedDate);
+                            togglePicker
+                            handleTimeSelection({hours: date.getHours(), minutes: date.getMinutes()})
+                        }
+                    }}
+                />
+            }
         </View>
     );
 }
