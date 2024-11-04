@@ -20,6 +20,7 @@ import { Text, View } from 'react-native';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
+import { constants } from '../constants/constants';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -146,8 +147,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    await getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
-    await getPendingPayment(user?.id_perfil === 3 ? user?.id_pessoa : undefined)
+    await getPeople(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined);
+    await getPendingPayment(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined)
     await getHourValue();
     await getProduct();
   };

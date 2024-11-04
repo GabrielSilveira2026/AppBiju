@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPeople, login } from '../httpservices/user';
 import { UserType } from '../types/types';
 import { useSQLiteContext } from 'expo-sqlite';
+import { constants } from '../constants/constants';
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -54,9 +55,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   function redirectUser(id_perfil: number) {
-    if (id_perfil === 1) {
-      router.replace("/(tabs)/employees")
-    } else if (id_perfil === 2) {
+    if (id_perfil === constants.perfil.suporte.id_perfil) {
+      router.replace("/(tabs)")
+    } else if (id_perfil === constants.perfil.administrador.id_perfil) {
       router.replace("/(tabs)/employees")
     } else {
       router.replace("/(tabs)")

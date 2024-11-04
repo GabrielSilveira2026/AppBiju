@@ -10,6 +10,7 @@ import Button from '../Button';
 import Select from '../Select';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
+import { constants } from '@/src/constants/constants';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -101,7 +102,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.observacao}</Text>
                         </View>
                         <View style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
-                            <Text style={styles.text}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : formatMinutesToHours(productionValues.quantidade * 60)}</Text>
+                            <Text style={styles.text}>{productionValues.id_produto !== constants.id_producao_hora ? `Qtde ${productionValues.quantidade}` : formatMinutesToHours(productionValues.quantidade * 60)}</Text>
                             <Text style={styles.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
                         </View>
                     </View>
@@ -134,7 +135,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             <Select list={productList} label="nome" onSelect={selectProduct} initialText={production.nome_produto} />
                         </View>
                         {
-                            productionValues.id_produto !== "111111" ?
+                            productionValues.id_produto !== constants.id_producao_hora ?
                                 <>
                                     <Input
                                         inputStyle={{ flex: 1, textAlign: "center" }}
@@ -192,7 +193,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
                         {
-                            productionValues.id_produto !== "111111" &&
+                            productionValues.id_produto !== constants.id_producao_hora &&
                             <Text style={[styles.text, { textAlign: "center" }]}>
                                 ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
                             </Text>
@@ -254,12 +255,12 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
 
 
                     <View style={{ justifyContent: "space-around", flex: 1, gap: 16 }}>
-                        <Text style={[styles.text, { textAlign: "center" }]}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : `${formatMinutesToHours(productionValues.quantidade * 60)}h`}</Text>
+                        <Text style={[styles.text, { textAlign: "center" }]}>{productionValues.id_produto !== constants.id_producao_hora ? `Qtde ${productionValues.quantidade}` : `${formatMinutesToHours(productionValues.quantidade * 60)}h`}</Text>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
                         {
-                            productionValues.id_produto !== "111111" &&
+                            productionValues.id_produto !== constants.id_producao_hora &&
                             <Text style={[styles.text, { textAlign: "center" }]}>
                                 ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
                             </Text>

@@ -10,6 +10,7 @@ import { globalStyles } from '@/styles/styles';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 import { useAuthContext } from '@/src/contexts/AuthContext';
+import { constants } from '@/src/constants/constants';
 
 type CardProductProps = {
   product: ProductType;
@@ -202,7 +203,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               setModeCard("details")
             }} name={"arrow-back-outline"} size={35} color={colors.primary} />
             {
-              user?.id_perfil === 1 &&
+              user?.id_perfil === constants.perfil.suporte.id_perfil &&
               < Ionicons onPress={deleteProduct} name={"trash-outline"} size={35} color={colors.error} />
             }
           </View>

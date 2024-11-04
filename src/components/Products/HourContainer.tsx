@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles } from '@/styles/styles';
+import { constants } from '@/src/constants/constants';
 
 type HourContainerProps = {
     hourValueProp: string;
@@ -74,7 +75,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                         />
                     </View>
                 )}
-                {user?.id_perfil !== 3 && modeHourValue === "view" && (
+                {user?.id_perfil !== constants.perfil.funcionario.id_perfil && modeHourValue === "view" && (
                     <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
                 )}
             </View>
