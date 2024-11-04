@@ -72,6 +72,13 @@ export default function AppLayout() {
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
+      <Tabs.Screen
+        name="payment"
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
+        }}
+      />
     </Tabs>
   );
 }

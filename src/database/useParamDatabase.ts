@@ -23,19 +23,19 @@ export default function useParamDatabase() {
     async function updateParam(id_parametro: number, dataInicio: string, valor: number) {
         const [day, month, year] = dataInicio.split('/');
         const v_data_inicio = new Date(`${year}-${month}-${day}`).toISOString();
-    
+
         const statementUpdateParam = await database.prepareAsync(`
             UPDATE parametro
             SET valor = $valor
             WHERE id_parametro = $id_parametro
         `);
-    
+
         const statementUpdateProducao = await database.prepareAsync(`
             UPDATE producao
             SET historico_preco_unidade = 
             (
-                $valor / 60 * 
-                (SELECT pr.tempo_minuto FROM produto pr WHERE pr.id_produto = producao.id_produto) +
+                ($valor * 
+                (SELECT pr.tempo_minuto FROM produto pr WHERE pr.id_produto = producao.id_produto)) +
                 (SELECT pr.preco FROM produto pr WHERE pr.id_produto = producao.id_produto)
             )
             WHERE producao.id_dia IN (
@@ -44,18 +44,18 @@ export default function useParamDatabase() {
                 WHERE d.data_dia_producao >= $data_inicio
             )
         `);
-    
+
         try {
             await statementUpdateParam.executeAsync({
                 $valor: valor,
                 $id_parametro: id_parametro,
             });
-    
+
             await statementUpdateProducao.executeAsync({
-                $valor: valor,
-                $data_inicio: v_data_inicio, // Usa a data em formato ISO
+                $valor: valor / 60,
+                $data_inicio: v_data_inicio,
             });
-    
+
             return { status: 200, message: "Atualização bem-sucedida" };
         } catch (error) {
             throw error;
@@ -64,7 +64,7 @@ export default function useParamDatabase() {
             await statementUpdateProducao.finalizeAsync();
         }
     }
-    
+
     async function updateParamList(paramList: ParamType[], id_parametro?: number) {
         const statementDelete = await database.prepareAsync(`DELETE FROM parametro`);
 
