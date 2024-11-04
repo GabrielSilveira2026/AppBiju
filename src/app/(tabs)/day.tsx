@@ -86,6 +86,8 @@ export default function DayDetails() {
             if (id_dia_params) {
                 getProductions(id_dia_params)
             }
+        } else {
+            setProductionList([])
         }
         return () => {
             setMode(undefined);
@@ -109,7 +111,7 @@ export default function DayDetails() {
             if (!id_dia_params && productionList.length > 0) {
                 Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja sair sem salva-las?", [
                     {
-                         text: "Cancelar"
+                        text: "Cancelar"
                     },
                     {
                         text: "Sair sem salvar",
@@ -130,7 +132,6 @@ export default function DayDetails() {
             const id_dia = new_id ? new_id : sync.nanoid()
             const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
             setMode("view")
-            console.log({ id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia });
 
             router.replace({
                 pathname: '../(tabs)/day',

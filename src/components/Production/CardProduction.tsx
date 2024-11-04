@@ -182,6 +182,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         <Input
                             onChangeText={(text) => handleInputChange('observacao', text)}
                             multiline
+                            inputStyle={{flex: 1}}
                             placeholder="Digite uma anotação"
                             value={productionValues.observacao || ""}
                         />

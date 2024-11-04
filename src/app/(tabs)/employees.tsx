@@ -7,6 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, FlatList, ImageBackground, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Funcionarios() {
 
@@ -28,7 +29,7 @@ export default function Funcionarios() {
     }, [isFocused])
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-            <View style={{ flexGrow: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <SafeAreaView style={globalStyles.pageContainer}>
                 <FlatList
                     style={{ backgroundColor: "white" }}
                     data={listPendingPayment}
@@ -45,7 +46,7 @@ export default function Funcionarios() {
                         )
                     }
                 />
-            </View >
+            </SafeAreaView >
         </ImageBackground>
     );
 }

@@ -168,7 +168,7 @@ export default function Product() {
             }
           />
           <AddContainer
-            text="Adicionar produto"
+            text="Criar produto"
             disable={isCreating}
             onPress={handleCreateProduct}
           />
