@@ -115,7 +115,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   if (modeCard === "view") {
     return (
-      <Pressable style={globalStyles.cardContainer} onPress={() => setModeCard("details")}>
+      <Pressable style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
         <View style={styles.line}>
           <View style={styleViews.nameAndCode}>
             <View style={styleViews.textContainer}>
@@ -147,7 +147,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else if (modeCard === "details") {
     return (
-      <View style={globalStyles.cardContainer}>
+      <View style={[globalStyles.cardContainer, {borderWidth: 1, borderColor: colors.text}]}>
         <View style={styles.cardOpenedDetails}>
           <View style={styles.line}>
             <Ionicons style={{ flex: 1 }} onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
@@ -194,7 +194,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else { //Create and Edit
     return (
-      <View style={[globalStyles.cardContainer, { gap: 8 }]}>
+      <View style={[globalStyles.cardContainer, { gap: 8, borderWidth: 1, borderColor: colors.primary}]}>
         {
           modeCard === "edit" &&
           <View style={styles.line}>
@@ -328,11 +328,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 4,
-    padding: 8,
-    backgroundColor: colors.backgroundTertiary
-  },
   line: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -390,7 +385,7 @@ const styles = StyleSheet.create({
 
 const stylesCreateAndEdit = StyleSheet.create({
   textDescription: {
-    borderBottomColor: "white",
+    borderBottomColor: colors.text,
     borderBottomWidth: 1,
     minHeight: 80,
     flex: 1
@@ -398,6 +393,10 @@ const stylesCreateAndEdit = StyleSheet.create({
 })
 
 const styleViews = StyleSheet.create({
+  cardContainer:{
+    borderBottomWidth: 1,
+    borderBottomColor: colors.text
+  },
   nameAndCode: {
     flex: 1,
     alignItems: "flex-start",

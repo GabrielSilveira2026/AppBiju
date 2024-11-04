@@ -1,11 +1,13 @@
+import { constants } from '@/src/constants/constants';
+import { useAuthContext } from '@/src/contexts/AuthContext';
 import { colors } from '@/styles/color';
 import { globalStyles } from '@/styles/styles';
-import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 
 
 export default function CardPayment() {
+    const { user } = useAuthContext()
     const [modeCard, setModeCard] = useState<"view" | "create">("view");
 
     if (modeCard === "view") {
@@ -15,9 +17,12 @@ export default function CardPayment() {
                     <View style={styleViews.textContainer}>
                         <Text style={styles.textValue}>09/11/24</Text>
                     </View>
-                    <View style={styleViews.textContainer}>
-                        <Text style={styles.textValue}>Gabriel Silveira</Text>
-                    </View>
+                    {
+                        user?.id_perfil === constants.perfil.funcionario.id_perfil &&
+                        <View style={styleViews.textContainer}>
+                            <Text style={styles.textValue}>Gabriel Silveira</Text>
+                        </View>
+                    }
                     <View style={styleViews.textContainer}>
                         <Text style={styles.textValue}>R$ 3000,00</Text>
                     </View>
@@ -42,6 +47,7 @@ const styles = StyleSheet.create({
     textValue: {
         fontSize: 16,
         color: colors.text,
+        textAlign: "center"
     },
     buttonOpen: {
         padding: 8
@@ -88,7 +94,6 @@ const styles = StyleSheet.create({
     },
 })
 
-
 const styleViews = StyleSheet.create({
     nameAndCode: {
         flex: 1,
@@ -96,8 +101,7 @@ const styleViews = StyleSheet.create({
         justifyContent: "space-between"
     },
     textContainer: {
-        padding: 8,
-        flex:1,
+        flex: 1,
     },
     iconsLine: {
         paddingHorizontal: 8

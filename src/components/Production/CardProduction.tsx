@@ -92,10 +92,10 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     if (modeCard === "view") {
         return (
             <Pressable
-                style={globalStyles.cardContainer}
+                style={[globalStyles.cardContainer, stylesView.cardContainer]}
                 onPress={() => setModeCard("details")}
             >
-                <View style={stylesView.cardContainer}>
+                <View style={stylesView.container}>
                     <View style={styles.textContainer}>
                         <View style={{ flex: 1, gap: 8 }}>
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.nome_produto}</Text>
@@ -224,7 +224,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     else {
         return (
             <View
-                style={globalStyles.cardContainer}
+                style={[globalStyles.cardContainer, stylesDetails.cardContainer]}
             >
                 <View style={stylesDetails.headerButtons}>
                     <Ionicons style={{ flex: 1 }} onPress={() => {
@@ -235,7 +235,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     <Ionicons style={{ flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
                 </View>
 
-                <View style={stylesDetails.contentContainer}>
+                <View style={stylesDetails.container}>
 
                     <View style={{ flex: 2, gap: 8 }}>
                         <View style={stylesDetails.lineProductName}>
@@ -292,8 +292,11 @@ const styles = StyleSheet.create({
 })
 
 const stylesView = StyleSheet.create({
-    cardContainer:
-    {
+    cardContainer:{
+        borderBottomWidth: 1, 
+        borderBottomColor: colors.text
+    },
+    container:{
         flexDirection: "row",
         backgroundColor: colors.backgroundTertiary,
         borderRadius: 4,
@@ -304,13 +307,17 @@ const stylesView = StyleSheet.create({
 })
 
 const stylesDetails = StyleSheet.create({
+    cardContainer:{
+        borderWidth: 1,
+        borderColor: colors.text
+    },
     headerButtons: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between"
     },
 
-    contentContainer: {
+    container: {
         flexDirection: "row",
         paddingVertical: 8,
         gap: 8
