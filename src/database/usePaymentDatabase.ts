@@ -9,25 +9,27 @@ export default function usePaymentDatabase() {
             const result = id_pessoa
                 ? `SELECT * FROM pagamento WHERE id_pessoa = $id_pessoa ORDER BY data_pagamento DESC`
                 : `SELECT * FROM pagamento ORDER BY data_pagamento DESC`;
-    
+
             const response = id_pessoa
                 ? await database.getAllAsync<PaymentType>(result, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<PaymentType>(result);
-    
+
             return response;
         } catch (error) {
             throw error;
         }
     }
-    
-    async function postPayment(payment: Omit<PaymentType, "id_pagamento">) {
+
+    async function postPayment(payment: PaymentType) {
         const statement = await database.prepareAsync(`
             INSERT INTO pagamento (
+                id_pagamento,
                 data_pagamento,
                 id_pessoa,
                 valor_pagamento
             )
             VALUES (
+                $id_pagamento,
                 $data_pagamento,
                 $id_pessoa,
                 $valor_pagamento
@@ -35,13 +37,14 @@ export default function usePaymentDatabase() {
         `);
         try {
             const result = await statement.executeAsync({
+                $id_pagamento: payment.id_pagamento,
                 $data_pagamento: payment.data_pagamento,
                 $id_pessoa: payment.id_pessoa,
                 $valor_pagamento: payment.valor_pagamento
             });
             return result.lastInsertRowId;
         } catch (error) {
-            console.error("Erro ao inserir pagamento:", error);
+            console.warn("Erro ao inserir pagamento:", error);
             throw error;
         } finally {
             await statement.finalizeAsync();
@@ -52,7 +55,7 @@ export default function usePaymentDatabase() {
         const statementDelete = id_pessoa
             ? await database.prepareAsync(`DELETE FROM pagamento WHERE id_pessoa = $id_pessoa`)
             : await database.prepareAsync(`DELETE FROM pagamento`);
-    
+
         try {
             if (id_pessoa) {
                 await statementDelete.executeAsync({ $id_pessoa: id_pessoa });
@@ -64,7 +67,7 @@ export default function usePaymentDatabase() {
         } finally {
             await statementDelete.finalizeAsync();
         }
-    
+
         const statementInsert = await database.prepareAsync(`
             INSERT INTO pagamento (
                 data_pagamento,
@@ -77,7 +80,7 @@ export default function usePaymentDatabase() {
                 $valor_pagamento
             )
         `);
-    
+
         try {
             for await (const payment of paymentList) {
                 await statementInsert.executeAsync({
@@ -92,6 +95,6 @@ export default function usePaymentDatabase() {
             await statementInsert.finalizeAsync();
         }
     }
-    
+
     return { postPayment, getPayment, updatePaymentList };
 }

@@ -6,6 +6,7 @@ import { getProduct as getProductRemote } from '../httpservices/product';
 import { getDay as getDayRemote } from '../httpservices/day';
 import { getPending as getPendingRemote } from '../httpservices/payment';
 import { getProduction as getProductionRemote } from '../httpservices/production';
+import { getPayment as getPaymentRemote } from '../httpservices/payment';
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
@@ -16,11 +17,11 @@ import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
 import useParamDatabase from '../database/useParamDatabase';
-import { Text, View } from 'react-native';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
 import { constants } from '../constants/constants';
+import usePaymentDatabase from '../database/usePaymentDatabase';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -29,15 +30,15 @@ type SyncContextType = {
   isConnected: boolean | null,
   nanoid: (size?: number) => string,
   setIsConnected: Dispatch<SetStateAction<boolean | null>>,
-  getHourValue: (id_parametro?: number | undefined) => Promise<any>,
+  getHourValue: (id_parametro?: number) => Promise<any>,
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
-  getPeople: (id_pessoa?: number | undefined) => Promise<any>,
-  getPendingPayment: (id_pessoa?: number | undefined) => Promise<any>,
-  getDay: (id_pessoa?: number | undefined) => Promise<any>,
+  getPeople: (id_pessoa?: number) => Promise<any>,
+  getPendingPayment: (id_pessoa?: number) => Promise<any>,
+  getDay: (id_pessoa?: number) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   updateDay: (dia: DayType) => Promise<any>,
   deleteDay: (dia: DayType) => Promise<any>,
-  getProduct: (name?: String | undefined) => Promise<any>,
+  getProduct: (name?: String) => Promise<any>,
   postProduct: (product: ProductType) => Promise<any>,
   updateProduct: (data_inicio: string, produto: ProductType) => Promise<any>,
   deleteProduct: (id_produto: string) => Promise<any>,
@@ -45,6 +46,7 @@ type SyncContextType = {
   postProduction: (production: ProductionType) => Promise<any>,
   updateProduction: (production: ProductionType) => Promise<any>,
   deleteProduction: (production: ProductionType) => Promise<any>,
+  getPayment: (id_pessoa?: number) => Promise<any>,
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -61,6 +63,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
   const productionDatabase = useProductionDatabase()
+  const paymentDatabase = usePaymentDatabase()
+
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -459,8 +463,23 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: request.data.items, origemDados: "Remoto" };
   }
 
+  async function getPayment(id_pessoa?: number) {
+    const requestRemote = await getPaymentRemote(id_pessoa)
+
+    if (requestRemote.status === 571) {
+      const request = await paymentDatabase.getPayment(id_pessoa)
+      return { response: request, origemDados: "Local" }
+    }
+
+    await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
+
+    const localData = await paymentDatabase.getPayment(id_pessoa)
+
+    return { response: localData, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{ deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );
