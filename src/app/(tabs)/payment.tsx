@@ -28,9 +28,10 @@ export default function Payment() {
       console.log(request)
       setPaymentList(request.response)
     }
-
+    
     if (isFocused) {
-      getPayment()
+      console.log(id_pessoa);
+      getPayment(Number(id_pessoa) || undefined)
     }
 
     return () => {
@@ -40,7 +41,7 @@ export default function Payment() {
       }
       controller.abort();
     };
-  }, [])
+  }, [isFocused])
 
 
   return (
@@ -70,7 +71,7 @@ export default function Payment() {
               getPayment()
             }}
             contentContainerStyle={{ gap: 8 }}
-            keyExtractor={(item) => String(item.id_pagamento)}
+            keyExtractor={(item) => item.id_pagamento}
             keyboardShouldPersistTaps='handled'
             renderItem={({ item }) => (
               <CardPayment payment={item} />

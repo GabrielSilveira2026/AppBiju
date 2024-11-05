@@ -6,19 +6,31 @@ export default function usePaymentDatabase() {
 
     async function getPayment(id_pessoa?: number) {
         try {
-            const result = id_pessoa
-                ? `SELECT * FROM pagamento WHERE id_pessoa = $id_pessoa ORDER BY data_pagamento DESC`
-                : `SELECT * FROM pagamento ORDER BY data_pagamento DESC`;
-
+            const query = id_pessoa
+                ? `
+                    SELECT pagamento.*, pessoa.nome 
+                    FROM pagamento
+                    INNER JOIN pessoa ON pagamento.id_pessoa = pessoa.id_pessoa
+                    WHERE pagamento.id_pessoa = $id_pessoa
+                    ORDER BY pagamento.data_pagamento DESC
+                  `
+                : `
+                    SELECT pagamento.*, pessoa.nome 
+                    FROM pagamento
+                    INNER JOIN pessoa ON pagamento.id_pessoa = pessoa.id_pessoa
+                    ORDER BY pagamento.data_pagamento DESC
+                  `;
+    
             const response = id_pessoa
-                ? await database.getAllAsync<PaymentType>(result, { $id_pessoa: id_pessoa })
-                : await database.getAllAsync<PaymentType>(result);
-
+                ? await database.getAllAsync<PaymentType>(query, { $id_pessoa: id_pessoa })
+                : await database.getAllAsync<PaymentType>(query);
+    
             return response;
         } catch (error) {
             throw error;
         }
     }
+    
 
     async function postPayment(payment: PaymentType) {
         const statement = await database.prepareAsync(`
@@ -70,11 +82,13 @@ export default function usePaymentDatabase() {
 
         const statementInsert = await database.prepareAsync(`
             INSERT INTO pagamento (
+                id_pagamento,
                 data_pagamento,
                 id_pessoa,
                 valor_pagamento
             )
             VALUES (
+                $id_pagamento,
                 $data_pagamento,
                 $id_pessoa,
                 $valor_pagamento
@@ -84,9 +98,10 @@ export default function usePaymentDatabase() {
         try {
             for await (const payment of paymentList) {
                 await statementInsert.executeAsync({
+                    $id_pagamento: payment.id_pagamento,
                     $data_pagamento: payment.data_pagamento,
                     $id_pessoa: payment.id_pessoa,
-                    $valor_pagamento: payment.valor_pagamento,
+                    $valor_pagamento: payment.valor_pagamento
                 });
             }
         } catch (error) {

@@ -6,6 +6,7 @@ import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Keyboard } from "react-native";
+import { constants } from "@/src/constants/constants";
 
 export default function AppLayout() {
   const { isLoading, isAuthenticated, user } = useAuthContext();
@@ -36,7 +37,7 @@ export default function AppLayout() {
         name="index"
         options={{
           headerShown: false,
-          href: user?.perfil !== "Administrador" ? `/?${user?.id_pessoa}` : null,
+          href: user?.id_perfil !== constants.perfil.administrador.id_perfil ? `/?${user?.id_pessoa}` : null,
           tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary} />
         }}
       />
@@ -44,7 +45,7 @@ export default function AppLayout() {
         name="employees"
         options={{
           headerShown: false,
-          href: user?.perfil === "Administrador" || user?.perfil === "Suporte" ? "/employees" : null,
+          href: user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "/employees" : null,
           tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary} />
         }}
       />
@@ -67,6 +68,7 @@ export default function AppLayout() {
         name="payment"
         options={{
           headerShown: false,
+          href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?${user?.id_pessoa}` : "/payment",
           tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
         }}
       />
@@ -74,11 +76,11 @@ export default function AppLayout() {
         name="log"
         options={{
           headerShown: false,
-          href: user?.perfil === "Suporte" ? "/log" : null,
+          href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
-      
+
     </Tabs>
   );
 }

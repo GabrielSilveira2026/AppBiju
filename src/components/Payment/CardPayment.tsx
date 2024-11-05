@@ -22,9 +22,9 @@ type CardPaymentProps = {
                         <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
                     </View>
                     {
-                        user?.id_perfil === constants.perfil.funcionario.id_perfil &&
+                        // user?.id_perfil === constants.perfil.funcionario.id_perfil &&
                         <View style={stylesView.textNameContainer}>
-                            <Text style={styles.textValue}>{payment.id_pessoa}</Text>
+                            <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
                     }
                     <View style={stylesView.textContainer}>

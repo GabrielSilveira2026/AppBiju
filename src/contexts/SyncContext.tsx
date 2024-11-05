@@ -190,7 +190,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
-
+    
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
       return { response: response, origemDados: "Local" }

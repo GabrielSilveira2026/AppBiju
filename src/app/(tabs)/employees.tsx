@@ -1,5 +1,6 @@
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
+import { getPeople } from "@/src/httpservices/user";
 import { PendingPaymentType } from "@/src/types/types";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -20,10 +21,16 @@ export default function Funcionarios() {
         setListPendingPayment(response.response)
     }
 
+    async function getPeople() {
+        const request = await sync.getPeople()
+        console.log(request.response);
+    }
+
     const isFocused = useIsFocused();
 
     useEffect(() => {
         if (isFocused) {
+            getPeople()
             getTablePendingPayment()
         }
     }, [isFocused])
@@ -42,6 +49,7 @@ export default function Funcionarios() {
                                 <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>
                                 <Text>total {item.total}</Text>
                                 <Button onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: item.id_pessoa }, })} title={"Consulta"}></Button>
+                                <Button onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: item.id_pessoa, pessoa: item.nome}, })} title={"Pagamento"}></Button>
                             </View>
                         )
                     }
