@@ -50,12 +50,12 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   function handlePriceInputChange(value: string) {
     let formattedValue = value.replace(/[^0-9,.-]/g, '');
-  
+
     formattedValue = formattedValue.replace(',', '.');
-  
+
     handleInputChange('preco', formattedValue);
   }
-  
+
 
   async function saveProduct() {
 
@@ -147,8 +147,8 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else if (modeCard === "details") {
     return (
-      <View style={[globalStyles.cardContainer, {borderWidth: 1, borderColor: colors.text}]}>
-        <View style={styles.cardOpenedDetails}>
+      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
+        <View style={styles.cardOpened}>
           <View style={styles.line}>
             <Ionicons style={{ flex: 1 }} onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
             <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
@@ -194,7 +194,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else { //Create and Edit
     return (
-      <View style={[globalStyles.cardContainer, { gap: 8, borderWidth: 1, borderColor: colors.primary}]}>
+      <View style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}>
         {
           modeCard === "edit" &&
           <View style={styles.line}>
@@ -341,9 +341,9 @@ const styles = StyleSheet.create({
   buttonOpen: {
     padding: 8
   },
-  cardOpenedDetails: {
+  cardOpened: {
     padding: 8,
-    gap: 8
+    gap: 8,
   },
   valueVertical: {
     padding: 8,
@@ -384,16 +384,22 @@ const styles = StyleSheet.create({
 })
 
 const stylesCreateAndEdit = StyleSheet.create({
+  cardContainer: {
+    padding: 8,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
   textDescription: {
     borderBottomColor: colors.text,
     borderBottomWidth: 1,
     minHeight: 80,
     flex: 1
-  },
+  }
 })
 
 const styleViews = StyleSheet.create({
-  cardContainer:{
+  cardContainer: {
     borderBottomWidth: 1,
     borderBottomColor: colors.text
   },

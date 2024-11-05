@@ -12,18 +12,18 @@ export default function CardPayment() {
 
     if (modeCard === "view") {
         return (
-            <Pressable style={globalStyles.cardContainer}>
+            <Pressable style={[globalStyles.cardContainer, stylesView.cardContainer]}>
                 <View style={styles.line}>
-                    <View style={styleViews.textContainer}>
+                    <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>09/11/24</Text>
                     </View>
                     {
                         user?.id_perfil === constants.perfil.funcionario.id_perfil &&
-                        <View style={styleViews.textContainer}>
+                        <View style={stylesView.textContainer}>
                             <Text style={styles.textValue}>Gabriel Silveira</Text>
                         </View>
                     }
-                    <View style={styleViews.textContainer}>
+                    <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R$ 3000,00</Text>
                     </View>
                 </View>
@@ -94,13 +94,18 @@ const styles = StyleSheet.create({
     },
 })
 
-const styleViews = StyleSheet.create({
+const stylesView = StyleSheet.create({
+    cardContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: colors.text
+    },
     nameAndCode: {
         flex: 1,
         alignItems: "flex-start",
         justifyContent: "space-between"
     },
     textContainer: {
+        paddingVertical: 8,
         flex: 1,
     },
     iconsLine: {

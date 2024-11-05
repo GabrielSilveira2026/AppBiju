@@ -1,6 +1,6 @@
 import { colors } from '@/styles/color'
 import { Ionicons } from '@expo/vector-icons'
-import { View, Text, StyleSheet, Pressable, FlatList, Alert } from 'react-native'
+import { View, Text, StyleSheet, Pressable, FlatList, Alert, TouchableOpacity } from 'react-native'
 import { ProductionType, ProductType } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { globalStyles } from '@/styles/styles';
@@ -102,7 +102,13 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.observacao}</Text>
                         </View>
                         <View style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
-                            <Text style={styles.text}>{productionValues.id_produto !== constants.id_producao_hora ? `Qtde ${productionValues.quantidade}` : formatMinutesToHours(productionValues.quantidade * 60)}</Text>
+                            <Text style={styles.text}>
+                                {
+                                    productionValues.id_produto !== constants.id_producao_hora ?
+                                        `Qtde ${productionValues.quantidade}`
+                                        : formatMinutesToHours(productionValues.quantidade * 60) + "h"
+                                }
+                            </Text>
                             <Text style={styles.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
                         </View>
                     </View>
@@ -183,7 +189,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         <Input
                             onChangeText={(text) => handleInputChange('observacao', text)}
                             multiline
-                            inputStyle={{flex: 1}}
+                            inputStyle={{ flex: 1 }}
                             placeholder="Digite uma anotação"
                             value={productionValues.observacao || ""}
                         />
@@ -233,7 +239,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     }} name={"create-outline"} size={35} color={colors.primary} />
 
                     <Ionicons style={{ flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
-                </View>
+                </View >
 
                 <View style={stylesDetails.container}>
 
@@ -292,11 +298,11 @@ const styles = StyleSheet.create({
 })
 
 const stylesView = StyleSheet.create({
-    cardContainer:{
-        borderBottomWidth: 1, 
+    cardContainer: {
+        borderBottomWidth: 1,
         borderBottomColor: colors.text
     },
-    container:{
+    container: {
         flexDirection: "row",
         backgroundColor: colors.backgroundTertiary,
         borderRadius: 4,
@@ -307,16 +313,16 @@ const stylesView = StyleSheet.create({
 })
 
 const stylesDetails = StyleSheet.create({
-    cardContainer:{
+    cardContainer: {
         borderWidth: 1,
-        borderColor: colors.text
+        borderColor: colors.text,
+        padding: 16
     },
     headerButtons: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between"
     },
-
     container: {
         flexDirection: "row",
         paddingVertical: 8,
@@ -335,9 +341,9 @@ const stylesCreateAndEdit = StyleSheet.create({
     cardContainer: {
         borderColor: colors.primary,
         borderWidth: 1,
+        padding: 8,
         gap: 8
     },
-
     dropdownButtonStyle: {
         flex: 4,
         flexDirection: "row",
