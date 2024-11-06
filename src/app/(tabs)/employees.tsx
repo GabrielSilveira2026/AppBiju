@@ -1,6 +1,5 @@
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { getPeople } from "@/src/httpservices/user";
 import { PendingPaymentType } from "@/src/types/types";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -16,22 +15,16 @@ export default function Funcionarios() {
 
     const [listPendingPayment, setListPendingPayment] = useState<PendingPaymentType[]>([])
 
-    async function getTablePendingPayment() {
+    async function getPendingPayment() {
         const response = await sync.getPendingPayment()
         setListPendingPayment(response.response)
-    }
-
-    async function getPeople() {
-        const request = await sync.getPeople()
-        console.log(request.response);
     }
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
         if (isFocused) {
-            getPeople()
-            getTablePendingPayment()
+            getPendingPayment()
         }
     }, [isFocused])
     return (

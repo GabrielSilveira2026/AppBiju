@@ -46,7 +46,7 @@ export default function Profile() {
 
     ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
 
-    setUserData({ nome, total, ultimo_pagamento });
+    setUserData({ nome , total, ultimo_pagamento });
   }
 
   async function getDataDays() {

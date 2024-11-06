@@ -138,7 +138,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <View style={{ flex: 5 }}>
-                            <Select list={productList} label="nome" onSelect={selectProduct} initialText={production.nome_produto} />
+                            <Select list={productList} id="id_produto" label="nome" textButton="Selecione um produto" onSelect={selectProduct} initialText={production.nome_produto} />
                         </View>
                         {
                             productionValues.id_produto !== constants.id_producao_hora ?

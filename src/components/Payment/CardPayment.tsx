@@ -1,18 +1,42 @@
 import { constants } from '@/src/constants/constants';
 import { useAuthContext } from '@/src/contexts/AuthContext';
-import { PaymentType } from '@/src/types/types';
+import { PaymentType, PendingPaymentType, UserType } from '@/src/types/types';
 import { colors } from '@/styles/color';
 import { globalStyles } from '@/styles/styles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native'
+import Select from '../Select';
+import { useSync } from '@/src/contexts/SyncContext';
+import Button from '../Button';
 
 type CardPaymentProps = {
     payment: PaymentType;
-  };
-  
-  export default function CardPayment({ payment }: CardPaymentProps) {
+    mode: "view" | "create"
+};
+
+export default function CardPayment({ payment, mode }: CardPaymentProps) {
     const { user } = useAuthContext()
-    const [modeCard, setModeCard] = useState<"view" | "create">("view");
+    const sync = useSync()
+    const [modeCard, setModeCard] = useState<"view" | "create">(mode);
+    const [pendingPaymentList, setPendingPaymentList] = useState<UserType[]>([])
+    const [paymentValues, setPaymentValues] = useState<PendingPaymentType>()
+
+    async function getPendingPayment() {
+        const request = await sync.getPendingPayment()
+        console.log("Pendentes:", request.response);
+
+        setPendingPaymentList(request.response)
+    }
+
+    useEffect(() => {
+        setModeCard(mode)
+        if (mode === "create") {
+            getPendingPayment()
+        }
+        return () => {
+        }
+    }, [])
+
 
     if (modeCard === "view") {
         return (
@@ -22,7 +46,7 @@ type CardPaymentProps = {
                         <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
                     </View>
                     {
-                        // user?.id_perfil === constants.perfil.funcionario.id_perfil &&
+                        user?.id_pessoa !== payment.id_pessoa &&
                         <View style={stylesView.textNameContainer}>
                             <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
@@ -30,6 +54,36 @@ type CardPaymentProps = {
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
+                </View>
+            </Pressable>
+        )
+    }
+    else {
+        return (
+            <Pressable style={[globalStyles.cardContainer, stylesCreate.cardContainer]}>
+                <View style={styles.line}>
+                    <Select
+                        label="nome"
+                        id="id_pessoa"
+                        onSelect={(item) => {
+                            setPaymentValues(item);
+                        }}
+                        textButton="Selecione um funcionário"
+                        list={pendingPaymentList}
+                    />
+                </View>
+                <View style={stylesCreate.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>Valor a pagar: R${paymentValues?.total.toFixed(2)}</Text>
+                    </View>
+                </View>
+                <View style={stylesCreate.line}>
+                    <Button style={{ flex: 1 }} title={"Descartar"} onPress={() => {
+
+                    }} />
+                    <Button style={{ flex: 1 }} title={"Salvar"} onPress={() => {
+
+                    }} />
                 </View>
             </Pressable>
         )
@@ -46,7 +100,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        gap: 32,
+        gap: 8,
     },
     textValue: {
         fontSize: 16,
@@ -104,5 +158,19 @@ const stylesView = StyleSheet.create({
     },
     iconsLine: {
         paddingHorizontal: 8
+    }
+})
+
+const stylesCreate = StyleSheet.create({
+    cardContainer: {
+        borderWidth: 1,
+        borderColor: colors.primary,
+        padding: 12,
+        gap: 8
+    },
+    line: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
     }
 })

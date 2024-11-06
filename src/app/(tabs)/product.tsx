@@ -79,7 +79,7 @@ export default function Product() {
 
       const newProduct: ProductType = {
         id_produto: "",
-        cod_referencia: "",
+        cod_referencia: 0,
         nome: '',
         descricao: '',
         preco: 0,

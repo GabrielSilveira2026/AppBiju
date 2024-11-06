@@ -56,7 +56,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     handleInputChange('preco', formattedValue);
   }
 
-
   async function saveProduct() {
 
     if (!productValues.nome.trim()) {
@@ -225,7 +224,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             <Input
               placeholder="Código"
               label="Código"
-              value={productValues.cod_referencia.toString()}
+              value={String(productValues.cod_referencia).replace(/[^0-9,.-]/g, '')}
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               keyboardType="numeric"
               style={[styles.inputValue]}

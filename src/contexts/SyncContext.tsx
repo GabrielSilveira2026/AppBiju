@@ -150,8 +150,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
       }
     }
-
-    await getPeople(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined);
+    
     await getPendingPayment(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined)
     await getHourValue();
     await getProduct();

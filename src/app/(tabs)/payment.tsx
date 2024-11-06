@@ -1,3 +1,4 @@
+import AddContainer from '@/src/components/AddContainer'
 import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
 import { useSync } from '@/src/contexts/SyncContext'
@@ -25,13 +26,12 @@ export default function Payment() {
   useEffect(() => {
     async function getPayment(id_pessoa?: number) {
       const request = await sync.getPayment(id_pessoa)
-      console.log(request)
+      console.log("Pagamentos:", request.response)
       setPaymentList(request.response)
     }
-    
+
     if (isFocused) {
-      console.log(id_pessoa);
-      getPayment(Number(id_pessoa) || undefined)
+      getPayment(Number(id_pessoa))
     }
 
     return () => {
@@ -74,7 +74,10 @@ export default function Payment() {
             keyExtractor={(item) => item.id_pagamento}
             keyboardShouldPersistTaps='handled'
             renderItem={({ item }) => (
-              <CardPayment payment={item} />
+              <CardPayment
+                mode="view"
+                payment={item}
+              />
             )}
           />
         </View>
