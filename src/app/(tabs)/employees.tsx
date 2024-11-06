@@ -17,13 +17,20 @@ export default function Funcionarios() {
 
     async function getPendingPayment() {
         const response = await sync.getPendingPayment()
+        console.log(response.response);
+        
         setListPendingPayment(response.response)
+    }
+
+    async function getPeople() {
+        await sync.getPeople()
     }
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
         if (isFocused) {
+            getPeople()
             getPendingPayment()
         }
     }, [isFocused])

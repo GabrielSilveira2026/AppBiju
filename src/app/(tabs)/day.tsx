@@ -122,7 +122,12 @@ export default function DayDetails() {
                 ])
             }
             else {
-                router.navigate("/");
+                router.navigate({
+                    pathname: '/',
+                    params: {
+                        id_pessoa: id_pessoa_params,
+                    },
+                })
             }
         }
     }
