@@ -44,6 +44,49 @@ export default function Payment() {
   }, [isFocused])
 
 
+  function handleCreatePayment() {
+    if (!isAdding) {
+      setIsAdding(true)
+
+      const newPayment: PaymentType = {
+        id_pagamento: "",
+        data_pagamento: (new Date()).toISOString(),
+        id_pessoa: 0,
+        valor_pagamento: 0,
+        nome: ""
+      };
+      setPaymentList((prevPaymentList) => [newPayment, ...prevPaymentList]);
+    }
+    else {
+      setIsAdding(false)
+    }
+  }
+
+  async function handleSavePayment(payment: PaymentType) {
+    setIsAdding(true)
+
+    if (payment.id_pagamento === "") {
+      payment.id_pagamento = sync.nanoid()
+      console.log("Para salvar:", payment);
+
+      const request = await sync.postPayment(payment)
+      console.log(request.response);
+
+      setPaymentList((prevPaymentList) => [payment, ...prevPaymentList]);
+
+      setPaymentList((prevPaymentList) => prevPaymentList.filter(payment => payment.id_pagamento !== ""));
+    }
+
+    setIsAdding(false)
+  }
+
+
+  function handleCancelPayment(paymentId: string) {
+    setIsAdding(false)
+    setPaymentList((prevPaymentList) => prevPaymentList.filter((payment) => payment.id_pagamento !== paymentId));
+  }
+
+
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
@@ -75,10 +118,17 @@ export default function Payment() {
             keyboardShouldPersistTaps='handled'
             renderItem={({ item }) => (
               <CardPayment
-                mode="view"
+                mode={item.id_pagamento ? "view" : "create"}
                 payment={item}
+                onSave={handleSavePayment}
+                onCancel={() => handleCancelPayment(item.id_pagamento)}
               />
             )}
+          />
+          <AddContainer
+            disable={isAdding}
+            onPress={handleCreatePayment}
+            text="Adicionar Pagamento"
           />
         </View>
       </SafeAreaView>

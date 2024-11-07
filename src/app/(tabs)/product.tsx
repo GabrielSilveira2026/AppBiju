@@ -118,7 +118,7 @@ export default function Product() {
     setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== id_product));
   }
 
-  function handleRemoveProduct(productId: string) {
+  function handleCancelProduct(productId: string) {
     setIsCreating(false)
     setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
   }
@@ -162,7 +162,7 @@ export default function Product() {
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
-                onCancel={() => handleRemoveProduct(item.id_produto)}
+                onCancel={() => handleCancelProduct(item.id_produto)}
                 onDelete={() => handleDeleteProduct(item.id_produto)}
               />
             }

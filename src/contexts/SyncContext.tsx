@@ -10,7 +10,7 @@ import { getPayment as getPaymentRemote } from '../httpservices/payment';
 
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
-import { DayType, ProductionType, ProductType } from '../types/types';
+import { DayType, PaymentType, ProductionType, ProductType } from '../types/types';
 import { useAuthContext } from './AuthContext';
 import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
@@ -47,6 +47,7 @@ type SyncContextType = {
   updateProduction: (production: ProductionType) => Promise<any>,
   deleteProduction: (production: ProductionType) => Promise<any>,
   getPayment: (id_pessoa?: number) => Promise<any>,
+  postPayment: (payment: PaymentType) => Promise<any>
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -150,7 +151,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
       }
     }
-    
+
     await getPendingPayment(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined)
     await getHourValue();
     await getProduct();
@@ -189,7 +190,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPeople(id_pessoa?: number) {
     const response = await getPeopleRemote(id_pessoa)
-    
+
     if (response.status === 571) {
       const response = await peopleDatabase.getPeople()
       return { response: response, origemDados: "Local" }
@@ -477,8 +478,24 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: localData, origemDados: "Remoto" };
   }
 
+  async function postPayment(payment: PaymentType) {
+    const url = `${baseUrl}/pagamento/?id_pessoa=${payment.id_pessoa}&data_pagamento=${payment.data_pagamento}&valor_pagamento=${payment.valor_pagamento}`
+
+    const request: any = await axios.post(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      // const request = await productDatabase.postProduct(payment);
+      return { response: request, origemDados: "Local" }
+    }
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{ getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

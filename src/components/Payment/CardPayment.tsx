@@ -10,21 +10,24 @@ import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
 
 type CardPaymentProps = {
-    payment: PaymentType;
-    mode: "view" | "create"
+    payment: PaymentType,
+    mode: "view" | "create",
+    onCancel?: () => void;
+    onSave: (payment: PaymentType) => void;
 };
 
-export default function CardPayment({ payment, mode }: CardPaymentProps) {
+export default function CardPayment({ onSave, onCancel, payment, mode }: CardPaymentProps) {
     const { user } = useAuthContext()
     const sync = useSync()
     const [modeCard, setModeCard] = useState<"view" | "create">(mode);
-    const [pendingPaymentList, setPendingPaymentList] = useState<UserType[]>([])
-    const [paymentValues, setPaymentValues] = useState<PendingPaymentType>()
+    const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentType[]>([])
+    const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
+
+    console.log("card:", payment);
+
 
     async function getPendingPayment() {
         const request = await sync.getPendingPayment()
-        console.log("Pendentes:", request.response);
-
         setPendingPaymentList(request.response)
     }
 
@@ -37,6 +40,13 @@ export default function CardPayment({ payment, mode }: CardPaymentProps) {
         }
     }, [])
 
+
+    async function savePayment() {
+        if (!paymentValues?.id_pessoa) {
+            return;
+        }
+        onSave(paymentValues)
+    }
 
     if (modeCard === "view") {
         return (
@@ -66,7 +76,14 @@ export default function CardPayment({ payment, mode }: CardPaymentProps) {
                         label="nome"
                         id="id_pessoa"
                         onSelect={(item) => {
-                            setPaymentValues(item);
+                            const teste: PaymentType = {
+                                data_pagamento: payment.data_pagamento,
+                                id_pagamento: payment.id_pagamento,
+                                valor_pagamento: item.total,
+                                id_pessoa: item.id_pessoa,
+                                nome: item.nome
+                            }
+                            setPaymentValues(teste)
                         }}
                         textButton="Selecione um funcionário"
                         list={pendingPaymentList}
@@ -74,16 +91,12 @@ export default function CardPayment({ payment, mode }: CardPaymentProps) {
                 </View>
                 <View style={stylesCreate.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>Valor a pagar: R${paymentValues?.total.toFixed(2)}</Text>
+                        <Text style={styles.textValue}>Valor a pagar: R${paymentValues?.valor_pagamento?.toFixed(2)}</Text>
                     </View>
                 </View>
                 <View style={stylesCreate.line}>
-                    <Button style={{ flex: 1 }} title={"Descartar"} onPress={() => {
-
-                    }} />
-                    <Button style={{ flex: 1 }} title={"Salvar"} onPress={() => {
-
-                    }} />
+                    <Button style={{ flex: 1 }} title={"Descartar"} onPress={() => { }} />
+                    <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
                 </View>
             </Pressable>
         )
