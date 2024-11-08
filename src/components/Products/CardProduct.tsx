@@ -11,6 +11,7 @@ import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 import { useAuthContext } from '@/src/contexts/AuthContext';
 import { constants } from '@/src/constants/constants';
+import DatePicker from '../DatePicker';
 
 type CardProductProps = {
   product: ProductType;
@@ -25,7 +26,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const { user } = useAuthContext()
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
-  const [showPicker, setShowPicker] = useState<boolean>(false);
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const [productValues, setFormValues] = useState<ProductType>(product);
 
@@ -33,13 +33,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     setFormValues(product)
     setInitialDate(new Date())
   }, [product])
-
-  function handleDateChange(event: any, date: Date | undefined) {
-    setShowPicker(false);
-    if (date) {
-      setInitialDate(date);
-    }
-  };
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
@@ -283,25 +276,10 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         </View>
         {
           modeCard === "edit" &&
-          <Pressable
-            style={styles.dataContainer}
-            onPress={() => setShowPicker(!showPicker)}
-          >
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={styles.dataText}>Alterar partir de: </Text>
-            <View style={styles.dataValue}>
-              <Text style={styles.dataText}>{initialDate?.toLocaleDateString()}</Text>
-            </View>
-          </Pressable>
-        }
-        {
-          showPicker && (
-            <DateTimePicker
-              value={initialDate || new Date()}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
-            />
-          )
+            <DatePicker date={initialDate} onDateChange={setInitialDate} />
+          </View>
         }
         <View style={styles.buttonsContainer}>
           {
