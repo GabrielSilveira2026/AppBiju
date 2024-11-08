@@ -26,7 +26,6 @@ export default function Payment() {
   useEffect(() => {
     async function getPayment(id_pessoa?: number) {
       const request = await sync.getPayment(id_pessoa)
-      console.log("Pagamentos:", request.response)
       setPaymentList(request.response)
     }
 

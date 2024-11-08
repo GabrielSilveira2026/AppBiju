@@ -479,7 +479,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postPayment(payment: PaymentType) {
-    const url = `${baseUrl}/pagamento/?id_pessoa=${payment.id_pessoa}&data_pagamento=${payment.data_pagamento}&valor_pagamento=${payment.valor_pagamento}`
+    const url = `${baseUrl}/pagamento/?id_pagamento=${payment.id_pagamento}&id_pessoa=${payment.id_pessoa}&data_pagamento=${payment.data_pagamento}&valor_pagamento=${payment.valor_pagamento}`
 
     const request: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
@@ -487,7 +487,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (request.status === 571) {
       await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
-      // const request = await productDatabase.postProduct(payment);
+      const request = await paymentDatabase.postPayment(payment);
       return { response: request, origemDados: "Local" }
     }
 

@@ -23,9 +23,6 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
     const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentType[]>([])
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
 
-    console.log("card:", payment);
-
-
     async function getPendingPayment() {
         const request = await sync.getPendingPayment()
         setPendingPaymentList(request.response)
@@ -95,7 +92,7 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
                     </View>
                 </View>
                 <View style={stylesCreate.line}>
-                    <Button style={{ flex: 1 }} title={"Descartar"} onPress={() => { }} />
+                    <Button style={{ flex: 1 }} title={"Descartar"} onPress={onCancel} />
                     <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
                 </View>
             </Pressable>

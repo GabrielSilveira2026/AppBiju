@@ -290,7 +290,7 @@ export default function DayDetails() {
                                                 color={colors.error}
                                             />
                                         ) :
-                                        mode === "view" &&
+                                        mode === "view" && Number(id_pessoa_params) === user?.id_pessoa &&
                                         (
                                             <Ionicons
                                                 onPress={() => setMode("edit")}

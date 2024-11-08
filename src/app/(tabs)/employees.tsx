@@ -16,9 +16,7 @@ export default function Funcionarios() {
     const [listPendingPayment, setListPendingPayment] = useState<PendingPaymentType[]>([])
 
     async function getPendingPayment() {
-        const response = await sync.getPendingPayment()
-        console.log(response.response);
-        
+        const response = await sync.getPendingPayment()        
         setListPendingPayment(response.response)
     }
 

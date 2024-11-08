@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -33,6 +33,7 @@ export default function Profile() {
   const [searchDay, setSearchDay] = useState<string>("");
   const [isSearch, setIsSearch] = useState<boolean>(false)
   const [isAdding, setIsAdding] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
   const controller = new AbortController();
@@ -50,6 +51,7 @@ export default function Profile() {
   }
 
   async function getDataDays() {
+    setIsLoading(true)
     await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
     const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
@@ -57,8 +59,9 @@ export default function Profile() {
     for (const day of response.response) {
       await sync.getProduction(day.id_dia);
     }
-
     setDayList(response.response);
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -68,8 +71,8 @@ export default function Profile() {
     }
 
     return () => {
-      setUserData(undefined)
-      setDayList([])
+      // setUserData(undefined)
+      // setDayList([])
       controller.abort();
     };
   }, [isFocused]);
@@ -146,16 +149,17 @@ export default function Profile() {
                 inputStyle={{ flex: 1 }}
               />
             }
-            {
+            {/* {
               isSearch || dayList?.length !== 0 &&
               <Pressable
                 onPress={() => {
                   setIsSearch(!isSearch)
                 }}
               >
-                {/* <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text> */}
+                <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
               </Pressable>
-            }
+            } */}
+            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
           </View>
           <FlatList
             refreshing={false}
@@ -163,7 +167,10 @@ export default function Profile() {
               getDataDays()
             }}
             data={isSearch ? dayList : dayList?.slice(0, 15)}
-            ListEmptyComponent={<Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text>}
+            ListEmptyComponent={
+              !dayList?.length && !isLoading ?
+                <Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text> : <></>
+            }
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day?.id_dia}
             renderItem={({ item }) => <DayListItem day={item} />}
