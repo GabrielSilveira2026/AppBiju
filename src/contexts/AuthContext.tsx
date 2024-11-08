@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else if (id_perfil === constants.perfil.administrador.id_perfil) {
       router.replace("/(tabs)/employees")
     } else {
-      router.replace("/(tabs)")
+      router.replace({ pathname: "/", params: { id_pessoa: user?.id_pessoa }, })
     }
   }
 

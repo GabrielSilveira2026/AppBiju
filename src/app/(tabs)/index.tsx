@@ -16,6 +16,7 @@ import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import AddContainer from "@/src/components/AddContainer";
+import { constants } from "@/src/constants/constants";
 
 type UserType = {
   nome: string;
@@ -176,9 +177,9 @@ export default function Profile() {
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {
-            !id_pessoa_params &&
+            user?.id_perfil !== constants.perfil.administrador.id_perfil  &&
             <AddContainer
-              text="Adicionar novo dia"
+              text="Adicionar dia"
               disable={isAdding}
               onPress={() => {
                 setIsAdding(true)

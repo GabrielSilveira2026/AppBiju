@@ -6,15 +6,18 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { colors } from "@/styles/color";
 
 export default function Loading() {
+    const { isAuthenticated } = useAuthContext()
     const sync = useSync()
     const { setIsLoading } = useAuthContext()
     async function syncData() {
         await sync.syncData()
+        setIsLoading(false)
     }
 
     useEffect(() => {
-        syncData()
-        setIsLoading(false)
+        if (isAuthenticated) {
+            syncData()
+        }
         return () => {
         }
     }, [])

@@ -15,6 +15,7 @@ import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
 import AddContainer from "@/src/components/AddContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
+import DatePicker from "@/src/components/DatePicker";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -36,7 +37,6 @@ export default function DayDetails() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
 
-    const [showPicker, setShowPicker] = useState<boolean>(false);
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
 
@@ -97,13 +97,6 @@ export default function DayDetails() {
         };
     }, [isFocused]);
 
-    function handleDateChange(event: any, date: Date | undefined) {
-        setShowPicker(false);
-        if (date) {
-            setSelectedDate(date);
-        }
-    };
-
     function goBack() {
         if (mode === "edit") {
             setMode("view");
@@ -116,7 +109,7 @@ export default function DayDetails() {
                     {
                         text: "Sair sem salvar",
                         onPress: async () => {
-                            router.navigate("/");
+                            router.navigate("/",);
                         }
                     }
                 ])
@@ -261,23 +254,11 @@ export default function DayDetails() {
                                     />
                                     {
                                         mode && mode !== "view" ? (
-                                            <Pressable onPress={() => setShowPicker(!showPicker)}>
-                                                <View style={styles.dataContainer}>
-                                                    <Text style={styles.dataText}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
-                                                </View>
-                                            </Pressable>
+                                            <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
                                         ) : (
-                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
+                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString()}</Text>
                                         )
                                     }
-                                    {showPicker && (
-                                        <DateTimePicker
-                                            value={selectedDate || new Date()}
-                                            mode="date"
-                                            display="default"
-                                            onChange={handleDateChange}
-                                        />
-                                    )}
                                 </View>
                                 {
                                     mode && Number(id_pessoa_params) === user?.id_pessoa &&

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextStyle } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { colors } from '@/styles/color';
 
 interface DataPickerProps {
     date: Date;
     onDateChange: (date: Date) => void;
+    textStyle?: TextStyle;
 }
 
-export default function DatePicker({ date, onDateChange }: DataPickerProps) {
+export default function DatePicker({ date, onDateChange, textStyle }: DataPickerProps) {
     const [showPicker, setShowPicker] = useState<boolean>(false);
 
     const handleDateChange = (event: any, selectedDate?: Date) => {
         setShowPicker(false);
         if (selectedDate) {
-            selectedDate.setHours(1, 0, 0, 0);
-            onDateChange(selectedDate);
+            onDateChange(new Date(selectedDate));
         }
     };
 
@@ -23,7 +23,7 @@ export default function DatePicker({ date, onDateChange }: DataPickerProps) {
         <>
             <TouchableOpacity style={styles.dataContainer} onPress={() => setShowPicker(!showPicker)}>
                 <View style={styles.dataValue}>
-                    <Text style={styles.dataText}>
+                    <Text style={[styles.dataText, textStyle]}>
                         {date?.toLocaleDateString()}
                     </Text>
                 </View>
