@@ -93,13 +93,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function signOut() {
+    router.replace('/login');
 
     setIsLoading(true)
     try {
       setIsAuthenticated(false)
       setUser(null)
       await AsyncStorage.removeItem("@user")
-      router.replace('/login');
     } catch (error) {
       console.warn(error);
     } finally {
