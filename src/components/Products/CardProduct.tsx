@@ -278,7 +278,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
           modeCard === "edit" &&
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={styles.dataText}>Alterar partir de: </Text>
-            <DatePicker date={initialDate} onDateChange={(date) => { (date.setHours(1, 0, 0, 0)); setInitialDate(date) }} />
+            <DatePicker date={initialDate} onDateChange={setInitialDate} />
           </View>
         }
         <View style={styles.buttonsContainer}>

@@ -66,7 +66,10 @@ export default function Payment() {
 
     if (payment.id_pagamento === "") {
       payment.id_pagamento = sync.nanoid()
-      console.log("Para salvar:", payment);
+      let localDate = new Date(payment.data_pagamento)
+      localDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
+      payment.data_pagamento = localDate.toISOString();
+      console.log(payment);
 
       const request = await sync.postPayment(payment)
       console.log(request.response);
@@ -78,7 +81,6 @@ export default function Payment() {
 
     setIsAdding(false)
   }
-
 
   function handleCancelPayment(paymentId: string) {
     setIsAdding(false)

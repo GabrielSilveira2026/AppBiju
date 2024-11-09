@@ -101,9 +101,9 @@ export default function Product() {
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
-
+      
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
-
+      
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {

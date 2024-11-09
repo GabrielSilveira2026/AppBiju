@@ -8,6 +8,7 @@ import { View, Text, Pressable, StyleSheet } from 'react-native'
 import Select from '../Select';
 import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
+import DatePicker from '../DatePicker';
 
 type CardPaymentProps = {
     payment: PaymentType,
@@ -22,6 +23,7 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
     const [modeCard, setModeCard] = useState<"view" | "create">(mode);
     const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentType[]>([])
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
     async function getPendingPayment() {
         const request = await sync.getPendingPayment()
@@ -42,6 +44,10 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
         if (!paymentValues?.id_pessoa) {
             return;
         }
+        setPaymentValues(prev => ({
+            ...prev,
+            ["data_pagamento"]: selectedDate.toISOString(),
+        }))
         onSave(paymentValues)
     }
 
@@ -74,7 +80,7 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
                         id="id_pessoa"
                         onSelect={(item) => {
                             const teste: PaymentType = {
-                                data_pagamento: payment.data_pagamento,
+                                data_pagamento: selectedDate.toISOString(),
                                 id_pagamento: payment.id_pagamento,
                                 valor_pagamento: item.total,
                                 id_pessoa: item.id_pessoa,
@@ -84,6 +90,11 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
                         }}
                         textButton="Selecione um funcionário"
                         list={pendingPaymentList}
+                    />
+                    <DatePicker
+                        textStyle={styles.dataText}
+                        date={selectedDate}
+                        onDateChange={setSelectedDate}
                     />
                 </View>
                 <View style={stylesCreate.line}>
