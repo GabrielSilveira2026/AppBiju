@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -8,28 +8,23 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { DayType } from "@/src/types/types";
+import { DayType, PendingPaymentType, UserType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import AddContainer from "@/src/components/AddContainer";
 import { constants } from "@/src/constants/constants";
-
-type UserType = {
-  nome: string;
-  total: number;
-  ultimo_pagamento: string;
-};
 
 export default function Profile() {
   const { user } = useAuthContext();
   const sync = useSync();
 
   const { id_pessoa } = useLocalSearchParams();
-  const [userData, setUserData] = useState<UserType | undefined>(undefined);
+
+  const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
   const [searchDay, setSearchDay] = useState<string>("");
   const [isSearch, setIsSearch] = useState<boolean>(false)
@@ -44,11 +39,11 @@ export default function Profile() {
   async function getDataHeader() {
     const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
 
-    let { nome, total, ultimo_pagamento } = response.response[0];
+    let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
 
     ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
 
-    setUserData({ nome, total, ultimo_pagamento });
+    setUserData({ id_pessoa, nome, total, ultimo_pagamento });
   }
 
   async function getDataDays() {
@@ -72,8 +67,6 @@ export default function Profile() {
     }
 
     return () => {
-      // setUserData(undefined)
-      // setDayList([])
       controller.abort();
     };
   }, [isFocused]);
@@ -177,7 +170,7 @@ export default function Profile() {
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {
-            user?.id_perfil !== constants.perfil.administrador.id_perfil  &&
+            user?.id_perfil !== constants.perfil.administrador.id_perfil &&
             <AddContainer
               text="Adicionar dia"
               disable={isAdding}

@@ -1,15 +1,13 @@
+import { PendingPaymentType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type HeaderProfileProps = {
-    userData: {
-        nome: string,
-        total: number,
-        ultimo_pagamento: string,
-    }
+    userData: PendingPaymentType
 }
 
 export default function HeaderProfile({ userData }: HeaderProfileProps) {
@@ -42,7 +40,8 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                         <Text style={styles.textTitle}>
                             Último Pagamento
                         </Text>
-                        <Ionicons name={"open-outline"} size={30} color={colors.primary} />
+                        <Ionicons
+                            onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: userData.id_pessoa, pessoa: userData.nome }, })} name={"open-outline"} size={30} color={colors.primary} />
                     </View>
                     <Text style={styles.textValue}>
                         {userData ? userData?.ultimo_pagamento : "__/__/____"}
