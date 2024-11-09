@@ -59,7 +59,9 @@ export default function usePaymentDatabase() {
                 WHERE 
                     P.id_pessoa = $id_pessoa
                 GROUP BY 
-                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`
+                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento
+                ORDER BY 
+                    P.nome ASC`
                 : `SELECT 
                     P.id_pessoa,
                     P.nome AS Nome,
@@ -83,7 +85,9 @@ export default function usePaymentDatabase() {
                 LEFT JOIN 
                     producao PR ON D.id_dia = PR.id_dia
                 GROUP BY 
-                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`;
+                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento
+                ORDER BY 
+                    P.nome ASC`;
     
             const params: { $id_pessoa?: number } = {};
             if (id_pessoa !== undefined) {

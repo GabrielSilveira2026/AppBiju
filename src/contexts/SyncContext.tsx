@@ -456,7 +456,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await paymentDatabase.getPayment(id_pessoa)
       return { response: request, origemDados: "Local" }
     }
-
     await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
 
     const localData = await paymentDatabase.getPayment(id_pessoa)
@@ -471,8 +470,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await paymentDatabase.getPendingPayment(id_pessoa)
       return { response: response, origemDados: "Local" }
     }
-
-    // await pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }

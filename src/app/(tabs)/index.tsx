@@ -23,7 +23,6 @@ export default function Profile() {
   const sync = useSync();
 
   const { id_pessoa } = useLocalSearchParams();
-
   const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
   const [searchDay, setSearchDay] = useState<string>("");
@@ -36,9 +35,8 @@ export default function Profile() {
 
   const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
-  async function getDataHeader() {
+  async function getDataHeader() {    
     const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
-
     let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
 
     ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });

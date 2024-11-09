@@ -1,6 +1,7 @@
 import AddContainer from '@/src/components/AddContainer'
 import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
+import { useAuthContext } from '@/src/contexts/AuthContext'
 import { useSync } from '@/src/contexts/SyncContext'
 import { getPayment } from '@/src/httpservices/payment'
 import { PaymentType } from '@/src/types/types'
@@ -15,6 +16,7 @@ import { View, Text, ImageBackground, StyleSheet, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
+  const { user } = useAuthContext();
   const { id_pessoa } = useLocalSearchParams();
   const isFocused = useIsFocused();
   const sync = useSync()
@@ -32,7 +34,7 @@ export default function Payment() {
     }
 
     if (isFocused) {
-      getPayment(Number(id_pessoa))
+      getPayment(Number(id_pessoa) || user?.id_pessoa)
     }
 
     return () => {
