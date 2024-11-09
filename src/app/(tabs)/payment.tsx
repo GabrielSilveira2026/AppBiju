@@ -1,9 +1,7 @@
 import AddContainer from '@/src/components/AddContainer'
-import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
 import { useAuthContext } from '@/src/contexts/AuthContext'
 import { useSync } from '@/src/contexts/SyncContext'
-import { getPayment } from '@/src/httpservices/payment'
 import { PaymentType } from '@/src/types/types'
 import { colors } from '@/styles/color'
 import { IMAGE_PATHS } from '@/styles/constants'
@@ -22,19 +20,22 @@ export default function Payment() {
   const sync = useSync()
   const controller = new AbortController();
 
+  
+  
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
+  
+  async function getPayment(id_pessoa?: number) {
+    setIsAdding(true)
+    const request = await sync.getPayment(id_pessoa)
+    setPaymentList(request.response)
+    setIsAdding(false)
+  }
 
   useEffect(() => {
-    async function getPayment(id_pessoa?: number) {
-      setIsAdding(true)
-      const request = await sync.getPayment(id_pessoa)
-      setPaymentList(request.response)
-      setIsAdding(false)
-    }
 
     if (isFocused) {
-      getPayment(Number(id_pessoa) || user?.id_pessoa)
+      getPayment(Number(id_pessoa))
     }
 
     return () => {

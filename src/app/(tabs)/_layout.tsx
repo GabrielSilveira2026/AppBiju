@@ -68,7 +68,7 @@ export default function AppLayout() {
         name="payment"
         options={{
           headerShown: false,
-          href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?${user?.id_pessoa}` : "/payment",
+          href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?id_pessoa=${user?.id_pessoa}` : "/payment",
           tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
         }}
       />

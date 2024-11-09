@@ -195,7 +195,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    await peopleDatabase.updatePeopleList(response.data.items)
+    await peopleDatabase.updatePeopleList(response.data.items, id_pessoa)
 
     const localData = await peopleDatabase.getPeople(id_pessoa)
 

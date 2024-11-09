@@ -46,7 +46,7 @@ export default function Profile() {
 
   async function getDataDays() {
     setIsLoading(true)
-    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
+    await sync.getPeople( Number(id_pessoa_params) || user?.id_pessoa);
 
     const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
 

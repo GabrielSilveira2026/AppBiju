@@ -76,7 +76,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
             <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -102,7 +102,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                 </View>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&

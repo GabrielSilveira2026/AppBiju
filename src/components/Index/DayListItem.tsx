@@ -20,7 +20,7 @@ export default function DayListItem({ day }: { day: DayType }) {
           },
         });
       }}>
-      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
+      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
       <Text style={styles.text}>{`R$${day.valor_dia?.toFixed(2)}`}</Text>
       <Ionicons
         name="arrow-forward"

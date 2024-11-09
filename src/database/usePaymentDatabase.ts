@@ -4,7 +4,9 @@ import { PaymentType, PendingPaymentType } from "../types/types";
 export default function usePaymentDatabase() {
     const database = useSQLiteContext();
 
-    async function getPayment(id_pessoa?: number) {
+    async function getPayment(id_pessoa?: number) {  
+        console.log(id_pessoa);
+              
         try {
             const query = id_pessoa
                 ? `
@@ -134,6 +136,7 @@ export default function usePaymentDatabase() {
     }
 
     async function updatePaymentList(paymentList: PaymentType[], id_pessoa?: number) {
+
         const statementDelete = id_pessoa
             ? await database.prepareAsync(`DELETE FROM pagamento WHERE id_pessoa = $id_pessoa`)
             : await database.prepareAsync(`DELETE FROM pagamento`);

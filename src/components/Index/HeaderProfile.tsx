@@ -41,7 +41,8 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                             Último Pagamento
                         </Text>
                         <Ionicons
-                            onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: userData.id_pessoa, pessoa: userData.nome }, })} name={"open-outline"} size={30} color={colors.primary} />
+                            onPress={() => router.push({ pathname: "/payment", params: { id_pessoa: userData.id_pessoa, pessoa: userData.nome}, })}
+                             name={"open-outline"} size={30} color={colors.primary} />
                     </View>
                     <Text style={styles.textValue}>
                         {userData ? userData?.ultimo_pagamento : "__/__/____"}

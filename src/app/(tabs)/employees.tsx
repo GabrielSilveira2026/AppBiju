@@ -17,8 +17,6 @@ export default function Funcionarios() {
 
     async function getPendingPayment() {
         const response = await sync.getPendingPayment()        
-        console.log(response);
-        
         setListPendingPayment(response.response)
     }
 
