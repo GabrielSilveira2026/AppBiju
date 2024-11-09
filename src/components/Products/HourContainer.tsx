@@ -77,7 +77,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                 <View style={styles.secondLine}>
                     <View style={styles.line}>
                         <Text style={styles.dataText}>A partir de: </Text>
-                        <DatePicker date={initialDate || Date()} onDateChange={setInitialDate} />
+                        <DatePicker date={initialDate} onDateChange={setInitialDate} />
                     </View>
                     <Button title={"Salvar"} onPress={handleUpdateHourValue} />
                 </View>

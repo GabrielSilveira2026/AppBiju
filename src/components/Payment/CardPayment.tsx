@@ -20,12 +20,12 @@ type CardPaymentProps = {
 };
 
 export default function CardPayment({ onDelete, onSave, onCancel, payment, mode }: CardPaymentProps) {
+
     const { user } = useAuthContext()
     const sync = useSync()
     const [modeCard, setModeCard] = useState<"view" | "create" | "details">(mode);
     const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentType[]>([])
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
     async function getPendingPayment() {
         const request = await sync.getPendingPayment()
@@ -41,15 +41,17 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
         }
     }, [])
 
+    const handleInputChange = (field: keyof PaymentType, value: string | number) => {
+        setPaymentValues(prev => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
 
     async function savePayment() {
         if (!paymentValues?.id_pessoa) {
             return;
         }
-        setPaymentValues(prev => ({
-            ...prev,
-            ["data_pagamento"]: selectedDate.toISOString(),
-        }))
         onSave(paymentValues)
     }
 
@@ -69,13 +71,12 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
         }
     }
 
-
     if (modeCard === "view") {
         return (
             <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -101,7 +102,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                 </View>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -125,22 +126,17 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                         id="id_pessoa"
                         initialText={paymentValues.nome}
                         onSelect={(item) => {
-                            const teste: PaymentType = {
-                                data_pagamento: selectedDate.toISOString(),
-                                id_pagamento: payment.id_pagamento,
-                                valor_pagamento: item.total,
-                                id_pessoa: item.id_pessoa,
-                                nome: item.nome
-                            }
-                            setPaymentValues(teste)
+                            handleInputChange("id_pessoa", item.id_pessoa)
+                            handleInputChange("nome", item.nome)
+                            handleInputChange("valor_pagamento", item.total)
                         }}
                         textButton="Selecione um funcionário"
                         list={pendingPaymentList}
                     />
                     <DatePicker
                         textStyle={styles.dataText}
-                        date={selectedDate}
-                        onDateChange={setSelectedDate}
+                        date={new Date(paymentValues.data_pagamento)}
+                        onDateChange={(date) => handleInputChange("data_pagamento", date.toISOString())}
                     />
                 </View>
                 <View style={stylesCreate.line}>
@@ -184,7 +180,8 @@ const stylesView = StyleSheet.create({
     cardContainer: {
         borderBottomWidth: 1,
         borderBottomColor: colors.text,
-        paddingHorizontal: 16
+        gap: 8,
+        paddingHorizontal: 12
     },
     textContainer: {
         paddingVertical: 8,

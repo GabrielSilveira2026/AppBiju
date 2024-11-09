@@ -46,7 +46,7 @@ export default function Profile() {
 
     let { nome, total, ultimo_pagamento } = response.response[0];
 
-    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
 
     setUserData({ nome, total, ultimo_pagamento });
   }

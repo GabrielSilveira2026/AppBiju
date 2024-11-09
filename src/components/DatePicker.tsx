@@ -15,7 +15,9 @@ export default function DatePicker({ date, onDateChange, textStyle }: DataPicker
     const handleDateChange = (event: any, selectedDate?: Date) => {
         setShowPicker(false);
         if (selectedDate) {
-            onDateChange(new Date(selectedDate));
+            console.log("Picker", selectedDate);
+
+            onDateChange(selectedDate);
         }
     };
 
@@ -24,7 +26,7 @@ export default function DatePicker({ date, onDateChange, textStyle }: DataPicker
             <TouchableOpacity style={styles.dataContainer} onPress={() => setShowPicker(!showPicker)}>
                 <View style={styles.dataValue}>
                     <Text style={[styles.dataText, textStyle]}>
-                        {date?.toLocaleDateString()}
+                        {date?.toLocaleDateString("pt-BR", { timeZone: "UTC", })}
                     </Text>
                 </View>
             </TouchableOpacity>

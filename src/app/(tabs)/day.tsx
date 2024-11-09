@@ -256,7 +256,7 @@ export default function DayDetails() {
                                         mode && mode !== "view" ? (
                                             <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
                                         ) : (
-                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString()}</Text>
+                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
                                         )
                                     }
                                 </View>

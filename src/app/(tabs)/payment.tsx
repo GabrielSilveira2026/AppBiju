@@ -25,8 +25,10 @@ export default function Payment() {
 
   useEffect(() => {
     async function getPayment(id_pessoa?: number) {
+      setIsAdding(true)
       const request = await sync.getPayment(id_pessoa)
       setPaymentList(request.response)
+      setIsAdding(false)
     }
 
     if (isFocused) {
@@ -69,11 +71,8 @@ export default function Payment() {
       let localDate = new Date(payment.data_pagamento)
       localDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
       payment.data_pagamento = localDate.toISOString();
-      console.log(payment);
 
       const request = await sync.postPayment(payment)
-      console.log(request.response);
-
       setPaymentList((prevPaymentList) => [payment, ...prevPaymentList]);
 
       setPaymentList((prevPaymentList) => prevPaymentList.filter(payment => payment.id_pagamento !== ""));
