@@ -12,7 +12,6 @@ import usePendingOperationDatabase from '../database/usePendingOperationDatabase
 import axios from 'axios';
 import { DayType, PaymentType, ProductionType, ProductType } from '../types/types';
 import { useAuthContext } from './AuthContext';
-import usePendingPaymentDatabase from '../database/usePendingPaymentDatabase';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
@@ -62,7 +61,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
   const paramDatabase = useParamDatabase();
-  const pendingPaymentDatabase = usePendingPaymentDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
   const productionDatabase = useProductionDatabase()
   const paymentDatabase = usePaymentDatabase()
@@ -202,19 +200,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const localData = await peopleDatabase.getPeople(id_pessoa)
 
     return { response: localData, origemDados: "Remoto" };
-  }
-
-  async function getPendingPayment(id_pessoa?: number) {
-    const response = await getPendingRemote(id_pessoa);
-
-    if (response.status === 571) {
-      const response = await pendingPaymentDatabase.getPendingPayment(id_pessoa)
-      return { response: response, origemDados: "Local" }
-    }
-
-    await pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
-
-    return { response: response.data.items, origemDados: "Remoto" };
   }
 
   async function getDay(id_pessoa?: number) {
@@ -477,6 +462,19 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const localData = await paymentDatabase.getPayment(id_pessoa)
 
     return { response: localData, origemDados: "Remoto" };
+  }
+
+  async function getPendingPayment(id_pessoa?: number) {
+    const response = await getPendingRemote(id_pessoa);
+
+    if (response.status === 571) {
+      const response = await paymentDatabase.getPendingPayment(id_pessoa)
+      return { response: response, origemDados: "Local" }
+    }
+
+    // await pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
+
+    return { response: response.data.items, origemDados: "Remoto" };
   }
 
   async function postPayment(payment: PaymentType) {

@@ -1,5 +1,5 @@
 import { useSQLiteContext } from "expo-sqlite";
-import { PaymentType } from "../types/types";
+import { PaymentType, PendingPaymentType } from "../types/types";
 
 export default function usePaymentDatabase() {
     const database = useSQLiteContext();
@@ -25,6 +25,73 @@ export default function usePaymentDatabase() {
                 ? await database.getAllAsync<PaymentType>(query, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<PaymentType>(query);
 
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async function getPendingPayment(id_pessoa?: number) {
+        try {
+            const result = id_pessoa
+                ? `SELECT 
+                    P.id_pessoa,
+                    P.nome AS Nome,
+                    PG.Ultimo_Pagamento,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.Ultimo_Pagamento)
+                            THEN PR.quantidade * PR.historico_preco_unidade
+                            ELSE 0
+                        END
+                    ), 0) AS total
+                FROM 
+                    pessoa P
+                LEFT JOIN 
+                    (SELECT id_pessoa, MAX(data_pagamento) AS Ultimo_Pagamento
+                    FROM pagamento
+                    GROUP BY id_pessoa) PG
+                    ON P.id_pessoa = PG.id_pessoa
+                LEFT JOIN 
+                    dia D ON P.id_pessoa = D.id_pessoa
+                LEFT JOIN 
+                    producao PR ON D.id_dia = PR.id_dia
+                WHERE 
+                    P.id_pessoa = $id_pessoa
+                GROUP BY 
+                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`
+                : `SELECT 
+                    P.id_pessoa,
+                    P.nome AS Nome,
+                    PG.Ultimo_Pagamento,
+                    COALESCE(SUM(
+                        CASE 
+                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.Ultimo_Pagamento)
+                            THEN PR.quantidade * PR.historico_preco_unidade
+                            ELSE 0
+                        END
+                    ), 0) AS total
+                FROM 
+                    pessoa P
+                LEFT JOIN 
+                    (SELECT id_pessoa, MAX(data_pagamento) AS Ultimo_Pagamento
+                    FROM pagamento
+                    GROUP BY id_pessoa) PG
+                    ON P.id_pessoa = PG.id_pessoa
+                LEFT JOIN 
+                    dia D ON P.id_pessoa = D.id_pessoa
+                LEFT JOIN 
+                    producao PR ON D.id_dia = PR.id_dia
+                GROUP BY 
+                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`;
+    
+            const params: { $id_pessoa?: number } = {};
+            if (id_pessoa !== undefined) {
+                params.$id_pessoa = id_pessoa;
+            }
+    
+            const response = await database.getAllAsync<PendingPaymentType>(result, params.$id_pessoa !== undefined ? params : {});
+    
             return response;
         } catch (error) {
             throw error;
@@ -129,5 +196,5 @@ export default function usePaymentDatabase() {
         }
     }
     
-    return { postPayment, getPayment, deletePayment, updatePaymentList };
+    return { postPayment, getPayment, getPendingPayment, deletePayment, updatePaymentList };
 }

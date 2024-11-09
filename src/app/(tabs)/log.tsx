@@ -3,7 +3,6 @@ import { useAuthContext } from '@/src/contexts/AuthContext';
 import useDayDatabase from '@/src/database/useDayDatabase';
 import useParamDatabase from '@/src/database/useParamDatabase';
 import usePendingOperationDatabase from '@/src/database/usePendingOperationDatabase';
-import usePendingPaymentDatabase from '@/src/database/usePendingPaymentDatabase';
 import usePeopleDatabase from '@/src/database/usePeopleDatabase';
 import useProductDatabase from '@/src/database/useProductDatabase';
 import useProductionDatabase from '@/src/database/useProductionDatabase';
@@ -22,14 +21,12 @@ import usePaymentDatabase from '@/src/database/usePaymentDatabase';
 const nanoid = customAlphabet('1234567890abcdef', 10)
 
 export default function log() {
-  const pendingPaymentDatabase = usePendingPaymentDatabase();
   const usePeople = usePeopleDatabase()
   const productDatabase = useProductDatabase();
   const paymentDatabase = usePaymentDatabase();
   const productionDatabase = useProductionDatabase();
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
-  const paramDatabase = useParamDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
 
 
