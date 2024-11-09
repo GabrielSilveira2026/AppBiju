@@ -23,6 +23,7 @@ export default function Profile() {
   const sync = useSync();
 
   const { id_pessoa } = useLocalSearchParams();
+
   const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
   const [searchDay, setSearchDay] = useState<string>("");
@@ -33,20 +34,25 @@ export default function Profile() {
   const isFocused = useIsFocused();
   const controller = new AbortController();
 
-  async function getDataHeader() {
-    const response = await sync.getPendingPayment(Number(id_pessoa) || user?.id_pessoa);
-    if (id_pessoa) {
+  const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
+
+  async function getDataHeader() {    
+    const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
+    if (response.response[0]) {
+      
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
+  
       ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
+  
       setUserData({ id_pessoa, nome, total, ultimo_pagamento });
     }
   }
 
   async function getDataDays() {
     setIsLoading(true)
-    await sync.getPeople(Number(id_pessoa) || user?.id_pessoa);
+    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
-    const response = await sync.getDay(Number(id_pessoa) || user?.id_pessoa);
+    const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
 
     for (const day of response.response) {
       await sync.getProduction(day.id_dia);
@@ -59,7 +65,7 @@ export default function Profile() {
   useEffect(() => {
     if (isFocused) {
       getDataHeader();
-      getDataDays();      
+      getDataDays();
     }
 
     return () => {
@@ -101,7 +107,7 @@ export default function Profile() {
     }
   })
 
-  if (user?.id_perfil === constants.perfil.administrador.id_perfil && !id_pessoa) {
+  if (user?.perfil === "Administrador" && !id_pessoa_params) {
     return <Redirect href={"/employees"} />
   }
 
