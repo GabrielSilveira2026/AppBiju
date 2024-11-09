@@ -6,7 +6,6 @@ import { router } from 'expo-router';
 import { globalStyles } from '@/styles/styles';
 
 export default function DayListItem({ day }: { day: DayType }) {
-
   return (
     <TouchableOpacity activeOpacity={0.7} style={[globalStyles.cardContainer, styles.container]}
       onPress={() => {

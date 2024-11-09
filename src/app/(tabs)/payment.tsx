@@ -105,11 +105,11 @@ export default function Payment() {
               color={colors.primary}
             />
             <Text style={globalStyles.title}>Pagamentos</Text>
-            <Input
+            {/* <Input
               value=""
               placeholder="Pesquisar"
               onChangeText={() => { }}
-            />
+            /> */}
           </View>
           <FlatList
             data={paymentList}

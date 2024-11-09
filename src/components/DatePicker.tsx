@@ -15,8 +15,6 @@ export default function DatePicker({ date, onDateChange, textStyle }: DataPicker
     const handleDateChange = (event: any, selectedDate?: Date) => {
         setShowPicker(false);
         if (selectedDate) {
-            console.log("Picker", selectedDate);
-
             onDateChange(selectedDate);
         }
     };
