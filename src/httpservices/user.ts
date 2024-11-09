@@ -37,19 +37,19 @@ export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">)
 
 export function getPeople(id_pessoa?: number) {
 
-  const query = id_pessoa ? `,"id_pessoa":${id_pessoa}}` : "";
+  const query = id_pessoa ? `,"id_pessoa":${id_pessoa}` : "";
 
-  const response = axios.get(`${baseUrl}/pessoa/?q={"$orderby":{"nome":"asc"}${query}`).catch(function (error) {
-      return { status: 571 };
-      if (error.response) {
-          return error.response;
+  const response = axios.get(`${baseUrl}/pessoa/?q={"$orderby":{"nome":"asc"}${query}}`).catch(function (error) {
+    return { data: [], status: 571 };
+    // if (error.response) {
+    //   console.log(error.response)
 
-      } else if (error.request) {
-          return error.request;
+    // } else if (error.request) {
+    //   console.log(error.request)
 
-      } else {
-          return error.message;
-      }
+    // } else {
+    //   console.log(error.message)
+    // }
   });
   return response;
 }

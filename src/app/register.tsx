@@ -9,6 +9,7 @@ import { Link } from 'expo-router';
 import { register } from '../httpservices/user';
 import { useAuthContext } from '../contexts/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { constants } from '../constants/constants';
 
 export type FormType = {
   email: string;
@@ -32,7 +33,7 @@ export default function RegisterForm() {
         nome: data.name.trim(),
         email: data.email.trim(),
         senha: data.password.trim(),
-        id_perfil: 3
+        id_perfil: constants.perfil.funcionario.id_perfil
       }
     )
 

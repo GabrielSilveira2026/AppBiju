@@ -1,6 +1,6 @@
 import { colors } from '@/styles/color'
 import { Ionicons } from '@expo/vector-icons'
-import { View, Text, StyleSheet, Pressable, FlatList, Alert } from 'react-native'
+import { View, Text, StyleSheet, Pressable, FlatList, Alert, TouchableOpacity } from 'react-native'
 import { ProductionType, ProductType } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { globalStyles } from '@/styles/styles';
@@ -10,6 +10,7 @@ import Button from '../Button';
 import Select from '../Select';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
+import { constants } from '@/src/constants/constants';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -91,17 +92,23 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     if (modeCard === "view") {
         return (
             <Pressable
-                style={globalStyles.cardContainer}
+                style={[globalStyles.cardContainer, stylesView.cardContainer]}
                 onPress={() => setModeCard("details")}
             >
-                <View style={stylesView.cardContainer}>
+                <View style={stylesView.container}>
                     <View style={styles.textContainer}>
                         <View style={{ flex: 1, gap: 8 }}>
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.nome_produto}</Text>
                             <Text style={styles.text} numberOfLines={1} ellipsizeMode="tail">{productionValues.observacao}</Text>
                         </View>
                         <View style={{ justifyContent: "space-between", alignItems: "flex-end" }}>
-                            <Text style={styles.text}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : formatMinutesToHours(productionValues.quantidade * 60)}</Text>
+                            <Text style={styles.text}>
+                                {
+                                    productionValues.id_produto !== constants.id_producao_hora ?
+                                        `Qtde ${productionValues.quantidade}`
+                                        : formatMinutesToHours(productionValues.quantidade * 60) + "h"
+                                }
+                            </Text>
                             <Text style={styles.text}>R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}</Text>
                         </View>
                     </View>
@@ -131,10 +138,10 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <View style={{ flex: 5 }}>
-                            <Select list={productList} label="nome" onSelect={selectProduct} initialText={production.nome_produto} />
+                            <Select list={productList} id="id_produto" label="nome" textButton="Selecione um produto" onSelect={selectProduct} initialText={production.nome_produto} />
                         </View>
                         {
-                            productionValues.id_produto !== "111111" ?
+                            productionValues.id_produto !== constants.id_producao_hora ?
                                 <>
                                     <Input
                                         inputStyle={{ flex: 1, textAlign: "center" }}
@@ -182,6 +189,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                         <Input
                             onChangeText={(text) => handleInputChange('observacao', text)}
                             multiline
+                            inputStyle={{ flex: 1 }}
                             placeholder="Digite uma anotação"
                             value={productionValues.observacao || ""}
                         />
@@ -191,7 +199,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             Valor total R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
                         {
-                            productionValues.id_produto !== "111111" &&
+                            productionValues.id_produto !== constants.id_producao_hora &&
                             <Text style={[styles.text, { textAlign: "center" }]}>
                                 ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
                             </Text>
@@ -222,7 +230,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     else {
         return (
             <View
-                style={globalStyles.cardContainer}
+                style={[globalStyles.cardContainer, stylesDetails.cardContainer]}
             >
                 <View style={stylesDetails.headerButtons}>
                     <Ionicons style={{ flex: 1 }} onPress={() => {
@@ -231,9 +239,9 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     }} name={"create-outline"} size={35} color={colors.primary} />
 
                     <Ionicons style={{ flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
-                </View>
+                </View >
 
-                <View style={stylesDetails.contentContainer}>
+                <View style={stylesDetails.container}>
 
                     <View style={{ flex: 2, gap: 8 }}>
                         <View style={stylesDetails.lineProductName}>
@@ -253,12 +261,12 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
 
 
                     <View style={{ justifyContent: "space-around", flex: 1, gap: 16 }}>
-                        <Text style={[styles.text, { textAlign: "center" }]}>{productionValues.id_produto !== "111111" ? `Qtde ${productionValues.quantidade}` : `${formatMinutesToHours(productionValues.quantidade * 60)}h`}</Text>
+                        <Text style={[styles.text, { textAlign: "center" }]}>{productionValues.id_produto !== constants.id_producao_hora ? `Qtde ${productionValues.quantidade}` : `${formatMinutesToHours(productionValues.quantidade * 60)}h`}</Text>
                         <Text style={[styles.text, { textAlign: "center" }]}>
                             Valor{"\n"}R$ {(productionValues.historico_preco_unidade * productionValues.quantidade).toFixed(2)}
                         </Text>
                         {
-                            productionValues.id_produto !== "111111" &&
+                            productionValues.id_produto !== constants.id_producao_hora &&
                             <Text style={[styles.text, { textAlign: "center" }]}>
                                 ≈ {formatMinutesToHours(productionValues.tempo_minuto * productionValues.quantidade)}h
                             </Text>
@@ -290,8 +298,11 @@ const styles = StyleSheet.create({
 })
 
 const stylesView = StyleSheet.create({
-    cardContainer:
-    {
+    cardContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: colors.text
+    },
+    container: {
         flexDirection: "row",
         backgroundColor: colors.backgroundTertiary,
         borderRadius: 4,
@@ -302,13 +313,17 @@ const stylesView = StyleSheet.create({
 })
 
 const stylesDetails = StyleSheet.create({
+    cardContainer: {
+        borderWidth: 1,
+        borderColor: colors.text,
+        padding: 16
+    },
     headerButtons: {
         flex: 1,
         flexDirection: "row",
         justifyContent: "space-between"
     },
-
-    contentContainer: {
+    container: {
         flexDirection: "row",
         paddingVertical: 8,
         gap: 8
@@ -326,9 +341,9 @@ const stylesCreateAndEdit = StyleSheet.create({
     cardContainer: {
         borderColor: colors.primary,
         borderWidth: 1,
+        padding: 8,
         gap: 8
     },
-
     dropdownButtonStyle: {
         flex: 4,
         flexDirection: "row",

@@ -25,13 +25,11 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
     const initialDate = new Date();
     initialDate.setHours(initialHours);
     initialDate.setMinutes(initialMinutes);
-    initialDate.setSeconds(0); // Opcional, se quiser zerar os segundos
-
-    const togglePicker = () => setShowPicker(prev => !prev);
+    initialDate.setSeconds(0);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={togglePicker}>
+            <TouchableOpacity style={styles.button} onPress={() => setShowPicker(!showPicker)}>
                 <Text style={styles.inputValue}>{formatMinutesToHours(value)}</Text>
             </TouchableOpacity>
             {
@@ -39,12 +37,12 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
                 <DateTimePicker
                     value={initialDate || new Date()}
                     mode="time"
-                    is24Hour={true} // Adicione esta linha para usar o formato de 24 horas
+                    is24Hour={true}
                     onChange={(event, selectedDate) => {
                         if (selectedDate) {
                             const date = new Date(selectedDate);
-                            togglePicker
-                            handleTimeSelection({hours: date.getHours(), minutes: date.getMinutes()})
+                            setShowPicker(!showPicker);
+                            handleTimeSelection({ hours: date.getHours(), minutes: date.getMinutes() })
                         }
                     }}
                 />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -13,6 +13,9 @@ import { useSync } from "@/src/contexts/SyncContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from 'react-native';
 import CardProduction from "@/src/components/Production/CardProduction";
+import AddContainer from "@/src/components/AddContainer";
+import { useAuthContext } from "@/src/contexts/AuthContext";
+import DatePicker from "@/src/components/DatePicker";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -21,23 +24,25 @@ export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
 
 export default function DayDetails() {
     const params = useLocalSearchParams();
+    const { user } = useAuthContext()
     const isFocused = useIsFocused();
     const sync = useSync();
     const controller = new AbortController();
 
-    const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(undefined);
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-    const [showPicker, setShowPicker] = useState<boolean>(false);
+    const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+
+    const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
+
+    const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(id_dia_params ? "view" : "create");
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
 
     const [productionList, setProductionList] = useState<ProductionType[]>([])
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-
-    const id_dia = Array.isArray(params.id_dia)
-        ? params.id_dia[0]
-        : params.id_dia;
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -65,13 +70,12 @@ export default function DayDetails() {
     useEffect(() => {
         async function getProductions(id_dia: string) {
             const request = await sync.getProduction(id_dia)
+
             setProductionList(request.response)
         }
 
         if (isFocused) {
-            const data = Array.isArray(params.data_dia_producao)
-                ? params?.data_dia_producao[0]
-                : params?.data_dia_producao || undefined;
+            const data = Array.isArray(params.data_dia_producao) ? params?.data_dia_producao[0] : params?.data_dia_producao || undefined;
             if (data) {
                 setMode("view");
                 setSelectedDate(new Date(data));
@@ -79,40 +83,97 @@ export default function DayDetails() {
                 setMode("create");
                 setSelectedDate(new Date());
             }
-            if (id_dia) {
-                getProductions(id_dia)
+            if (id_dia_params) {
+                getProductions(id_dia_params)
             }
+        } else {
+            setProductionList([])
         }
         return () => {
             setMode(undefined);
             setIsAdding(false)
-            setSelectedDate(undefined);
             setProductionList([])
             controller.abort();
         };
     }, [isFocused]);
 
-    const handleDateChange = (event: any, date: Date | undefined) => {
-        setShowPicker(false);
-        if (date) {
-            setSelectedDate(date);
-        }
-    };
-
-    async function createDay() {
-        const userId = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
-
-        if (selectedDate) {
-            const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
-            const response = await sync.postDay(parseInt(userId), localDate.toISOString(), sync.nanoid());
-            router.replace({
-                pathname: '../(tabs)/day',
-                params: { ...response.response, pessoa: params.pessoa }
-            });
+    function goBack() {
+        if (mode === "edit") {
             setMode("view");
         } else {
-            Alert.alert("Data inválida", "Por favor, selecione um dia");
+            if (!id_dia_params && productionList.length > 0) {
+                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja sair sem salva-las?", [
+                    {
+                        text: "Cancelar"
+                    },
+                    {
+                        text: "Sair sem salvar",
+                        onPress: async () => {
+                            router.navigate("/",);
+                        }
+                    }
+                ])
+            }
+            else {
+                router.navigate({
+                    pathname: '/',
+                    params: {
+                        id_pessoa: id_pessoa_params,
+                    },
+                })
+            }
         }
+    }
+
+    async function saveDay(new_id?: string) {
+        if (!id_dia_params) {
+            const id_dia = new_id ? new_id : sync.nanoid()
+            const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
+            setMode("view")
+
+            router.replace({
+                pathname: '../(tabs)/day',
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia }
+            });
+        }
+        else {
+            const day: DayType = {
+                id_dia: id_dia_params,
+                id_pessoa: Number(params.id_pessoa),
+                data_dia_producao: localDate.toISOString()
+            }
+
+            await sync.updateDay(day)
+
+            setMode("view")
+
+            router.replace({
+                pathname: '../(tabs)/day',
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia_params }
+            });
+        }
+        setMode("view");
+
+    }
+
+    async function deleteDay() {
+        Alert.alert("Excluir Dia?", `Deseja realmente excluir esse dia e todas as produções dele?`, [
+            {
+                text: "Cancelar"
+            },
+            {
+                text: "Confirmar",
+                onPress: async () => {
+                    const day: DayType = {
+                        id_dia: id_dia_params,
+                        id_pessoa: Number(params.id_pessoa),
+                        data_dia_producao: localDate.toISOString()
+                    }
+                    await sync.deleteDay(day)
+                    router.replace("/")
+                }
+            }
+        ])
     }
 
     function handleCreateProduction() {
@@ -121,7 +182,7 @@ export default function DayDetails() {
 
             const newProduction: ProductionType = {
                 id_producao: "",
-                id_dia: id_dia,
+                id_dia: id_dia_params,
                 id_produto: "",
                 tempo_minuto: 0,
                 nome_produto: "",
@@ -138,8 +199,14 @@ export default function DayDetails() {
 
     async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
-
         if (production.id_producao === "") {
+
+            if (!production.id_dia) {
+                const id = sync.nanoid()
+                await saveDay(id)
+                production.id_dia = id
+            }
+
             production.id_producao = sync.nanoid()
             const request = await sync.postProduction(production)
             setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
@@ -147,17 +214,22 @@ export default function DayDetails() {
             setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
         }
         else {
-            const request = await sync.updateProduction(production)
+            if (production.id_dia) {
+                const request = await sync.updateProduction(production)
+                setProductionList((prevProductionList) => prevProductionList.filter(item => item.id_producao !== production.id_producao));
+                setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+            }
+
             setProductionList((prevProductionList) => prevProductionList.filter(item => item.id_producao !== production.id_producao));
 
-            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
+            setProductionList((prevProductionList) => [production, ...prevProductionList]);
         }
         setIsAdding(false)
     }
 
     async function handleDeleteProduction(productionRemove: ProductionType) {
-       await sync.deleteProduction(productionRemove)
-       setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
+        await sync.deleteProduction(productionRemove)
+        setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
     }
 
     function handleCancelProduction(productionId: string) {
@@ -168,7 +240,6 @@ export default function DayDetails() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
-                {/* <Text style={{color: "white"}}>{id_dia}</Text> */}
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>
@@ -176,45 +247,39 @@ export default function DayDetails() {
                             <View style={styles.firstLine}>
                                 <View style={styles.backAndData}>
                                     <Ionicons
-                                        onPress={() => {
-                                            if (mode === "edit") {
-                                                setMode("view");
-                                            } else {
-                                                router.navigate("/");
-                                            }
-                                        }}
+                                        onPress={goBack}
                                         name="arrow-back-outline"
                                         size={35}
                                         color={colors.primary}
                                     />
                                     {
                                         mode && mode !== "view" ? (
-                                            <Pressable onPress={() => setShowPicker(!showPicker)}>
-                                                <View style={styles.dataContainer}>
-                                                    <Text style={styles.dataText}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
-                                                </View>
-                                            </Pressable>
+                                            <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
                                         ) : (
-                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
+                                            <Text style={styles.textValue}>{selectedDate?.toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
                                         )
                                     }
-                                    {showPicker && (
-                                        <DateTimePicker
-                                            value={selectedDate || new Date()}
-                                            mode="date"
-                                            display="default"
-                                            onChange={handleDateChange}
-                                        />
-                                    )}
                                 </View>
-                                {mode && mode !== "create" && (
-                                    <Ionicons
-                                        onPress={() => setMode("edit")}
-                                        name={mode === "view" ? "create-outline" : "trash-outline"}
-                                        size={35}
-                                        color={mode === "view" ? colors.primary : colors.error}
-                                    />
-                                )}
+                                {
+                                    mode && Number(id_pessoa_params) === user?.id_pessoa &&
+                                        mode === "edit" ?
+                                        (
+                                            <Ionicons
+                                                onPress={deleteDay}
+                                                name={"trash-outline"}
+                                                size={35}
+                                                color={colors.error}
+                                            />
+                                        ) :
+                                        mode === "view" && Number(id_pessoa_params) === user?.id_pessoa &&
+                                        (
+                                            <Ionicons
+                                                onPress={() => setMode("edit")}
+                                                name={"create-outline"}
+                                                size={35}
+                                                color={colors.primary}
+                                            />
+                                        )}
                             </View>
                             <View style={styles.secondLine}>
                                 <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
@@ -230,7 +295,7 @@ export default function DayDetails() {
                                 <Text style={globalStyles.title}>Produções</Text>
                             </View>
                         }
-                        keyboardShouldPersistTaps= 'handled'
+                        keyboardShouldPersistTaps='handled'
                         data={productionList}
                         renderItem={({ item }) =>
                             <CardProduction
@@ -241,23 +306,29 @@ export default function DayDetails() {
                                 onRemove={handleDeleteProduction}
                             />
                         }
-                        style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
+                        style={{ marginBottom: isKeyboardVisible ? 260 : 0 }}
                         keyExtractor={(item, index) => index.toString()}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    <View style={globalStyles.bottomAdd}>
-                        <Ionicons
+                    {mode && mode !== "edit" && Number(id_pessoa_params) === user?.id_pessoa
+                        &&
+                        < AddContainer
+                            text="Adicionar produção"
+                            disable={isAdding}
                             onPress={handleCreateProduction}
-                            name="add-circle-outline"
-                            color={colors.primary}
-                            size={50}
-                            disabled={isAdding}
                         />
-                    </View>
+                    }
                 </View>
-                {mode && mode !== 'view' && <Button title={"Salvar"} onPress={createDay} />}
+
+                {
+                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa &&
+                    <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
+                        <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
+                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveDay} />
+                    </View>
+                }
             </SafeAreaView>
-        </ImageBackground>
+        </ImageBackground >
     );
 }
 

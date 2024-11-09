@@ -10,10 +10,12 @@ type SelectProps = {
     list: any[],
     label: string,
     initialText?: string,
+    textButton?: string,
+    id: string,
     onSelect: (item: any) => void
 }
 
-export default function Select({ initialText, list, label, onSelect }: SelectProps) {
+export default function Select({id, textButton, initialText, list, label, onSelect }: SelectProps) {
     const [showModal, setShowModal] = useState(false);
     const [filteredData, setFilteredData] = useState(list);
     const [search, setSearch] = useState('');
@@ -27,7 +29,7 @@ export default function Select({ initialText, list, label, onSelect }: SelectPro
         setSearch(text);
         setFilteredData(
             list.filter(item =>
-                item.nome.toLowerCase().includes(text.toLowerCase())
+                item[label].toLowerCase().includes(text.toLowerCase())
             )
         );
     };
@@ -43,7 +45,7 @@ export default function Select({ initialText, list, label, onSelect }: SelectPro
             <TouchableOpacity onPress={() => setShowModal(true)} style={styles.button}>
                 <Text
                     style={[styles.textButton, { color: selectedItem ? colors.text : colors.textInput }]}>
-                    {selectedItem ? selectedItem[label] : 'Selecione um produto'}
+                    {selectedItem ? selectedItem[label] : textButton}
                 </Text>
                 <Ionicons name={showModal ? 'chevron-up-outline' : 'chevron-down-outline'} color={colors.primary} size={30} />
             </TouchableOpacity>
@@ -59,14 +61,14 @@ export default function Select({ initialText, list, label, onSelect }: SelectPro
                         <View style={styles.modalView}>
                             <Input
                                 inputStyle={{ width: "100%" }}
-                                placeholder="Pesquise um produto"
+                                placeholder={"Pesquisar"}
                                 value={search}
                                 onChangeText={handleSearch}
                             />
                             <FlatList
                                 data={filteredData}
                                 keyboardShouldPersistTaps='handled'
-                                keyExtractor={(item) => item.id_produto}
+                                keyExtractor={(item) => item[id]}
                                 style={{ width: "100%" }}
                                 contentContainerStyle={{ gap: 8 }}
                                 renderItem={({ item }) => (

@@ -31,23 +31,11 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
         CREATE TABLE IF NOT EXISTS pagamento (
-            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_pagamento INTEGER,
+            id_pagamento TEXT NOT NULL,
             data_pagamento TEXT,
             id_pessoa INTEGER NOT NULL,
             valor_pagamento REAL,
             CONSTRAINT fk_pessoa_pagamento FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
-        );
-    `);
-
-    await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS pagamento_pendente (
-            id_pagamento_local INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_pagamento INTEGER,
-            id_pessoa INTEGER NOT NULL,
-            nome TEXT NOT NULL,
-            ultimo_pagamento TEXT,
-            total REAL NOT NULL
         );
     `);
 

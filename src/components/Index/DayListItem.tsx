@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DayType } from '@/src/types/types';
 import { colors } from '@/styles/color';
@@ -6,9 +6,8 @@ import { router } from 'expo-router';
 import { globalStyles } from '@/styles/styles';
 
 export default function DayListItem({ day }: { day: DayType }) {
-
   return (
-    <Pressable style={[globalStyles.cardContainer, styles.container]}
+    <TouchableOpacity activeOpacity={0.7} style={[globalStyles.cardContainer, styles.container]}
       onPress={() => {
         router.navigate({
           pathname: '../../(tabs)/day',
@@ -21,13 +20,13 @@ export default function DayListItem({ day }: { day: DayType }) {
           },
         });
       }}>
-      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</Text>
+      <Text style={styles.text}>{new Date(day.data_dia_producao).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
       <Text style={styles.text}>{`R$${day.valor_dia?.toFixed(2)}`}</Text>
       <Ionicons
         name="arrow-forward"
         size={45}
         color={colors.primary} />
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

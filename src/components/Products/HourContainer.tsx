@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { globalStyles } from '@/styles/styles';
+import { constants } from '@/src/constants/constants';
+import DatePicker from '../DatePicker';
 
 type HourContainerProps = {
     hourValueProp: string;
@@ -28,14 +30,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
             setModeHourValue("view");
         }
     }, [hourValueProp, isFocused]);
-
-    function handleDateChange(event: any, date: Date | undefined) {
-        setShowPicker(false);
-        if (date) {
-            setInitialDate(date);
-        }
-    };
-
+    
     async function handleUpdateHourValue() {
         Alert.alert('Alterar valor da hora?', `Deseja realmente alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
             {
@@ -53,7 +48,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
 
     return (
         <View style={[globalStyles.cardContainer, { gap: 12 }]}>
-            <View style={styles.firstLine}>
+            <View style={styles.line}>
                 {modeHourValue === "edit" && (
                     <Ionicons onPress={() => {
                         setHourValue(hourValueProp)
@@ -74,38 +69,25 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                         />
                     </View>
                 )}
-                {user?.id_perfil !== 3 && modeHourValue === "view" && (
+                {user?.id_perfil !== constants.perfil.funcionario.id_perfil && modeHourValue === "view" && (
                     <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
                 )}
             </View>
             {modeHourValue === "edit" && (
                 <View style={styles.secondLine}>
-                    <Pressable
-                        style={styles.dataContainer}
-                        onPress={() => setShowPicker(!showPicker)}
-                    >
+                    <View style={styles.line}>
                         <Text style={styles.dataText}>A partir de: </Text>
-                        <View style={styles.dataValue}>
-                            <Text style={styles.dataText}>{initialDate?.toLocaleDateString()}</Text>
-                        </View>
-                    </Pressable>
+                        <DatePicker date={initialDate} onDateChange={setInitialDate} />
+                    </View>
                     <Button title={"Salvar"} onPress={handleUpdateHourValue} />
                 </View>
-            )}
-            {showPicker && (
-                <DateTimePicker
-                    value={initialDate || new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={handleDateChange}
-                />
             )}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    firstLine: {
+    line: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",

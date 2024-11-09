@@ -10,6 +10,8 @@ import { globalStyles } from '@/styles/styles';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 import { useAuthContext } from '@/src/contexts/AuthContext';
+import { constants } from '@/src/constants/constants';
+import DatePicker from '../DatePicker';
 
 type CardProductProps = {
   product: ProductType;
@@ -24,7 +26,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const { user } = useAuthContext()
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
-  const [showPicker, setShowPicker] = useState<boolean>(false);
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const [productValues, setFormValues] = useState<ProductType>(product);
 
@@ -32,13 +33,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     setFormValues(product)
     setInitialDate(new Date())
   }, [product])
-
-  function handleDateChange(event: any, date: Date | undefined) {
-    setShowPicker(false);
-    if (date) {
-      setInitialDate(date);
-    }
-  };
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
     setFormValues(prev => ({
@@ -49,12 +43,11 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   function handlePriceInputChange(value: string) {
     let formattedValue = value.replace(/[^0-9,.-]/g, '');
-  
+
     formattedValue = formattedValue.replace(',', '.');
-  
+
     handleInputChange('preco', formattedValue);
   }
-  
 
   async function saveProduct() {
 
@@ -114,7 +107,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   if (modeCard === "view") {
     return (
-      <Pressable style={globalStyles.cardContainer} onPress={() => setModeCard("details")}>
+      <Pressable style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
         <View style={styles.line}>
           <View style={styleViews.nameAndCode}>
             <View style={styleViews.textContainer}>
@@ -146,8 +139,8 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else if (modeCard === "details") {
     return (
-      <View style={globalStyles.cardContainer}>
-        <View style={styles.cardOpenedDetails}>
+      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
+        <View style={styles.cardOpened}>
           <View style={styles.line}>
             <Ionicons style={{ flex: 1 }} onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
             <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
@@ -193,7 +186,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else { //Create and Edit
     return (
-      <View style={[globalStyles.cardContainer, { gap: 8 }]}>
+      <View style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}>
         {
           modeCard === "edit" &&
           <View style={styles.line}>
@@ -202,7 +195,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               setModeCard("details")
             }} name={"arrow-back-outline"} size={35} color={colors.primary} />
             {
-              user?.id_perfil === 1 &&
+              user?.id_perfil === constants.perfil.suporte.id_perfil &&
               < Ionicons onPress={deleteProduct} name={"trash-outline"} size={35} color={colors.error} />
             }
           </View>
@@ -224,7 +217,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             <Input
               placeholder="Código"
               label="Código"
-              value={productValues.cod_referencia.toString()}
+              value={String(productValues.cod_referencia).replace(/[^0-9,.-]/g, '')}
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               keyboardType="numeric"
               style={[styles.inputValue]}
@@ -283,25 +276,10 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         </View>
         {
           modeCard === "edit" &&
-          <Pressable
-            style={styles.dataContainer}
-            onPress={() => setShowPicker(!showPicker)}
-          >
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={styles.dataText}>Alterar partir de: </Text>
-            <View style={styles.dataValue}>
-              <Text style={styles.dataText}>{initialDate?.toLocaleDateString()}</Text>
-            </View>
-          </Pressable>
-        }
-        {
-          showPicker && (
-            <DateTimePicker
-              value={initialDate || new Date()}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
-            />
-          )
+            <DatePicker date={initialDate} onDateChange={setInitialDate} />
+          </View>
         }
         <View style={styles.buttonsContainer}>
           {
@@ -327,11 +305,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 4,
-    padding: 8,
-    backgroundColor: colors.backgroundTertiary
-  },
   line: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -345,9 +318,9 @@ const styles = StyleSheet.create({
   buttonOpen: {
     padding: 8
   },
-  cardOpenedDetails: {
+  cardOpened: {
     padding: 8,
-    gap: 8
+    gap: 8,
   },
   valueVertical: {
     padding: 8,
@@ -388,15 +361,25 @@ const styles = StyleSheet.create({
 })
 
 const stylesCreateAndEdit = StyleSheet.create({
+  cardContainer: {
+    padding: 8,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.primary
+  },
   textDescription: {
-    borderBottomColor: "white",
+    borderBottomColor: colors.text,
     borderBottomWidth: 1,
     minHeight: 80,
     flex: 1
-  },
+  }
 })
 
 const styleViews = StyleSheet.create({
+  cardContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.text
+  },
   nameAndCode: {
     flex: 1,
     alignItems: "flex-start",

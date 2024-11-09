@@ -9,7 +9,7 @@ export type UserType = {
 
 export type ProductType = {
     id_produto: string;
-    cod_referencia: number | string;
+    cod_referencia: number;
     nome: string;
     descricao: string;
     preco: number;
@@ -36,9 +36,9 @@ export type PendingPaymentType = {
 };
 
 export type PaymentType = {
-    id_pagamento_local: number;
-    id_pagamento?: number;
+    id_pagamento: string;
     data_pagamento: string;
+    nome?: string;
     id_pessoa: number;
     valor_pagamento: number;
 };

@@ -7,6 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, FlatList, ImageBackground, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Funcionarios() {
 
@@ -14,21 +15,26 @@ export default function Funcionarios() {
 
     const [listPendingPayment, setListPendingPayment] = useState<PendingPaymentType[]>([])
 
-    async function getTablePendingPayment() {
-        const response = await sync.getPendingPayment()
+    async function getPendingPayment() {
+        const response = await sync.getPendingPayment()        
         setListPendingPayment(response.response)
+    }
+
+    async function getPeople() {
+        await sync.getPeople()
     }
 
     const isFocused = useIsFocused();
 
     useEffect(() => {
         if (isFocused) {
-            getTablePendingPayment()
+            getPeople()
+            getPendingPayment()
         }
     }, [isFocused])
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-            <View style={{ flexGrow: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <SafeAreaView style={globalStyles.pageContainer}>
                 <FlatList
                     style={{ backgroundColor: "white" }}
                     data={listPendingPayment}
@@ -41,11 +47,12 @@ export default function Funcionarios() {
                                 <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>
                                 <Text>total {item.total}</Text>
                                 <Button onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: item.id_pessoa }, })} title={"Consulta"}></Button>
+                                <Button onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: item.id_pessoa, pessoa: item.nome}, })} title={"Pagamento"}></Button>
                             </View>
                         )
                     }
                 />
-            </View >
+            </SafeAreaView >
         </ImageBackground>
     );
 }

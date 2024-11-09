@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -15,6 +15,8 @@ import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import AddContainer from "@/src/components/AddContainer";
+import { constants } from "@/src/constants/constants";
 
 type UserType = {
   nome: string;
@@ -31,32 +33,36 @@ export default function Profile() {
   const [dayList, setDayList] = useState<DayType[] | undefined>([]);
   const [searchDay, setSearchDay] = useState<string>("");
   const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [isAdding, setIsAdding] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
   const controller = new AbortController();
 
-  const userId = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
+  const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
   async function getDataHeader() {
-    const response = await sync.getPendingPayment(user?.id_pessoa || parseInt(userId));
+    const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
 
     let { nome, total, ultimo_pagamento } = response.response[0];
 
-    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString();
+    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
 
     setUserData({ nome, total, ultimo_pagamento });
   }
 
   async function getDataDays() {
-    await sync.getPeople(user?.id_perfil === 3 ? user?.id_pessoa : undefined);
+    setIsLoading(true)
+    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
-    const response = await sync.getDay(parseInt(userId) || user?.id_pessoa);
+    const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
 
     for (const day of response.response) {
       await sync.getProduction(day.id_dia);
     }
-
     setDayList(response.response);
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -66,6 +72,8 @@ export default function Profile() {
     }
 
     return () => {
+      // setUserData(undefined)
+      // setDayList([])
       controller.abort();
     };
   }, [isFocused]);
@@ -104,7 +112,7 @@ export default function Profile() {
     }
   })
 
-  if (user?.perfil === "Administrador" && !userId) {
+  if (user?.perfil === "Administrador" && !id_pessoa_params) {
     return <Redirect href={"/employees"} />
   }
 
@@ -142,7 +150,7 @@ export default function Profile() {
                 inputStyle={{ flex: 1 }}
               />
             }
-            {
+            {/* {
               isSearch || dayList?.length !== 0 &&
               <Pressable
                 onPress={() => {
@@ -151,7 +159,8 @@ export default function Profile() {
               >
                 <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
               </Pressable>
-            }
+            } */}
+            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
           </View>
           <FlatList
             refreshing={false}
@@ -159,28 +168,31 @@ export default function Profile() {
               getDataDays()
             }}
             data={isSearch ? dayList : dayList?.slice(0, 15)}
-            ListEmptyComponent={<Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text>}
+            ListEmptyComponent={
+              !dayList?.length && !isLoading ?
+                <Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text> : <></>
+            }
             contentContainerStyle={{ gap: 12 }}
             keyExtractor={(day) => day?.id_dia}
             renderItem={({ item }) => <DayListItem day={item} />}
           />
           {
-            !userId &&
-            <View style={globalStyles.bottomAdd}>
-              <Ionicons
-                onPress={() => {
-                  router.navigate({
-                    pathname: '../(tabs)/day',
-                    params: {
-                      id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome
-                    },
-                  });
-                }}
-                name="add-circle-outline"
-                color={colors.primary}
-                size={50} />
-            </View>
+            user?.id_perfil !== constants.perfil.administrador.id_perfil  &&
+            <AddContainer
+              text="Adicionar dia"
+              disable={isAdding}
+              onPress={() => {
+                setIsAdding(true)
+                router.navigate({
+                  pathname: '../(tabs)/day',
+                  params: {
+                    id_pessoa: user?.id_pessoa,
+                    pessoa: user?.nome,
+                  },
+                });
+                setIsAdding(false)
+              }}
+            />
           }
         </Animated.View>
       </SafeAreaView>

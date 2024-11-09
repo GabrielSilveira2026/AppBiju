@@ -1,3 +1,4 @@
+import AddContainer from "@/src/components/AddContainer";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -78,7 +79,7 @@ export default function Product() {
 
       const newProduct: ProductType = {
         id_produto: "",
-        cod_referencia: "",
+        cod_referencia: 0,
         nome: '',
         descricao: '',
         preco: 0,
@@ -100,9 +101,9 @@ export default function Product() {
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
-
+      
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
-
+      
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
@@ -116,8 +117,8 @@ export default function Product() {
     await sync.deleteProduct(id_product)
     setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== id_product));
   }
-  
-  function handleRemoveProduct(productId: string) {
+
+  function handleCancelProduct(productId: string) {
     setIsCreating(false)
     setProductList((prevProductList) => prevProductList.filter((product) => product.id_produto !== productId));
   }
@@ -136,7 +137,7 @@ export default function Product() {
             style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
-            keyboardShouldPersistTaps= 'handled'
+            keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
                 <Ionicons
@@ -161,20 +162,16 @@ export default function Product() {
                 product={item}
                 hourValue={Number(hourValue)}
                 onSave={handleSaveProduct}
-                onCancel={() => handleRemoveProduct(item.id_produto)}
+                onCancel={() => handleCancelProduct(item.id_produto)}
                 onDelete={() => handleDeleteProduct(item.id_produto)}
               />
             }
           />
-          <View style={globalStyles.bottomAdd}>
-            <Ionicons
-              onPress={handleCreateProduct}
-              name="add-circle-outline"
-              color={colors.primary}
-              size={50}
-              disabled={isCreating}
-            />
-          </View>
+          <AddContainer
+            text="Criar produto"
+            disable={isCreating}
+            onPress={handleCreateProduct}
+          />
         </View>
       </SafeAreaView>
     </ImageBackground>
