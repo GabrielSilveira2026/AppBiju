@@ -47,7 +47,8 @@ type SyncContextType = {
   updateProduction: (production: ProductionType) => Promise<any>,
   deleteProduction: (production: ProductionType) => Promise<any>,
   getPayment: (id_pessoa?: number) => Promise<any>,
-  postPayment: (payment: PaymentType) => Promise<any>
+  postPayment: (payment: PaymentType) => Promise<any>,
+  deletePayment: (id_payment: string) => Promise<any>,
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -494,8 +495,26 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: request.data.items, origemDados: "Remoto" };
   }
 
+  async function deletePayment(id_payment: string) {
+    const url = `${baseUrl}/pagamento/${id_payment}`
+
+    const request: any = await axios.delete(url).catch(function (error) {
+      return { status: 571 }
+    });
+
+    if (request.status === 571) {
+      await pendingOperationDatabase.postPendingOperation({ metodo: "DELETE", url: url });
+      const request = await paymentDatabase.deletePayment(id_payment);
+      return { response: request, origemDados: "Local" }
+    }
+
+    await getPayment()
+
+    return { response: request.data.items, origemDados: "Remoto" };
+  }
+
   return (
-    <SyncContext.Provider value={{ postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
       {children}
     </SyncContext.Provider>
   );

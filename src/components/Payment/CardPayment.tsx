@@ -4,23 +4,25 @@ import { PaymentType, PendingPaymentType, UserType } from '@/src/types/types';
 import { colors } from '@/styles/color';
 import { globalStyles } from '@/styles/styles';
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native'
 import Select from '../Select';
 import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
 import DatePicker from '../DatePicker';
+import { Ionicons } from '@expo/vector-icons';
 
 type CardPaymentProps = {
     payment: PaymentType,
-    mode: "view" | "create",
+    mode: "view" | "create" | "details",
     onCancel?: () => void;
     onSave: (payment: PaymentType) => void;
+    onDelete: (id_payment: string) => void;
 };
 
-export default function CardPayment({ onSave, onCancel, payment, mode }: CardPaymentProps) {
+export default function CardPayment({ onDelete, onSave, onCancel, payment, mode }: CardPaymentProps) {
     const { user } = useAuthContext()
     const sync = useSync()
-    const [modeCard, setModeCard] = useState<"view" | "create">(mode);
+    const [modeCard, setModeCard] = useState<"view" | "create" | "details">(mode);
     const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentType[]>([])
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -51,9 +53,52 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
         onSave(paymentValues)
     }
 
+    async function deletePayment() {
+        if (paymentValues.id_pagamento !== "") {
+            Alert.alert("Deletar pagamento?", `Deseja realmente deletar esse pagamento?`, [
+                {
+                    text: "Cancelar"
+                },
+                {
+                    text: "Confirmar",
+                    onPress: async () => {
+                        onDelete(paymentValues.id_pagamento);
+                    }
+                }
+            ]);
+        }
+    }
+
+
     if (modeCard === "view") {
         return (
-            <Pressable style={[globalStyles.cardContainer, stylesView.cardContainer]}>
+            <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
+                <View style={styles.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
+                    </View>
+                    {
+                        user?.id_pessoa !== payment.id_pessoa &&
+                        <View style={stylesView.textNameContainer}>
+                            <Text style={styles.textValue}>{payment.nome}</Text>
+                        </View>
+                    }
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
+                    </View>
+                    <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+                </View>
+            </Pressable>
+        )
+    }
+    else if (modeCard === "details") {
+        return (
+            <Pressable onPress={() => setModeCard("create")} style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
+                <View style={styles.line}>
+                    < Ionicons onPress={deletePayment} name={"trash-outline"} size={35} color={colors.error} />
+
+                    <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+                </View>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString()}</Text>
@@ -78,6 +123,7 @@ export default function CardPayment({ onSave, onCancel, payment, mode }: CardPay
                     <Select
                         label="nome"
                         id="id_pessoa"
+                        initialText={paymentValues.nome}
                         onSelect={(item) => {
                             const teste: PaymentType = {
                                 data_pagamento: selectedDate.toISOString(),
@@ -119,7 +165,7 @@ const styles = StyleSheet.create({
     },
     line: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
         gap: 8,
     },
@@ -127,38 +173,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: colors.text,
         textAlign: "center"
-    },
-    valueVertical: {
-        padding: 8,
-        gap: 8,
-        alignItems: "center",
-    },
-    titleText: {
-        fontSize: 16,
-        color: colors.text,
-        textAlign: "center"
-    },
-    inputValue: {
-        fontSize: 16,
-        padding: 8,
-        color: colors.text,
-    },
-    buttonsContainer: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    dataContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    dataValue: {
-        padding: 12,
-        backgroundColor: colors.backgroundInput,
-        borderBottomColor: colors.text,
-        borderBottomWidth: 1,
-        borderRadius: 4,
-        alignItems: "center",
     },
     dataText: {
         fontSize: 16,
@@ -169,7 +183,8 @@ const styles = StyleSheet.create({
 const stylesView = StyleSheet.create({
     cardContainer: {
         borderBottomWidth: 1,
-        borderBottomColor: colors.text
+        borderBottomColor: colors.text,
+        paddingHorizontal: 16
     },
     textContainer: {
         paddingVertical: 8,
@@ -195,3 +210,13 @@ const stylesCreate = StyleSheet.create({
         gap: 8
     }
 })
+
+const stylesdetails = StyleSheet.create({
+    cardContainer: {
+        borderWidth: 1,
+        borderColor: colors.text,
+        padding: 12,
+        gap: 12
+    }
+})
+

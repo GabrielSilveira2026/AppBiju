@@ -87,6 +87,10 @@ export default function Payment() {
     setPaymentList((prevPaymentList) => prevPaymentList.filter((payment) => payment.id_pagamento !== paymentId));
   }
 
+  async function handleDeletePayment(id_payment: string) {
+    await sync.deletePayment(id_payment)
+    setPaymentList((prevPaymentList) => prevPaymentList.filter(payment => payment.id_pagamento !== id_payment));
+  }
 
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -123,6 +127,7 @@ export default function Payment() {
                 payment={item}
                 onSave={handleSavePayment}
                 onCancel={() => handleCancelPayment(item.id_pagamento)}
+                onDelete={() => handleDeletePayment(item.id_pagamento)}
               />
             )}
           />

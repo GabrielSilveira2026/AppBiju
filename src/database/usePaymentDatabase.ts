@@ -20,17 +20,16 @@ export default function usePaymentDatabase() {
                     INNER JOIN pessoa ON pagamento.id_pessoa = pessoa.id_pessoa
                     ORDER BY pagamento.data_pagamento DESC
                   `;
-    
+
             const response = id_pessoa
                 ? await database.getAllAsync<PaymentType>(query, { $id_pessoa: id_pessoa })
                 : await database.getAllAsync<PaymentType>(query);
-    
+
             return response;
         } catch (error) {
             throw error;
         }
     }
-    
 
     async function postPayment(payment: PaymentType) {
         const statement = await database.prepareAsync(`
@@ -111,5 +110,24 @@ export default function usePaymentDatabase() {
         }
     }
 
-    return { postPayment, getPayment, updatePaymentList };
+    async function deletePayment(id_pagamento: string) {
+        const statement = await database.prepareAsync(`
+            DELETE FROM pagamento 
+            WHERE id_pagamento = $id_pagamento
+        `);
+    
+        try {
+            const result = await statement.executeAsync({
+                $id_pagamento: id_pagamento
+            });
+    
+            return result.changes > 0;
+        } catch (error) {
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+        }
+    }
+    
+    return { postPayment, getPayment, deletePayment, updatePaymentList };
 }
