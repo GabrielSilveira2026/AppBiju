@@ -41,7 +41,6 @@ export default function Payment() {
 
     return () => {
       if (!isFocused) {
-        setPaymentList([])
         setIsAdding(false)
       }
       controller.abort();

@@ -9,13 +9,15 @@ const { width } = Dimensions.get('window');
 type SelectProps = {
     list: any[],
     label: string,
+    titleSecondLabel?: string,
+    secondLabel?: string,
     initialText?: string,
     textButton?: string,
     id: string,
     onSelect: (item: any) => void
 }
 
-export default function Select({id, textButton, initialText, list, label, onSelect }: SelectProps) {
+export default function Select({ id, textButton, initialText, titleSecondLabel, secondLabel, list, label, onSelect }: SelectProps) {
     const [showModal, setShowModal] = useState(false);
     const [filteredData, setFilteredData] = useState(list);
     const [search, setSearch] = useState('');
@@ -29,10 +31,11 @@ export default function Select({id, textButton, initialText, list, label, onSele
         setSearch(text);
         setFilteredData(
             list.filter(item =>
-                item[label].toLowerCase().includes(text.toLowerCase())
+                item[label]?.toLowerCase().includes(text.toLowerCase()) ||
+                (secondLabel && String(item[secondLabel])?.toLowerCase().includes(text.toLowerCase()))
             )
         );
-    };
+    }    
 
     function handleSelect(item: any) {
         setSelectedItem(item);
@@ -77,6 +80,10 @@ export default function Select({id, textButton, initialText, list, label, onSele
                                         style={styles.item}
                                     >
                                         <Text style={styles.label}>{item[label]}</Text>
+                                        {
+                                            secondLabel &&
+                                            <Text style={styles.secondLabel}>{titleSecondLabel}{"\n"}{item[secondLabel]}</Text>
+                                        }
                                     </TouchableOpacity>
                                 )}
                             />
@@ -128,10 +135,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 16,
         borderRadius: 4,
+        alignItems: "center",
         backgroundColor: colors.backgroundInput,
     },
     label: {
         flex: 1,
+        textAlign: "center",
+        color: "white"
+    },
+    secondLabel:{
         textAlign: "center",
         color: "white"
     }

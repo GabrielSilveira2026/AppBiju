@@ -48,7 +48,7 @@ export default function Funcionarios() {
                     </View>
                     <FlatList
                         data={listPendingPayment}
-                        keyExtractor={item => item.id_pessoa.toString()}
+                        keyExtractor={item => String(item.id_pessoa)}
                         contentContainerStyle={{ gap: 16 }}
                         renderItem={
                             ({ item }) => (

@@ -36,7 +36,7 @@ export default function Product() {
   async function getHourValue() {
     setIsLoading(true)
     const request = await sync.getHourValue();
-    setHourValue(request.response[0].valor.toString());
+    setHourValue(String(request.response[0].valor));
     setIsLoading(false)
   }
 

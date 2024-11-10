@@ -30,6 +30,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const [productValues, setFormValues] = useState<ProductType>(product);
 
   useEffect(() => {
+    setModeCard(mode)
     setFormValues(product)
     setInitialDate(new Date())
   }, [product])
@@ -227,8 +228,9 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             <Input
               placeholder="Código"
               label="Código"
-              value={String(productValues.cod_referencia).replace(/[^0-9,.-]/g, '')}
+              value={String(productValues.cod_referencia || "").replace(/[^0-9,.-]/g, '')}
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
+              selectTextOnFocus={true}
               keyboardType="numeric"
               style={[styles.inputValue]}
               placeholderTextColor={colors.textInput}
@@ -251,9 +253,9 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             <Text style={styles.titleText}>Valor mão{"\n"}de obra:</Text>
             <Input
               placeholder="Preço"
-              value={productValues.preco.toString()}
+              value={String(productValues.preco || "")}
               onChangeText={handlePriceInputChange}
-              keyboardType="numbers-and-punctuation"
+              keyboardType="number-pad"
               selectTextOnFocus={true}
               style={[styles.inputValue, { textAlign: "center" }]}
               placeholderTextColor={colors.textInput}

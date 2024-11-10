@@ -63,7 +63,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                 ) : (
                     <View>
                         <Input
-                            value={hourValue.toString()}
+                            value={String(hourValue)}
                             onChangeText={(text) => setHourValue(text)}
                             keyboardType="number-pad"
                             autoCapitalize="none"

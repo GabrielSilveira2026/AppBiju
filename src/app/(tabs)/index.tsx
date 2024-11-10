@@ -39,6 +39,7 @@ export default function Profile() {
 
   async function getDataHeader(id_pessoa: number) {
     const response = await sync.getPendingPayment(id_pessoa);
+    
     if (response.response[0]) {
 
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
@@ -51,7 +52,7 @@ export default function Profile() {
 
   async function getDataDays() {
     setIsLoading(true)
-    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
+    // await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
     const response = await sync.getDay(Number(id_pessoa_params) || user?.id_pessoa);
 

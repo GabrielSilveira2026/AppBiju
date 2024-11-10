@@ -30,7 +30,7 @@ export default function InputDuration({ onChange, value }: InputDurationProps) {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.button} onPress={() => setShowPicker(!showPicker)}>
-                <Text style={styles.inputValue}>{formatMinutesToHours(value)}</Text>
+                <Text style={[styles.inputValue, {color: value? colors.text: colors.textInput}]}>{formatMinutesToHours(value)}</Text>
             </TouchableOpacity>
             {
                 showPicker &&
