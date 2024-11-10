@@ -125,7 +125,6 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}
             >
                 {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
-                <Text>{production.id_dia}</Text>
                 {
                     modeCard === "edit"
                     &&
