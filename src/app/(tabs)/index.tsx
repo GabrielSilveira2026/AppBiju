@@ -52,7 +52,7 @@ export default function Profile() {
 
   async function getDataDays() {
     setIsLoading(true)
-    // await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
+    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
     const response = await sync.getDay(Number(id_pessoa_params) || user?.id_pessoa);
 

@@ -62,11 +62,6 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       return;
     }
 
-    if (productValues.tempo_minuto <= 0) {
-      setAlert("O campo Tempo de Produção deve ser maior que zero.");
-      return;
-    }
-
     if (onSave) {
       setAlert("");
       if (productValues.id_produto === "") {
