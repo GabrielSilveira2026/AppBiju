@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, ImageBackground, StyleSheet, FlatList } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
@@ -20,11 +20,9 @@ export default function Payment() {
   const sync = useSync()
   const controller = new AbortController();
 
-  
-  
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
-  
+
   async function getPayment(id_pessoa?: number) {
     setIsAdding(true)
     const request = await sync.getPayment(id_pessoa)
@@ -99,14 +97,22 @@ export default function Payment() {
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.paymentContainer]}>
           <View style={styles.titleContainer}>
-            <Ionicons
+            <TouchableOpacity
               onPress={() => {
-                router.navigate("/");
+                if (id_pessoa) {
+                  router.navigate({ pathname: "/", params: { id_pessoa: id_pessoa } })
+                } else {
+                  router.navigate("/");
+                }
               }}
-              name="arrow-back-outline"
-              size={35}
-              color={colors.primary}
-            />
+            >
+              <Ionicons
+                name="arrow-back-outline"
+                size={35}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+
             <Text style={globalStyles.title}>Pagamentos</Text>
             {/* <Input
               value=""

@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
@@ -101,9 +101,9 @@ export default function Product() {
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
-      
+
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
-      
+
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
@@ -140,14 +140,13 @@ export default function Product() {
             keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
-                <Ionicons
-                  onPress={() => {
-                    router.navigate("/");
-                  }}
-                  name="arrow-back-outline"
-                  size={35}
-                  color={colors.primary}
-                />
+                <TouchableOpacity onPress={() => { router.navigate("/") }}>
+                  <Ionicons
+                    name="arrow-back-outline"
+                    size={35}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
                 <Text style={globalStyles.title}>Produtos</Text>
               </View>
               <HourContainer
@@ -185,6 +184,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     padding: 8,
+    paddingBottom: 16,
     gap: 8,
     flexDirection: "row",
     alignItems: "center",

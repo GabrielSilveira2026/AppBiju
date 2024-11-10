@@ -246,12 +246,14 @@ export default function DayDetails() {
                         <View style={styles.dayContainer}>
                             <View style={styles.firstLine}>
                                 <View style={styles.backAndData}>
-                                    <Ionicons
-                                        onPress={goBack}
-                                        name="arrow-back-outline"
-                                        size={35}
-                                        color={colors.primary}
-                                    />
+                                    <TouchableOpacity onPress={goBack}>
+                                        <Ionicons
+                                            name="arrow-back-outline"
+                                            size={35}
+                                            color={colors.primary}
+                                        />
+                                    </TouchableOpacity>
+
                                     {
                                         mode && mode !== "view" ? (
                                             <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
@@ -264,21 +266,23 @@ export default function DayDetails() {
                                     mode && Number(id_pessoa_params) === user?.id_pessoa &&
                                         mode === "edit" ?
                                         (
-                                            <Ionicons
-                                                onPress={deleteDay}
-                                                name={"trash-outline"}
-                                                size={35}
-                                                color={colors.error}
-                                            />
+                                            <TouchableOpacity onPress={deleteDay}>
+                                                <Ionicons
+                                                    name={"trash-outline"}
+                                                    size={35}
+                                                    color={colors.error}
+                                                />
+                                            </TouchableOpacity>
                                         ) :
                                         mode === "view" && Number(id_pessoa_params) === user?.id_pessoa &&
                                         (
-                                            <Ionicons
-                                                onPress={() => setMode("edit")}
-                                                name={"create-outline"}
-                                                size={35}
-                                                color={colors.primary}
-                                            />
+                                            <TouchableOpacity onPress={() => setMode("edit")}>
+                                                <Ionicons
+                                                    name={"create-outline"}
+                                                    size={35}
+                                                    color={colors.primary}
+                                                />
+                                            </TouchableOpacity>
                                         )}
                             </View>
                             <View style={styles.secondLine}>

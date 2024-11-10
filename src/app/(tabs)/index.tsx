@@ -17,6 +17,7 @@ import HeaderProfile from "@/src/components/Index/HeaderProfile";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import AddContainer from "@/src/components/AddContainer";
 import { constants } from "@/src/constants/constants";
+import Loading from "@/src/components/Loading";
 
 export default function Profile() {
   const { user } = useAuthContext();
@@ -36,14 +37,14 @@ export default function Profile() {
 
   const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
 
-  async function getDataHeader() {    
+  async function getDataHeader() {
     const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
     if (response.response[0]) {
-      
+
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
-  
+
       ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
-  
+
       setUserData({ id_pessoa, nome, total, ultimo_pagamento });
     }
   }
@@ -108,7 +109,11 @@ export default function Profile() {
   })
 
   if (user?.perfil === "Administrador" && !id_pessoa_params) {
-    return <Redirect href={"/employees"} />
+    return (
+      <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+        <Redirect href={"/employees"} />
+      </ImageBackground>
+    )
   }
 
   return (

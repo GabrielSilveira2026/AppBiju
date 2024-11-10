@@ -4,7 +4,7 @@ import { PaymentType, PendingPaymentType, UserType } from '@/src/types/types';
 import { colors } from '@/styles/color';
 import { globalStyles } from '@/styles/styles';
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Alert, TouchableOpacity } from 'react-native'
 import Select from '../Select';
 import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
@@ -96,9 +96,13 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
         return (
             <Pressable onPress={() => setModeCard("create")} style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
                 <View style={styles.line}>
-                    < Ionicons onPress={deletePayment} name={"trash-outline"} size={35} color={colors.error} />
+                    <TouchableOpacity onPress={deletePayment}>
+                        <Ionicons name="trash-outline" size={35} color={colors.error} />
+                    </TouchableOpacity>
 
-                    <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 1 }}>
+                        <Ionicons style={{textAlign: "right"}} name="chevron-up-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>

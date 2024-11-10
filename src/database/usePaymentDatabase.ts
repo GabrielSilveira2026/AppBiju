@@ -5,8 +5,7 @@ export default function usePaymentDatabase() {
     const database = useSQLiteContext();
 
     async function getPayment(id_pessoa?: number) {  
-        console.log(id_pessoa);
-              
+        
         try {
             const query = id_pessoa
                 ? `

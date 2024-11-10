@@ -1,6 +1,6 @@
 import { ProductType } from '@/src/types/types'
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert, TouchableOpacity } from 'react-native'
 import { Input } from '../Input';
 import { colors } from '@/styles/color';
 import { Ionicons } from '@expo/vector-icons';
@@ -142,8 +142,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
         <View style={styles.cardOpened}>
           <View style={styles.line}>
-            <Ionicons style={{ flex: 1 }} onPress={() => setModeCard("edit")} name={"create-outline"} size={35} color={colors.primary} />
-            <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+            <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
+              <Ionicons name="create-outline" size={35} color={colors.primary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
+              <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
+            </TouchableOpacity>
           </View>
           <View style={styles.line}>
             <Text style={[styles.textValue, { flex: 1 }]}>{productValues.nome}</Text>
@@ -190,14 +195,19 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         {
           modeCard === "edit" &&
           <View style={styles.line}>
-            < Ionicons onPress={() => {
-              setFormValues(product)
-              setModeCard("details")
-            }} name={"arrow-back-outline"} size={35} color={colors.primary} />
-            {
-              user?.id_perfil === constants.perfil.suporte.id_perfil &&
-              < Ionicons onPress={deleteProduct} name={"trash-outline"} size={35} color={colors.error} />
-            }
+            <TouchableOpacity onPress={() => {
+              setFormValues(product);
+              setModeCard("details");
+            }}>
+              <Ionicons name="arrow-back-outline" size={35} color={colors.primary} />
+            </TouchableOpacity>
+
+            {user?.id_perfil === constants.perfil.suporte.id_perfil && (
+              <TouchableOpacity onPress={deleteProduct}>
+                <Ionicons name="trash-outline" size={35} color={colors.error} />
+              </TouchableOpacity>
+            )}
+
           </View>
         }
         {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
