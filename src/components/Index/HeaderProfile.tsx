@@ -6,7 +6,7 @@ import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type HeaderProfileProps = {
     userData: PendingPaymentType
@@ -21,7 +21,7 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                         <Text style={styles.textValue}>
                             {userData ? userData?.nome : "Carregando"}
                         </Text>
-                        <Ionicons name={"create-outline"} size={30} color={colors.primary} />
+                        {/* <Ionicons name={"create-outline"} size={30} color={colors.primary} /> */}
                     </View>
 
                     <View style={styles.amountToReceiveContainer}>
@@ -49,6 +49,7 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                     <Text style={styles.textValue}>
                         {userData ? userData?.ultimo_pagamento : "__/__/____"}
                     </Text>
+                    {/* <ActivityIndicator/> */}
                 </View>
             </View>
         </View >

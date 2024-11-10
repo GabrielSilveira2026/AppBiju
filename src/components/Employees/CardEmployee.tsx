@@ -10,8 +10,6 @@ type CardPaymentProps = {
 };
 
 export default function CardEmployee({ pendingPayment }: CardPaymentProps) {
-    console.log(pendingPayment);
-
     return (
         <View style={[globalStyles.cardContainer, styles.cardContainer]}>
             <View style={{ flex: 1, gap: 16 }}>

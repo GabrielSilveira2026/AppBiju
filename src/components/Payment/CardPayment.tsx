@@ -28,7 +28,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
 
     async function getPendingPayment() {
-        const request = await sync.getPendingPayment()
+        const request = await sync.getPendingPayment(payment.id_pessoa)
         setPendingPaymentList(request.response)
     }
 
@@ -101,7 +101,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 1 }}>
-                        <Ionicons style={{textAlign: "right"}} name="chevron-up-outline" size={35} color={colors.primary} />
+                        <Ionicons style={{ textAlign: "right" }} name="chevron-up-outline" size={35} color={colors.primary} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.line}>

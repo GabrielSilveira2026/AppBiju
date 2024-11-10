@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
@@ -21,19 +21,27 @@ export default function Product() {
   const [productList, setProductList] = useState<ProductType[]>([]);
   const [hourValue, setHourValue] = useState<string>("0");
   const [isCreating, setIsCreating] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const controller = new AbortController();
 
   async function getProductList() {
+    setIsLoading(true)    
+    setIsCreating(true)
     const request = await sync.getProduct();
     setProductList(request.response);
+    setIsCreating(false)
+    setIsLoading(false)
+  }
+
+  async function getHourValue() {
+    setIsLoading(true)
+    const request = await sync.getHourValue();
+    setHourValue(request.response[0].valor.toString());
+    setIsLoading(false)
   }
 
   useEffect(() => {
 
-    async function getHourValue() {
-      const request = await sync.getHourValue();
-      setHourValue(request.response[0].valor.toString());
-    }
 
     if (isFocused) {
       setIsCreating(false)
@@ -47,7 +55,7 @@ export default function Product() {
       }
       controller.abort();
     };
-  }, []);
+  }, [isFocused]);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -148,6 +156,7 @@ export default function Product() {
                   />
                 </TouchableOpacity>
                 <Text style={globalStyles.title}>Produtos</Text>
+                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
               </View>
               <HourContainer
                 hourValueProp={hourValue}

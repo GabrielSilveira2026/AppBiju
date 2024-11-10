@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -36,6 +36,7 @@ export default function DayDetails() {
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(id_dia_params ? "view" : "create");
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
@@ -67,12 +68,14 @@ export default function DayDetails() {
 
     }, [productionList]);
 
-    useEffect(() => {
-        async function getProductions(id_dia: string) {
-            const request = await sync.getProduction(id_dia)
+    async function getProductions(id_dia: string) {
+        setIsLoading(true)
+        const request = await sync.getProduction(id_dia)
+        setProductionList(request.response)
+        setIsLoading(false)
+    }
 
-            setProductionList(request.response)
-        }
+    useEffect(() => {
 
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao) ? params?.data_dia_producao[0] : params?.data_dia_producao || undefined;
@@ -85,6 +88,9 @@ export default function DayDetails() {
             }
             if (id_dia_params) {
                 getProductions(id_dia_params)
+            }
+            else {
+                setIsLoading(false)
             }
         } else {
             setProductionList([])
@@ -126,6 +132,7 @@ export default function DayDetails() {
     }
 
     async function saveDay(new_id?: string) {
+        setIsLoading(true)
         if (!id_dia_params) {
             const id_dia = new_id ? new_id : sync.nanoid()
             const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
@@ -153,7 +160,7 @@ export default function DayDetails() {
             });
         }
         setMode("view");
-
+        setIsLoading(false)
     }
 
     async function deleteDay() {
@@ -164,6 +171,7 @@ export default function DayDetails() {
             {
                 text: "Confirmar",
                 onPress: async () => {
+                    setIsLoading(true)
                     const day: DayType = {
                         id_dia: id_dia_params,
                         id_pessoa: Number(params.id_pessoa),
@@ -171,6 +179,7 @@ export default function DayDetails() {
                     }
                     await sync.deleteDay(day)
                     router.replace("/")
+                    setIsLoading(false)
                 }
             }
         ])
@@ -294,9 +303,16 @@ export default function DayDetails() {
                 }
                 <View style={[globalStyles.container, styles.containerProducts]}>
                     <FlatList
+                        refreshing={false}
+                        onRefresh={() => {
+                            if (id_dia_params) {
+                                getProductions(id_dia_params)
+                            }
+                        }}
                         ListHeaderComponent={
                             <View style={styles.headerProducts}>
                                 <Text style={globalStyles.title}>Produções</Text>
+                                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
                             </View>
                         }
                         keyboardShouldPersistTaps='handled'
@@ -325,10 +341,10 @@ export default function DayDetails() {
                 </View>
 
                 {
-                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa &&
+                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa && !isLoading && 
                     <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
                         <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
-                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveDay} />
+                        <Button style={{ flex: 1 }} title={isLoading ? "Carregando" : "Salvar"} onPress={saveDay} />
                     </View>
                 }
             </SafeAreaView>

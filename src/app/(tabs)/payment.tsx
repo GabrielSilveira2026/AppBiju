@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
@@ -22,12 +22,15 @@ export default function Payment() {
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   async function getPayment(id_pessoa?: number) {
     setIsAdding(true)
+    setIsLoading(true)
     const request = await sync.getPayment(id_pessoa)
     setPaymentList(request.response)
     setIsAdding(false)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function Payment() {
       const newPayment: PaymentType = {
         id_pagamento: "",
         data_pagamento: (new Date()).toISOString(),
-        id_pessoa: 0,
+        id_pessoa: Number(id_pessoa) || 0,
         valor_pagamento: 0,
         nome: ""
       };
@@ -114,6 +117,8 @@ export default function Payment() {
             </TouchableOpacity>
 
             <Text style={globalStyles.title}>Pagamentos</Text>
+            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+
             {/* <Input
               value=""
               placeholder="Pesquisar"

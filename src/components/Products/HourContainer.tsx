@@ -22,7 +22,6 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
     const [hourValue, setHourValue] = useState<string>(hourValueProp);
     const [modeHourValue, setModeHourValue] = useState<"view" | "edit">("view");
     const [initialDate, setInitialDate] = useState<Date>(new Date());
-    const [showPicker, setShowPicker] = useState<boolean>(false);
 
     useEffect(() => {
         if (isFocused) {
