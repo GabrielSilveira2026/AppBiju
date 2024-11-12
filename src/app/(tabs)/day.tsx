@@ -32,7 +32,6 @@ export default function DayDetails() {
     const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
 
     const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
-    console.log(id_dia_params);
 
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(id_dia_params ? "view" : "create");
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -111,7 +110,7 @@ export default function DayDetails() {
             setMode("view");
         } else {
             if (!id_dia_params && productionList.length > 0) {
-                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja sair sem salva-las?", [
+                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dia e suas produções, deseja sair sem salva-las?", [
                     {
                         text: "Cancelar"
                     },
@@ -143,7 +142,6 @@ export default function DayDetails() {
 
             for (const production of productionList) {
                 production.id_dia = id_dia
-                console.log("Inserindo Id", productionList);
             }
             setProductionList(productionList)
             router.replace({
@@ -217,14 +215,11 @@ export default function DayDetails() {
     async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
         if (production.id_producao === "") {
-            console.log("Criando producao", production);
-
             if (!production.id_dia) {
                 if (!id_dia_params) {
                     const id = sync.nanoid()
                     await saveDay(id)
                     production.id_dia = id
-                    console.log("Salvando dia", id, production);
                 }else{
                     production.id_dia = id_dia_params
                 }

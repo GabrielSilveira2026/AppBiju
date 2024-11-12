@@ -38,9 +38,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
         if (mode === "create") {
             getProductList()
         }
-        setProductionValues(production)
-        console.log("Card",production);
-        
+        setProductionValues(production)        
     }, [production])
 
     const handleInputChange = (field: keyof ProductionType, value: string | number) => {
@@ -125,7 +123,6 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 style={[globalStyles.cardContainer, stylesCreateAndEdit.cardContainer]}
             >
                 {alert && <Text style={{ color: colors.error }}>{alert}</Text>}
-                <Text>{production.id_dia}</Text>
                 {
                     modeCard === "edit"
                     &&

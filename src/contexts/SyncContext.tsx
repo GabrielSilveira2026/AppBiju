@@ -70,7 +70,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-    // syncData();
 
     return () => {
       unsubscribe();
@@ -93,21 +92,16 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         await axios.post(operacaoPendente.url)
           .catch(function (error) {
             if (error.response) {
-              // A resposta foi recebida, mas o status é de erro
               console.warn("Erro de resposta:", error.response.status, error.response.data);
               return
             } else if (error.request) {
-              // A requisição foi feita, mas nenhuma resposta foi recebida
               console.warn("Erro de requisição:", error.request);
               return
             } else {
-              // Outro erro aconteceu na configuração da requisição
-              return
               console.warn("Erro:", error.message);
+              return
             }
           });
-
-
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
       }
@@ -150,10 +144,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
       }
     }
-
-    await getPendingPayment(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined)
-    await getHourValue();
-    await getProduct();
   };
 
   async function getHourValue() {
@@ -211,8 +201,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await dayDatabase.updateDiaList(request.data.items, id_pessoa)
-
-    const localData = await dayDatabase.getDay(id_pessoa)
 
     return { response: request.data.items, origemDados: "Remoto" };
   }

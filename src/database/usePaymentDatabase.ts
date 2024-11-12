@@ -4,8 +4,8 @@ import { PaymentType, PendingPaymentType } from "../types/types";
 export default function usePaymentDatabase() {
     const database = useSQLiteContext();
 
-    async function getPayment(id_pessoa?: number) {  
-        
+    async function getPayment(id_pessoa?: number) {
+
         try {
             const query = id_pessoa
                 ? `
@@ -89,18 +89,15 @@ export default function usePaymentDatabase() {
                     P.id_pessoa, P.nome, PG.Ultimo_Pagamento
                 ORDER BY 
                     P.nome ASC`;
-    
+
             const params: { $id_pessoa?: number } = {};
 
             if (id_pessoa !== undefined) {
                 params.$id_pessoa = id_pessoa;
             }
-    
+
             const response = await database.getAllAsync<PendingPaymentType>(result, params.$id_pessoa !== undefined ? params : {});
 
-            console.log(response);
-            
-    
             return response;
         } catch (error) {
             throw error;
@@ -139,7 +136,6 @@ export default function usePaymentDatabase() {
     }
 
     async function updatePaymentList(paymentList: PaymentType[], id_pessoa?: number) {
-
         const statementDelete = id_pessoa
             ? await database.prepareAsync(`DELETE FROM pagamento WHERE id_pessoa = $id_pessoa`)
             : await database.prepareAsync(`DELETE FROM pagamento`);
@@ -192,12 +188,12 @@ export default function usePaymentDatabase() {
             DELETE FROM pagamento 
             WHERE id_pagamento = $id_pagamento
         `);
-    
+
         try {
             const result = await statement.executeAsync({
                 $id_pagamento: id_pagamento
             });
-    
+
             return result.changes > 0;
         } catch (error) {
             throw error;
@@ -205,6 +201,6 @@ export default function usePaymentDatabase() {
             await statement.finalizeAsync();
         }
     }
-    
+
     return { postPayment, getPayment, getPendingPayment, deletePayment, updatePaymentList };
 }

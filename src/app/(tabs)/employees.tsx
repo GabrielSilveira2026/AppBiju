@@ -1,15 +1,12 @@
 import CardEmployee from "@/src/components/Employees/CardEmployee";
-import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
 import { PendingPaymentType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
-import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { Redirect, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Button, FlatList, ImageBackground, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, ImageBackground, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Funcionarios() {

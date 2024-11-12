@@ -4,8 +4,6 @@ import { Redirect, router, Tabs } from "expo-router";
 import Loading from "../../components/Loading";
 import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import { Keyboard } from "react-native";
 import { constants } from "@/src/constants/constants";
 
 export default function AppLayout() {

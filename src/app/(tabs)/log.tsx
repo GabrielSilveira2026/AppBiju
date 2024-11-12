@@ -70,10 +70,10 @@ export default function log() {
 
     response = await paymentDatabase.getPayment()
     setLog3(response)
-    
+
     response = await dayDatabase.getDay()
     setLog4(response)
-    
+
     response = await pendingOperationDatabase.getPendingOperation()
     setLog5(response)
 
@@ -91,7 +91,17 @@ export default function log() {
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    getTable()
+    if (isFocused) {
+      getTable()
+    }
+    else {
+      setLog1([])
+      setLog2([])
+      setLog3([])
+      setLog4([])
+      setLog5([])
+      setLog6([])
+    }
   }, [isFocused])
 
   const [showPicker, setShowPicker] = useState(false);

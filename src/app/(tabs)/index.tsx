@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -8,7 +8,7 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { DayType, PendingPaymentType, UserType } from "@/src/types/types";
+import { DayType, PendingPaymentType, ProductType, UserType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -18,6 +18,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import AddContainer from "@/src/components/AddContainer";
 import { constants } from "@/src/constants/constants";
 import Loading from "@/src/components/Loading";
+import CardProduct from "@/src/components/Products/CardProduct";
 
 export default function Profile() {
   const { user } = useAuthContext();
@@ -39,7 +40,7 @@ export default function Profile() {
 
   async function getDataHeader(id_pessoa: number) {
     const response = await sync.getPendingPayment(id_pessoa);
-    
+
     if (response.response[0]) {
 
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
@@ -52,11 +53,11 @@ export default function Profile() {
 
   async function getDataDays() {
     setIsLoading(true)
-    // await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
+    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
     const response = await sync.getDay(Number(id_pessoa_params) || user?.id_pessoa);
 
-    for (const day of response.response) {
+    for (const day of response.response.slice(0, 7)) {
       await sync.getProduction(day.id_dia);
     }
     setDayList(response.response);
@@ -111,6 +112,10 @@ export default function Profile() {
     }
   })
 
+  const renderItem = useCallback(({ item }: { item: DayType }) => (
+    <DayListItem day={item} />
+  ), [])
+
   if (user?.perfil === "Administrador" && !id_pessoa_params) {
     return (
       <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -134,13 +139,15 @@ export default function Profile() {
             <View style={styles.headerDias}>
               {
                 isSearch &&
-                <Ionicons
-                  onPress={() => {
-                    setIsSearch(!isSearch)
-                  }}
-                  name="arrow-back-outline"
-                  size={40}
-                  color={colors.primary} />
+                <TouchableOpacity onPress={() => {
+                  setIsSearch(!isSearch)
+                }}>
+                  <Ionicons
+
+                    name="arrow-back-outline"
+                    size={40}
+                    color={colors.primary} />
+                </TouchableOpacity>
               }
               <Text style={[globalStyles.title]}>
                 {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : ""}
@@ -154,16 +161,16 @@ export default function Profile() {
                   inputStyle={{ flex: 1 }}
                 />
               }
-              {/* {
-              isSearch || dayList?.length !== 0 &&
-              <Pressable
-                onPress={() => {
-                  setIsSearch(!isSearch)
-                }}
-              >
-                <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
-              </Pressable>
-            } */}
+              {
+                isSearch || dayList?.length !== 0 &&
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsSearch(!isSearch)
+                  }}
+                >
+                  <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
+                </TouchableOpacity>
+              }
               <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
             </View>
             <FlatList
@@ -171,14 +178,19 @@ export default function Profile() {
               onRefresh={() => {
                 getDataDays()
               }}
-              data={isSearch ? dayList : dayList?.slice(0, 15)}
+              data={isSearch ? dayList : dayList?.slice(0, 30)}
               ListEmptyComponent={
-                !dayList?.length && !isLoading ?
-                  <Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text> : <></>
+                !dayList?.length 
+                && 
+                !isLoading 
+                ?
+                <Text style={[globalStyles.title, { margin: "auto" }]}>
+                  Nenhum dia produzido ainda</Text>:null
               }
               contentContainerStyle={{ gap: 12 }}
               keyExtractor={(day) => day?.id_dia}
-              renderItem={({ item }) => <DayListItem day={item} />}
+              maxToRenderPerBatch={10}
+              renderItem={renderItem}
             />
             {
               user?.id_perfil !== constants.perfil.administrador.id_perfil &&
