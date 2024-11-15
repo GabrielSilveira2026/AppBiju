@@ -19,11 +19,11 @@ import AddContainer from "@/src/components/AddContainer";
 import { constants } from "@/src/constants/constants";
 import Loading from "@/src/components/Loading";
 import CardProduct from "@/src/components/Products/CardProduct";
+import useProductionDatabase from "@/src/database/useProductionDatabase";
 
 export default function Profile() {
   const { user } = useAuthContext();
   const sync = useSync();
-
   const { id_pessoa } = useLocalSearchParams();
 
   const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);

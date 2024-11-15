@@ -141,9 +141,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
       }
     }
+    
+    await productionDatabase.deleteProduction()
   };
 
   async function getHourValue() {

@@ -227,9 +227,9 @@ export default function DayDetails() {
 
             production.id_producao = sync.nanoid()
             const request = await sync.postProduction(production)
-            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
 
             setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
         }
         else {
             if (production.id_dia) {
