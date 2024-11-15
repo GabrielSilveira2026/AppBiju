@@ -220,7 +220,7 @@ export default function DayDetails() {
                     const id = sync.nanoid()
                     await saveDay(id)
                     production.id_dia = id
-                }else{
+                } else {
                     production.id_dia = id_dia_params
                 }
             }
@@ -281,7 +281,7 @@ export default function DayDetails() {
                                     }
                                 </View>
                                 {
-                                    mode && Number(id_pessoa_params) === user?.id_pessoa &&
+                                    mode &&
                                         mode === "edit" ?
                                         (
                                             <TouchableOpacity onPress={deleteDay}>
@@ -292,7 +292,7 @@ export default function DayDetails() {
                                                 />
                                             </TouchableOpacity>
                                         ) :
-                                        mode === "view" && Number(id_pessoa_params) === user?.id_pessoa &&
+                                        mode === "view" &&
                                         (
                                             <TouchableOpacity onPress={() => setMode("edit")}>
                                                 <Ionicons
@@ -339,7 +339,7 @@ export default function DayDetails() {
                         keyExtractor={(item, index) => String(index)}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    {mode && mode !== "edit" && Number(id_pessoa_params) === user?.id_pessoa
+                    {mode && mode !== "edit"
                         &&
                         < AddContainer
                             text="Adicionar produção"
@@ -350,7 +350,7 @@ export default function DayDetails() {
                 </View>
 
                 {
-                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa && !isLoading &&
+                    mode && mode !== 'view' && !isLoading &&
                     <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
                         <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
                         <Button style={{ flex: 1 }} title={isLoading ? "Carregando" : "Salvar"} onPress={saveDay} />

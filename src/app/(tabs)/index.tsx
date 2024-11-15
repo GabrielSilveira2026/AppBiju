@@ -205,7 +205,6 @@ export default function Profile() {
               renderItem={renderItem}
             />
             {
-              user?.id_perfil !== constants.perfil.administrador.id_perfil &&
               <AddContainer
                 text="Adicionar dia"
                 disable={isAdding}

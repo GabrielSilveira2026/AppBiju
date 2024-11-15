@@ -138,9 +138,12 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
         <View style={styles.cardOpened}>
           <View style={styles.line}>
-            <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
-              <Ionicons name="create-outline" size={35} color={colors.primary} />
-            </TouchableOpacity>
+            {
+              user?.id_perfil === constants.perfil.administrador.id_perfil &&
+              <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
+                <Ionicons name="create-outline" size={35} color={colors.primary} />
+              </TouchableOpacity>
+            }
 
             <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
               <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
