@@ -1,4 +1,5 @@
 import AddContainer from "@/src/components/AddContainer";
+import { Input } from "@/src/components/Input";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -9,26 +10,31 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
   const sync = useSync();
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [search, setSearch] = useState<string>("");
   const [hourValue, setHourValue] = useState<string>("0");
-  const [isCreating, setIsCreating] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const controller = new AbortController();
 
+  const { nome_produto } = useLocalSearchParams();
+
   async function getProductList() {
-    setIsLoading(true)    
+    setIsLoading(true)
     setIsCreating(true)
     const request = await sync.getProduct();
     setProductList(request.response);
+    setFilteredProducts(request.response)
     setIsCreating(false)
     setIsLoading(false)
   }
@@ -41,9 +47,8 @@ export default function Product() {
   }
 
   useEffect(() => {
-
-
     if (isFocused) {
+      setSearch(nome_produto ? String(nome_produto) : "")
       setIsCreating(false)
       getHourValue();
       getProductList();
@@ -56,6 +61,20 @@ export default function Product() {
       controller.abort();
     };
   }, [isFocused]);
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilteredProducts(productList);
+    } else {
+      setFilteredProducts(
+        productList.filter((product) =>
+          product.nome.toLowerCase().includes(search.toLowerCase())
+          ||
+          String(product.cod_referencia)?.toLowerCase().includes(search.toLowerCase())
+        )
+      )
+    }
+  }, [search, productList]);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -136,11 +155,14 @@ export default function Product() {
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
           <FlatList
-            data={productList}
+            data={filteredProducts}
             refreshing={false}
             onRefresh={() => {
-              setIsCreating(false)
-              getProductList()
+              if (!isLoading) {
+                setIsCreating(false)
+                getProductList()
+                setSearch("")
+              }
             }}
             style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
@@ -155,8 +177,27 @@ export default function Product() {
                     color={colors.primary}
                   />
                 </TouchableOpacity>
-                <Text style={globalStyles.title}>Produtos</Text>
-                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+                {
+                  !search && <Text style={globalStyles.title}>Produtos</Text>
+                }
+                <Input
+                  value={search}
+                  placeholder="Nome ou código"
+                  onChangeText={setSearch}
+                  inputStyle={{ flex: 1 }}
+                />
+                {
+                  search &&
+                  <TouchableOpacity
+                    onPress={() => setSearch("")}
+                  >
+                    <Ionicons name="close-circle-outline" color={colors.primary} size={30} />
+                  </TouchableOpacity>
+                }
+                {
+                  isLoading &&
+                  <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+                }
               </View>
               <HourContainer
                 hourValueProp={hourValue}

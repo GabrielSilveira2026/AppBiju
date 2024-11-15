@@ -94,7 +94,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     }
     else if (modeCard === "details") {
         return (
-            <Pressable onPress={() => setModeCard("create")} style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
+            <View style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
                 <View style={styles.line}>
                     <TouchableOpacity onPress={deletePayment}>
                         <Ionicons name="trash-outline" size={35} color={colors.error} />
@@ -118,7 +118,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
                 </View>
-            </Pressable>
+            </View >
         )
     }
     else {

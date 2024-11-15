@@ -195,7 +195,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getDay(page: number, id_pessoa?: number) {
     const request = await getDayRemote(page, id_pessoa);
-    console.log("Sync", page);
 
     if (request.status === 571) {
       const localData = await dayDatabase.getDay(id_pessoa)

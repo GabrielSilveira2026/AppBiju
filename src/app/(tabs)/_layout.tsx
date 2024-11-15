@@ -51,6 +51,7 @@ export default function AppLayout() {
         name="product"
         options={{
           headerShown: false,
+          href: "/product",
           tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,
         }}
       />

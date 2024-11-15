@@ -16,10 +16,6 @@ import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import AddContainer from "@/src/components/AddContainer";
-import { constants } from "@/src/constants/constants";
-import Loading from "@/src/components/Loading";
-import CardProduct from "@/src/components/Products/CardProduct";
-import useProductionDatabase from "@/src/database/useProductionDatabase";
 
 export default function Profile() {
   const { user } = useAuthContext();
@@ -180,10 +176,12 @@ export default function Profile() {
             <FlatList
               refreshing={false}
               onRefresh={() => {
-                setPage(0)
-                getDataDays()
+                if (!isLoading) {
+                  setPage(0)
+                  getDataDays()
+                }
               }}
-              data={dayList}
+              data={isSearch ? dayList : dayList.slice(0, 30)}
               ListEmptyComponent={
                 !dayList?.length
                   &&
@@ -196,7 +194,7 @@ export default function Profile() {
               keyExtractor={(day) => day?.id_dia}
               maxToRenderPerBatch={10}
               onEndReached={() => {
-                if (hasMore && !isLoading) {
+                if (hasMore && !isLoading && isSearch) {
                   const currentPage = page + 1
                   setPage(currentPage)
                   getDataDays()

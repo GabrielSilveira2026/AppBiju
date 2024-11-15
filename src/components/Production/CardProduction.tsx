@@ -11,6 +11,7 @@ import Select from '../Select';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 import { constants } from '@/src/constants/constants';
+import { router } from 'expo-router';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -38,7 +39,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
         if (mode === "create") {
             getProductList()
         }
-        setProductionValues(production)        
+        setProductionValues(production)
     }, [production])
 
     const handleInputChange = (field: keyof ProductionType, value: string | number) => {
@@ -272,7 +273,16 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                 </Text>
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Ionicons name="open-outline" size={24} color={colors.primary} />
+                                <TouchableOpacity
+                                    onPress={() => router.replace({ 
+                                        pathname: "/product", 
+                                        params: {
+                                            nome_produto: productionValues.nome_produto
+                                        }
+                                    })}
+                                >
+                                    <Ionicons name="open-outline" size={24} color={colors.primary} />
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <View>
