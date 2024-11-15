@@ -27,11 +27,13 @@ export default function Profile() {
   const { id_pessoa } = useLocalSearchParams();
 
   const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
-  const [dayList, setDayList] = useState<DayType[] | undefined>([]);
+  const [dayList, setDayList] = useState<DayType[]>([]);
   const [searchDay, setSearchDay] = useState<string>("");
   const [isSearch, setIsSearch] = useState<boolean>(false)
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(0)
+  const [hasMore, setHasMore] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
   const controller = new AbortController();
@@ -55,19 +57,21 @@ export default function Profile() {
     setIsLoading(true)
     await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
-    const response = await sync.getDay(Number(id_pessoa_params) || user?.id_pessoa);
-
-    for (const day of response.response.slice(0, 7)) {
-      await sync.getProduction(day.id_dia);
+    const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
+    if (page === 0) {
+      for (const day of response.response.slice(0, 7)) {
+        await sync.getProduction(day.id_dia);
+      }
     }
-    setDayList(response.response);
-
+    setHasMore(response.hasMore)
+    setDayList(page > 0 ? [...dayList, ...response.response] : response.response);
     setIsLoading(false)
   }
 
   useEffect(() => {
     if (isFocused) {
       if (id_pessoa_params || !!user?.id_pessoa) {
+        setPage(0)
         getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
         getDataDays();
       }
@@ -176,20 +180,28 @@ export default function Profile() {
             <FlatList
               refreshing={false}
               onRefresh={() => {
+                setPage(0)
                 getDataDays()
               }}
-              data={isSearch ? dayList : dayList?.slice(0, 30)}
+              data={dayList}
               ListEmptyComponent={
-                !dayList?.length 
-                && 
-                !isLoading 
-                ?
-                <Text style={[globalStyles.title, { margin: "auto" }]}>
-                  Nenhum dia produzido ainda</Text>:null
+                !dayList?.length
+                  &&
+                  !isLoading
+                  ?
+                  <Text style={[globalStyles.title, { margin: "auto" }]}>
+                    Nenhum dia produzido ainda</Text> : null
               }
               contentContainerStyle={{ gap: 12 }}
               keyExtractor={(day) => day?.id_dia}
               maxToRenderPerBatch={10}
+              onEndReached={() => {
+                if (hasMore && !isLoading) {
+                  const currentPage = page + 1
+                  setPage(currentPage)
+                  getDataDays()
+                }
+              }}
               renderItem={renderItem}
             />
             {

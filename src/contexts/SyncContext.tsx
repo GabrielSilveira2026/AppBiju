@@ -33,7 +33,7 @@ type SyncContextType = {
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getPeople: (id_pessoa?: number) => Promise<any>,
   getPendingPayment: (id_pessoa?: number) => Promise<any>,
-  getDay: (id_pessoa?: number) => Promise<any>,
+  getDay: (page: number, id_pessoa?: number) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   updateDay: (dia: DayType) => Promise<any>,
   deleteDay: (dia: DayType) => Promise<any>,
@@ -192,17 +192,19 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     return { response: localData, origemDados: "Remoto" };
   }
 
-  async function getDay(id_pessoa?: number) {
-    const request = await getDayRemote(id_pessoa);
+  async function getDay(page: number, id_pessoa?: number) {
+    const request = await getDayRemote(page, id_pessoa);
+    console.log("Sync", page);
 
     if (request.status === 571) {
       const localData = await dayDatabase.getDay(id_pessoa)
       return { response: localData, origemDados: "Local" }
     }
+    if (page === 0) {
+      await dayDatabase.updateDiaList(request.data.items, id_pessoa)
+    }
 
-    await dayDatabase.updateDiaList(request.data.items, id_pessoa)
-
-    return { response: request.data.items, origemDados: "Remoto" };
+    return { response: request.data.items, hasMore: request.data.hasMore, origemDados: "Remoto" };
   }
 
   async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
