@@ -27,7 +27,6 @@ export default function DayDetails() {
     const { user } = useAuthContext()
     const isFocused = useIsFocused();
     const sync = useSync();
-    const controller = new AbortController();
 
     const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
 
@@ -96,13 +95,10 @@ export default function DayDetails() {
             }
         } else {
             setProductionList([])
-        }
-        return () => {
             setMode(undefined);
             setIsAdding(false)
             setProductionList([])
-            controller.abort();
-        };
+        }
     }, [isFocused]);
 
     function goBack() {
@@ -226,6 +222,8 @@ export default function DayDetails() {
             }
 
             production.id_producao = sync.nanoid()
+            production.observacao = production.observacao ? production.observacao.replace(/\n/g, '\n') : ""
+
             const request = await sync.postProduction(production)
 
             setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));

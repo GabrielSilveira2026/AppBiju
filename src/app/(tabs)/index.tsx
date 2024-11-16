@@ -25,14 +25,13 @@ export default function Profile() {
   const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
   const [dayList, setDayList] = useState<DayType[]>([]);
   const [searchDay, setSearchDay] = useState<string>("");
-  const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [viewMore, setviewMore] = useState<boolean>(false)
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [page, setPage] = useState<number>(0)
   const [hasMore, setHasMore] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
-  const controller = new AbortController();
 
   const id_pessoa_params = Number(id_pessoa);
 
@@ -72,10 +71,6 @@ export default function Profile() {
         getDataDays();
       }
     }
-
-    return () => {
-      controller.abort();
-    };
   }, [isFocused]);
 
   const headerPosition = useSharedValue(-300)
@@ -127,7 +122,7 @@ export default function Profile() {
       <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
         <SafeAreaView style={globalStyles.pageContainer}>
           {
-            !isSearch
+            !viewMore
             &&
             userData
             &&
@@ -138,9 +133,9 @@ export default function Profile() {
           <Animated.View style={[daysStyle, globalStyles.container, styles.containerDias]}>
             <View style={styles.headerDias}>
               {
-                isSearch &&
+                viewMore &&
                 <TouchableOpacity onPress={() => {
-                  setIsSearch(!isSearch)
+                  setviewMore(!viewMore)
                 }}>
                   <Ionicons
 
@@ -153,25 +148,19 @@ export default function Profile() {
                 {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : ""}
               </Text>
               {
-                isSearch &&
-                <Input
-                  value={searchDay}
-                  onChangeText={setSearchDay}
-                  placeholder="Pesquisar"
-                  inputStyle={{ flex: 1 }}
-                />
-              }
-              {
-                isSearch || dayList?.length !== 0 &&
+                viewMore || dayList?.length !== 0 &&
                 <TouchableOpacity
                   onPress={() => {
-                    setIsSearch(!isSearch)
+                    setviewMore(!viewMore)
                   }}
                 >
                   <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
                 </TouchableOpacity>
               }
-              <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+              {
+                isLoading &&
+                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+              }
             </View>
             <FlatList
               refreshing={false}
@@ -181,7 +170,7 @@ export default function Profile() {
                   getDataDays()
                 }
               }}
-              data={isSearch ? dayList : dayList.slice(0, 30)}
+              data={viewMore ? dayList : dayList.slice(0, 30)}
               ListEmptyComponent={
                 !dayList?.length
                   &&
@@ -194,7 +183,7 @@ export default function Profile() {
               keyExtractor={(day) => day?.id_dia}
               maxToRenderPerBatch={10}
               onEndReached={() => {
-                if (hasMore && !isLoading && isSearch) {
+                if (hasMore && !isLoading && viewMore) {
                   const currentPage = page + 1
                   setPage(currentPage)
                   getDataDays()

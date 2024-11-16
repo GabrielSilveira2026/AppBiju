@@ -25,7 +25,6 @@ export default function Product() {
   const [hourValue, setHourValue] = useState<string>("0");
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const controller = new AbortController();
 
   const { nome_produto } = useLocalSearchParams();
 
@@ -52,14 +51,10 @@ export default function Product() {
       setIsCreating(false)
       getHourValue();
       getProductList();
+    } else {
+      setIsCreating(false)
+      setSearch("")
     }
-
-    return () => {
-      if (!isFocused) {
-        setIsCreating(false)
-      }
-      controller.abort();
-    };
   }, [isFocused]);
 
   useEffect(() => {
