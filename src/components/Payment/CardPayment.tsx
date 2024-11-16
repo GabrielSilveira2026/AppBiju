@@ -4,7 +4,7 @@ import { PaymentType, PendingPaymentType, UserType } from '@/src/types/types';
 import { colors } from '@/styles/color';
 import { globalStyles } from '@/styles/styles';
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Alert, TouchableOpacity } from 'react-native'
 import Select from '../Select';
 import { useSync } from '@/src/contexts/SyncContext';
 import Button from '../Button';
@@ -28,7 +28,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     const [paymentValues, setPaymentValues] = useState<PaymentType>(payment)
 
     async function getPendingPayment() {
-        const request = await sync.getPendingPayment()
+        const request = await sync.getPendingPayment(payment.id_pessoa)
         setPendingPaymentList(request.response)
     }
 
@@ -76,7 +76,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
             <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -94,15 +94,19 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     }
     else if (modeCard === "details") {
         return (
-            <Pressable onPress={() => setModeCard("create")} style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
+            <View style={[globalStyles.cardContainer, stylesdetails.cardContainer]}>
                 <View style={styles.line}>
-                    < Ionicons onPress={deletePayment} name={"trash-outline"} size={35} color={colors.error} />
+                    <TouchableOpacity onPress={deletePayment}>
+                        <Ionicons name="trash-outline" size={35} color={colors.error} />
+                    </TouchableOpacity>
 
-                    <Ionicons style={{ flex: 5, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 1 }}>
+                        <Ionicons style={{ textAlign: "right" }} name="chevron-up-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.line}>
                     <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
                     </View>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -114,7 +118,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
                 </View>
-            </Pressable>
+            </View >
         )
     }
     else {

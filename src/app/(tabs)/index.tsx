@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, ImageBackground, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -8,74 +8,75 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import DayListItem from "@/src/components/Index/DayListItem";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
-import { DayType } from "@/src/types/types";
+import { DayType, PendingPaymentType, ProductType, UserType } from "@/src/types/types";
 import { colors } from "@/styles/color";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Input } from "@/src/components/Input";
 import HeaderProfile from "@/src/components/Index/HeaderProfile";
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import AddContainer from "@/src/components/AddContainer";
-import { constants } from "@/src/constants/constants";
-
-type UserType = {
-  nome: string;
-  total: number;
-  ultimo_pagamento: string;
-};
 
 export default function Profile() {
   const { user } = useAuthContext();
   const sync = useSync();
-
   const { id_pessoa } = useLocalSearchParams();
-  const [userData, setUserData] = useState<UserType | undefined>(undefined);
-  const [dayList, setDayList] = useState<DayType[] | undefined>([]);
+
+  const [userData, setUserData] = useState<PendingPaymentType | undefined>(undefined);
+  const [dayList, setDayList] = useState<DayType[]>([]);
   const [searchDay, setSearchDay] = useState<string>("");
-  const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [viewMore, setviewMore] = useState<boolean>(false)
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(0)
+  const [hasMore, setHasMore] = useState<boolean>(false)
 
   const isFocused = useIsFocused();
-  const controller = new AbortController();
 
-  const id_pessoa_params = Array.isArray(id_pessoa) ? id_pessoa[0] : id_pessoa;
+  const id_pessoa_params = Number(id_pessoa);
 
-  async function getDataHeader() {
-    const response = await sync.getPendingPayment(parseInt(id_pessoa_params) || user?.id_pessoa);
+  async function getDataHeader(id_pessoa: number) {
+    const response = await sync.getPendingPayment(id_pessoa);
 
-    let { nome, total, ultimo_pagamento } = response.response[0];
+    if (response.response[0]) {
 
-    ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
+      let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
 
-    setUserData({ nome, total, ultimo_pagamento });
+      ultimo_pagamento = new Date(ultimo_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", });
+
+      setUserData({ id_pessoa, nome, total, ultimo_pagamento });
+    }
   }
 
   async function getDataDays() {
     setIsLoading(true)
     await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
-    const response = await sync.getDay(parseInt(id_pessoa_params) || user?.id_pessoa);
-
-    for (const day of response.response) {
-      await sync.getProduction(day.id_dia);
+    const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
+    if (page === 0) {
+      for (const day of response.response.slice(0, 7)) {
+        await sync.getProduction(day.id_dia);
+      }
     }
-    setDayList(response.response);
-
+    setHasMore(response.hasMore)
+    setDayList(page > 0 ? [...dayList, ...response.response] : response.response);
     setIsLoading(false)
   }
 
   useEffect(() => {
-    if (isFocused) {
-      getDataHeader();
-      getDataDays();
-    }
+    getDataDays();
+  
+  }, [page])
+  
 
-    return () => {
-      // setUserData(undefined)
-      // setDayList([])
-      controller.abort();
-    };
+  useEffect(() => {
+    if (isFocused) {
+      if (id_pessoa_params || !!user?.id_pessoa) {
+        setPage(0)
+        getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
+        getDataDays();
+      }
+    }
   }, [isFocused]);
 
   const headerPosition = useSharedValue(-300)
@@ -112,92 +113,112 @@ export default function Profile() {
     }
   })
 
-  if (user?.perfil === "Administrador" && !id_pessoa_params) {
-    return <Redirect href={"/employees"} />
-  }
+  const renderItem = useCallback(({ item }: { item: DayType }) => (
+    <DayListItem day={item} />
+  ), [])
 
-  return (
-    <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
-      <SafeAreaView style={globalStyles.pageContainer}>
-        {
-          !isSearch
-          &&
-          userData
-          &&
-          <Animated.View style={[headerStyle, { width: "100%" }]}><HeaderProfile userData={userData} /></Animated.View>
-        }
-        <Animated.View style={[daysStyle, globalStyles.container, styles.containerDias]}>
-          <View style={styles.headerDias}>
+  if (user?.perfil === "Administrador" && !id_pessoa_params) {
+    return (
+      <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+        <Redirect href={"/employees"} />
+      </ImageBackground>
+    )
+  } else {
+    return (
+      <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
+        <SafeAreaView style={globalStyles.pageContainer}>
+          {
+            !viewMore
+            &&
+            userData
+            &&
+            <Animated.View style={[headerStyle, { width: "100%" }]}>
+              <HeaderProfile userData={userData} />
+            </Animated.View>
+          }
+          <Animated.View style={[daysStyle, globalStyles.container, styles.containerDias]}>
+            <View style={styles.headerDias}>
+              {
+                viewMore &&
+                <TouchableOpacity onPress={() => {
+                  setviewMore(!viewMore)
+                }}>
+                  <Ionicons
+
+                    name="arrow-back-outline"
+                    size={40}
+                    color={colors.primary} />
+                </TouchableOpacity>
+              }
+              <Text style={[globalStyles.title]}>
+                {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : ""}
+              </Text>
+              {
+                viewMore || dayList?.length !== 0 &&
+                <TouchableOpacity
+                  onPress={() => {
+                    setviewMore(!viewMore)
+                  }}
+                >
+                  <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
+                </TouchableOpacity>
+              }
+              {
+                isLoading &&
+                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+              }
+            </View>
+            <FlatList
+              refreshing={false}
+              onRefresh={() => {
+                if (!isLoading) {
+                  setPage(0)
+                  // getDataDays()
+                }
+              }}
+              data={viewMore ? dayList : dayList.slice(0, 30)}
+              ListEmptyComponent={
+                !dayList?.length
+                  &&
+                  !isLoading
+                  ?
+                  <Text style={[globalStyles.title, { margin: "auto" }]}>
+                    Nenhum dia produzido ainda</Text> : null
+              }
+              contentContainerStyle={{ gap: 12 }}
+              keyExtractor={(day) => day?.id_dia}
+              maxToRenderPerBatch={10}
+              onEndReached={() => {
+                if (hasMore && !isLoading && viewMore) {
+                  const currentPage = page + 1
+                  setPage(currentPage)
+                }
+              }}
+              renderItem={renderItem}
+            />
             {
-              isSearch &&
-              <Ionicons
+              <AddContainer
+                text="Adicionar dia"
+                disable={isAdding}
                 onPress={() => {
-                  setIsSearch(!isSearch)
+                  setIsAdding(true)
+                  router.navigate({
+                    pathname: '../(tabs)/day',
+                    params: {
+                      id_pessoa: user?.id_pessoa,
+                      pessoa: user?.nome,
+                    },
+                  });
+                  setIsAdding(false)
                 }}
-                name="arrow-back-outline"
-                size={40}
-                color={colors.primary} />
-            }
-            <Text style={[globalStyles.title]}>
-              {dayList?.length ? `${dayList?.length} ${dayList?.length > 1 ? "dias" : "dia"}` : ""}
-            </Text>
-            {
-              isSearch &&
-              <Input
-                value={searchDay}
-                onChangeText={setSearchDay}
-                placeholder="Pesquisar"
-                inputStyle={{ flex: 1 }}
               />
             }
-            {/* {
-              isSearch || dayList?.length !== 0 &&
-              <Pressable
-                onPress={() => {
-                  setIsSearch(!isSearch)
-                }}
-              >
-                <Text style={[globalStyles.title, styles.showMore]}>ver mais</Text>
-              </Pressable>
-            } */}
-            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
-          </View>
-          <FlatList
-            refreshing={false}
-            onRefresh={() => {
-              getDataDays()
-            }}
-            data={isSearch ? dayList : dayList?.slice(0, 15)}
-            ListEmptyComponent={
-              !dayList?.length && !isLoading ?
-                <Text style={[globalStyles.title, { margin: "auto" }]}>Nenhum dia produzido ainda</Text> : <></>
-            }
-            contentContainerStyle={{ gap: 12 }}
-            keyExtractor={(day) => day?.id_dia}
-            renderItem={({ item }) => <DayListItem day={item} />}
-          />
-          {
-            user?.id_perfil !== constants.perfil.administrador.id_perfil  &&
-            <AddContainer
-              text="Adicionar dia"
-              disable={isAdding}
-              onPress={() => {
-                setIsAdding(true)
-                router.navigate({
-                  pathname: '../(tabs)/day',
-                  params: {
-                    id_pessoa: user?.id_pessoa,
-                    pessoa: user?.nome,
-                  },
-                });
-                setIsAdding(false)
-              }}
-            />
-          }
-        </Animated.View>
-      </SafeAreaView>
-    </ImageBackground>
-  );
+          </Animated.View>
+        </SafeAreaView>
+      </ImageBackground>
+    )
+  }
+
 }
 
 const styles = StyleSheet.create({

@@ -2,7 +2,7 @@ import { useAuthContext } from '@/src/contexts/AuthContext';
 import { colors } from '@/styles/color';
 import { useIsFocused } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Alert, TouchableOpacity } from 'react-native'
 import Button from '../Button';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '../Input';
@@ -22,7 +22,6 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
     const [hourValue, setHourValue] = useState<string>(hourValueProp);
     const [modeHourValue, setModeHourValue] = useState<"view" | "edit">("view");
     const [initialDate, setInitialDate] = useState<Date>(new Date());
-    const [showPicker, setShowPicker] = useState<boolean>(false);
 
     useEffect(() => {
         if (isFocused) {
@@ -30,7 +29,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
             setModeHourValue("view");
         }
     }, [hourValueProp, isFocused]);
-    
+
     async function handleUpdateHourValue() {
         Alert.alert('Alterar valor da hora?', `Deseja realmente alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
             {
@@ -50,18 +49,21 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
         <View style={[globalStyles.cardContainer, { gap: 12 }]}>
             <View style={styles.line}>
                 {modeHourValue === "edit" && (
-                    <Ionicons onPress={() => {
-                        setHourValue(hourValueProp)
-                        setModeHourValue("view")
-                    }} name={"arrow-back-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => {
+                        setHourValue(hourValueProp);
+                        setModeHourValue("view");
+                    }}>
+                        <Ionicons name="arrow-back-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
                 )}
+
                 <Text style={styles.hourText}>Valor Hora: R$</Text>
                 {modeHourValue === "view" ? (
                     <Text style={styles.hourText}>{hourValue}</Text>
                 ) : (
                     <View>
                         <Input
-                            value={hourValue.toString()}
+                            value={String(hourValue)}
                             onChangeText={(text) => setHourValue(text)}
                             keyboardType="number-pad"
                             autoCapitalize="none"
@@ -70,7 +72,9 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                     </View>
                 )}
                 {user?.id_perfil !== constants.perfil.funcionario.id_perfil && modeHourValue === "view" && (
-                    <Ionicons onPress={() => setModeHourValue("edit")} name={"create-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => setModeHourValue("edit")}>
+                        <Ionicons name="create-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
                 )}
             </View>
             {modeHourValue === "edit" && (

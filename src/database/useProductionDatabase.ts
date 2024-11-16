@@ -112,24 +112,26 @@ export default function useProductionDatabase() {
         }
     }
 
-    async function deleteProduction(id_producao: string) {
-        const statement = await database.prepareAsync(`
-            DELETE FROM producao 
-            WHERE id_producao = $id_producao
-        `);
-
+    async function deleteProduction(id_producao?: string) {
+        const query = id_producao 
+            ? `DELETE FROM producao WHERE id_producao = $id_producao`
+            : `DELETE FROM producao`;
+    
+        const statement = await database.prepareAsync(query);
+    
         try {
-            const result = await statement.executeAsync({
-                $id_producao: id_producao
-            });
-
-            return result.changes > 0; // Retorna true se uma linha foi deletada
+            const result = await statement.executeAsync(
+                id_producao ? { $id_producao: id_producao } : {}
+            );
+    
+            return result.changes > 0;
         } catch (error) {
             throw error;
         } finally {
             await statement.finalizeAsync();
         }
     }
+    
 
     async function updateProduction(production: ProductionType) {
         const statementUpdateProduction = await database.prepareAsync(`

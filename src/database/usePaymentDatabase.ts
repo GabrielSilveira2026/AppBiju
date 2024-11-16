@@ -5,6 +5,7 @@ export default function usePaymentDatabase() {
     const database = useSQLiteContext();
 
     async function getPayment(id_pessoa?: number) {
+
         try {
             const query = id_pessoa
                 ? `
@@ -36,11 +37,11 @@ export default function usePaymentDatabase() {
             const result = id_pessoa
                 ? `SELECT 
                     P.id_pessoa,
-                    P.nome AS Nome,
-                    PG.Ultimo_Pagamento,
+                    P.nome AS nome,
+                    PG.ultimo_pagamento,
                     COALESCE(SUM(
                         CASE 
-                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.Ultimo_Pagamento)
+                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.ultimo_pagamento)
                             THEN PR.quantidade * PR.historico_preco_unidade
                             ELSE 0
                         END
@@ -48,7 +49,7 @@ export default function usePaymentDatabase() {
                 FROM 
                     pessoa P
                 LEFT JOIN 
-                    (SELECT id_pessoa, MAX(data_pagamento) AS Ultimo_Pagamento
+                    (SELECT id_pessoa, MAX(data_pagamento) AS ultimo_pagamento
                     FROM pagamento
                     GROUP BY id_pessoa) PG
                     ON P.id_pessoa = PG.id_pessoa
@@ -58,12 +59,15 @@ export default function usePaymentDatabase() {
                     producao PR ON D.id_dia = PR.id_dia
                 WHERE 
                     P.id_pessoa = $id_pessoa
+                    AND P.id_perfil = 3
                 GROUP BY 
-                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`
+                    P.id_pessoa, P.nome, PG.ultimo_pagamento
+                ORDER BY 
+                    P.nome ASC`
                 : `SELECT 
                     P.id_pessoa,
-                    P.nome AS Nome,
-                    PG.Ultimo_Pagamento,
+                    P.nome AS nome,
+                    PG.ultimo_pagamento,
                     COALESCE(SUM(
                         CASE 
                             WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.Ultimo_Pagamento)
@@ -74,7 +78,7 @@ export default function usePaymentDatabase() {
                 FROM 
                     pessoa P
                 LEFT JOIN 
-                    (SELECT id_pessoa, MAX(data_pagamento) AS Ultimo_Pagamento
+                    (SELECT id_pessoa, MAX(data_pagamento) AS ultimo_Pagamento
                     FROM pagamento
                     GROUP BY id_pessoa) PG
                     ON P.id_pessoa = PG.id_pessoa
@@ -82,16 +86,21 @@ export default function usePaymentDatabase() {
                     dia D ON P.id_pessoa = D.id_pessoa
                 LEFT JOIN 
                     producao PR ON D.id_dia = PR.id_dia
+                WHERE 
+                    P.id_perfil = 3
                 GROUP BY 
-                    P.id_pessoa, P.nome, PG.Ultimo_Pagamento`;
-    
+                    P.id_pessoa, P.nome, PG.ultimo_Pagamento
+                ORDER BY 
+                    P.nome ASC`;
+
             const params: { $id_pessoa?: number } = {};
+
             if (id_pessoa !== undefined) {
                 params.$id_pessoa = id_pessoa;
             }
-    
+
             const response = await database.getAllAsync<PendingPaymentType>(result, params.$id_pessoa !== undefined ? params : {});
-    
+
             return response;
         } catch (error) {
             throw error;
@@ -182,12 +191,12 @@ export default function usePaymentDatabase() {
             DELETE FROM pagamento 
             WHERE id_pagamento = $id_pagamento
         `);
-    
+
         try {
             const result = await statement.executeAsync({
                 $id_pagamento: id_pagamento
             });
-    
+
             return result.changes > 0;
         } catch (error) {
             throw error;
@@ -195,6 +204,6 @@ export default function usePaymentDatabase() {
             await statement.finalizeAsync();
         }
     }
-    
+
     return { postPayment, getPayment, getPendingPayment, deletePayment, updatePaymentList };
 }

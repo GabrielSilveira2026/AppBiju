@@ -11,6 +11,7 @@ import Select from '../Select';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import InputDuration from '../InputDuration';
 import { constants } from '@/src/constants/constants';
+import { router } from 'expo-router';
 
 type CardProductionProps = {
     production: ProductionType;
@@ -127,18 +128,31 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                     modeCard === "edit"
                     &&
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                        < Ionicons onPress={() => {
+                        <TouchableOpacity onPress={() => {
                             setModeCard("details")
                             setProductionValues(production)
-                        }} name={"arrow-back-outline"} size={35} color={colors.primary} />
-                        <Ionicons onPress={deleteProduction}
-                            name={"trash-outline"} size={35} color={colors.error} />
+                        }} >
+                            < Ionicons name={"arrow-back-outline"} size={35} color={colors.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={deleteProduction}>
+                            <Ionicons name={"trash-outline"} size={35} color={colors.error} />
+                        </TouchableOpacity>
+
                     </View>
                 }
                 <View style={{ gap: 8 }}>
                     <View style={{ flexDirection: "row", gap: 8 }}>
                         <View style={{ flex: 5 }}>
-                            <Select list={productList} id="id_produto" label="nome" textButton="Selecione um produto" onSelect={selectProduct} initialText={production.nome_produto} />
+                            <Select
+                                list={productList}
+                                titleSecondLabel="Cod."
+                                secondLabel="cod_referencia"
+                                id="id_produto"
+                                label="nome"
+                                textButton="Selecione um produto"
+                                onSelect={selectProduct}
+                                initialText={production.nome_produto}
+                            />
                         </View>
                         {
                             productionValues.id_produto !== constants.id_producao_hora ?
@@ -150,29 +164,32 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                         placeholder="Qtde"
                                         keyboardType='numeric'
                                         selectTextOnFocus={true}
-                                        value={productionValues.quantidade === 0 ? "" : productionValues.quantidade.toString()}
+                                        value={productionValues.quantidade === 0 ? "" : String(productionValues.quantidade)}
                                     />
                                     <View style={{ gap: 8, justifyContent: "center" }}>
-                                        < Ionicons
+                                        <TouchableOpacity
                                             onPress={() => {
                                                 handleInputChange('quantidade', Number(productionValues.quantidade) + 1)
-                                            }}
-                                            name={"add-outline"}
-                                            style={styles.buttonIcon}
-                                            size={30} color={colors.primary}
-                                        />
-
-                                        < Ionicons
+                                            }}>
+                                            < Ionicons
+                                                name={"add-outline"}
+                                                style={styles.buttonIcon}
+                                                size={30} color={colors.primary}
+                                            />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
                                             onPress={() => {
                                                 if (productionValues.quantidade > 0) {
                                                     handleInputChange('quantidade', productionValues.quantidade - 1)
                                                 }
-                                            }}
-                                            name={"remove-outline"}
-                                            size={30}
-                                            style={styles.buttonIcon}
-                                            color={colors.primary}
-                                        />
+                                            }}>
+                                            < Ionicons
+                                                name={"remove-outline"}
+                                                size={30}
+                                                style={styles.buttonIcon}
+                                                color={colors.primary}
+                                            />
+                                        </TouchableOpacity>
 
                                     </View>
                                 </>
@@ -233,12 +250,17 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                 style={[globalStyles.cardContainer, stylesDetails.cardContainer]}
             >
                 <View style={stylesDetails.headerButtons}>
-                    <Ionicons style={{ flex: 1 }} onPress={() => {
-                        getProductList()
-                        setModeCard("edit")
-                    }} name={"create-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => {
+                        getProductList();
+                        setModeCard("edit");
+                    }} style={{ flex: 1 }}>
+                        <Ionicons name="create-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
 
-                    <Ionicons style={{ flex: 3, textAlign: "right" }} onPress={() => setModeCard("view")} name={"chevron-up-outline"} size={35} color={colors.primary} />
+                    <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 3, alignItems: 'flex-end' }}>
+                        <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
+                    </TouchableOpacity>
+
                 </View >
 
                 <View style={stylesDetails.container}>
@@ -251,7 +273,16 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                 </Text>
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Ionicons name="open-outline" size={24} color={colors.primary} />
+                                <TouchableOpacity
+                                    onPress={() => router.replace({ 
+                                        pathname: "/product", 
+                                        params: {
+                                            nome_produto: productionValues.nome_produto
+                                        }
+                                    })}
+                                >
+                                    <Ionicons name="open-outline" size={24} color={colors.primary} />
+                                </TouchableOpacity>
                             </View>
                         </View>
                         <View>

@@ -23,6 +23,12 @@ export const globalStyles = StyleSheet.create({
         width: "100%",
         gap: 16,
     },
+    titleContainer: {
+        padding: 8,
+        gap: 8,
+        flexDirection: "row",
+        alignItems: "center",
+    },
     cardContainer: {
         borderRadius: 4,
         padding: 8,

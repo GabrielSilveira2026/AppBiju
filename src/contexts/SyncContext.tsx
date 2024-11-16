@@ -33,7 +33,7 @@ type SyncContextType = {
   updateHourValue: (valor: number, data_inicio: string) => Promise<any>
   getPeople: (id_pessoa?: number) => Promise<any>,
   getPendingPayment: (id_pessoa?: number) => Promise<any>,
-  getDay: (id_pessoa?: number) => Promise<any>,
+  getDay: (page: number, id_pessoa?: number) => Promise<any>,
   postDay: (id_pessoa: number, data_dia_producao: string, id_dia: string) => Promise<any>,
   updateDay: (dia: DayType) => Promise<any>,
   deleteDay: (dia: DayType) => Promise<any>,
@@ -70,7 +70,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
     });
-    // syncData();
 
     return () => {
       unsubscribe();
@@ -93,21 +92,16 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         await axios.post(operacaoPendente.url)
           .catch(function (error) {
             if (error.response) {
-              // A resposta foi recebida, mas o status é de erro
               console.warn("Erro de resposta:", error.response.status, error.response.data);
               return
             } else if (error.request) {
-              // A requisição foi feita, mas nenhuma resposta foi recebida
               console.warn("Erro de requisição:", error.request);
               return
             } else {
-              // Outro erro aconteceu na configuração da requisição
-              return
               console.warn("Erro:", error.message);
+              return
             }
           });
-
-
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
 
       }
@@ -147,13 +141,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
       }
     }
-
-    await getPendingPayment(user?.id_perfil === constants.perfil.funcionario.id_perfil ? user?.id_pessoa : undefined)
-    await getHourValue();
-    await getProduct();
+    
+    await productionDatabase.deleteProduction()
   };
 
   async function getHourValue() {
@@ -195,26 +186,25 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       return { response: response, origemDados: "Local" }
     }
 
-    await peopleDatabase.updatePeopleList(response.data.items)
+    await peopleDatabase.updatePeopleList(response.data.items, id_pessoa)
 
     const localData = await peopleDatabase.getPeople(id_pessoa)
 
     return { response: localData, origemDados: "Remoto" };
   }
 
-  async function getDay(id_pessoa?: number) {
-    const request = await getDayRemote(id_pessoa);
+  async function getDay(page: number, id_pessoa?: number) {
+    const request = await getDayRemote(page, id_pessoa);
 
     if (request.status === 571) {
       const localData = await dayDatabase.getDay(id_pessoa)
       return { response: localData, origemDados: "Local" }
     }
+    if (page === 0) {
+      await dayDatabase.updateDiaList(request.data.items, id_pessoa)
+    }
 
-    await dayDatabase.updateDiaList(request.data.items, id_pessoa)
-
-    const localData = await dayDatabase.getDay(id_pessoa)
-
-    return { response: request.data.items, origemDados: "Remoto" };
+    return { response: request.data.items, hasMore: request.data.hasMore, origemDados: "Remoto" };
   }
 
   async function postDay(id_pessoa: number, data_dia_producao: string, id_dia: string) {
@@ -386,7 +376,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postProduction(production: ProductionType) {
-    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao}`
+    
+    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao.replace(/(?:\r\n|\r|\n)/g, "\n")}`
 
     const request: any = await axios.post(url).catch(function (error) {
       return { status: 571 }
@@ -456,7 +447,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const request = await paymentDatabase.getPayment(id_pessoa)
       return { response: request, origemDados: "Local" }
     }
-
     await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
 
     const localData = await paymentDatabase.getPayment(id_pessoa)
@@ -471,8 +461,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await paymentDatabase.getPendingPayment(id_pessoa)
       return { response: response, origemDados: "Local" }
     }
-
-    // await pendingPaymentDatabase.updatePendingPaymentList(response.data.items, id_pessoa)
 
     return { response: response.data.items, origemDados: "Remoto" };
   }

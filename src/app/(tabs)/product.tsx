@@ -1,4 +1,5 @@
 import AddContainer from "@/src/components/AddContainer";
+import { Input } from "@/src/components/Input";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
@@ -9,45 +10,66 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
   const sync = useSync();
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
   const isFocused = useIsFocused();
   const [productList, setProductList] = useState<ProductType[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [search, setSearch] = useState<string>("");
   const [hourValue, setHourValue] = useState<string>("0");
-  const [isCreating, setIsCreating] = useState<boolean>(false)
-  const controller = new AbortController();
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const { nome_produto } = useLocalSearchParams();
 
   async function getProductList() {
+    setIsLoading(true)
+    setIsCreating(true)
     const request = await sync.getProduct();
     setProductList(request.response);
+    setFilteredProducts(request.response)
+    setIsCreating(false)
+    setIsLoading(false)
+  }
+
+  async function getHourValue() {
+    setIsLoading(true)
+    const request = await sync.getHourValue();
+    setHourValue(String(request.response[0].valor));
+    setIsLoading(false)
   }
 
   useEffect(() => {
-
-    async function getHourValue() {
-      const request = await sync.getHourValue();
-      setHourValue(request.response[0].valor.toString());
-    }
-
     if (isFocused) {
+      setSearch(nome_produto ? String(nome_produto) : "")
       setIsCreating(false)
       getHourValue();
       getProductList();
+    } else {
+      setIsCreating(false)
+      setSearch("")
     }
+  }, [isFocused]);
 
-    return () => {
-      if (!isFocused) {
-        setIsCreating(false)
-      }
-      controller.abort();
-    };
-  }, []);
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilteredProducts(productList);
+    } else {
+      setFilteredProducts(
+        productList.filter((product) =>
+          product.nome.toLowerCase().includes(search.toLowerCase())
+          ||
+          String(product.cod_referencia)?.toLowerCase().includes(search.toLowerCase())
+        )
+      )
+    }
+  }, [search, productList]);
 
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -101,9 +123,9 @@ export default function Product() {
     if (product.id_produto === "") {
       product.id_produto = sync.nanoid()
       const request = await sync.postProduct(product)
-      
+
       setProductList((prevProductList) => [request.response[0], ...prevProductList]);
-      
+
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
@@ -128,11 +150,14 @@ export default function Product() {
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.productContainer]}>
           <FlatList
-            data={productList}
+            data={filteredProducts}
             refreshing={false}
             onRefresh={() => {
-              setIsCreating(false)
-              getProductList()
+              if (!isLoading) {
+                setIsCreating(false)
+                getProductList()
+                setSearch("")
+              }
             }}
             style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
             contentContainerStyle={{ gap: 8 }}
@@ -140,15 +165,34 @@ export default function Product() {
             keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
-                <Ionicons
-                  onPress={() => {
-                    router.navigate("/");
-                  }}
-                  name="arrow-back-outline"
-                  size={35}
-                  color={colors.primary}
+                <TouchableOpacity onPress={() => { router.navigate("/") }}>
+                  <Ionicons
+                    name="arrow-back-outline"
+                    size={35}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+                {
+                  !search && <Text style={globalStyles.title}>Produtos</Text>
+                }
+                <Input
+                  value={search}
+                  placeholder="Nome ou código"
+                  onChangeText={setSearch}
+                  inputStyle={{ flex: 1 }}
                 />
-                <Text style={globalStyles.title}>Produtos</Text>
+                {
+                  search &&
+                  <TouchableOpacity
+                    onPress={() => setSearch("")}
+                  >
+                    <Ionicons name="close-circle-outline" color={colors.primary} size={30} />
+                  </TouchableOpacity>
+                }
+                {
+                  isLoading &&
+                  <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+                }
               </View>
               <HourContainer
                 hourValueProp={hourValue}
@@ -185,6 +229,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     padding: 8,
+    paddingBottom: 16,
     gap: 8,
     flexDirection: "row",
     alignItems: "center",

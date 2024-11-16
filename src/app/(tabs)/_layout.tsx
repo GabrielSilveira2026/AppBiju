@@ -4,8 +4,6 @@ import { Redirect, router, Tabs } from "expo-router";
 import Loading from "../../components/Loading";
 import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import { Keyboard } from "react-native";
 import { constants } from "@/src/constants/constants";
 
 export default function AppLayout() {
@@ -53,6 +51,7 @@ export default function AppLayout() {
         name="product"
         options={{
           headerShown: false,
+          href: "/product",
           tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,
         }}
       />
@@ -68,7 +67,7 @@ export default function AppLayout() {
         name="payment"
         options={{
           headerShown: false,
-          href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?${user?.id_pessoa}` : "/payment",
+          href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?id_pessoa=${user?.id_pessoa}` : "/payment",
           tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
         }}
       />

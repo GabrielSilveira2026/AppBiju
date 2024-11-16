@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { globalStyles } from "@/styles/styles";
@@ -27,7 +27,6 @@ export default function DayDetails() {
     const { user } = useAuthContext()
     const isFocused = useIsFocused();
     const sync = useSync();
-    const controller = new AbortController();
 
     const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
 
@@ -36,6 +35,7 @@ export default function DayDetails() {
     const [mode, setMode] = useState<"view" | "edit" | "create" | undefined>(id_dia_params ? "view" : "create");
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
@@ -67,12 +67,16 @@ export default function DayDetails() {
 
     }, [productionList]);
 
-    useEffect(() => {
-        async function getProductions(id_dia: string) {
-            const request = await sync.getProduction(id_dia)
+    async function getProductions(id_dia: string) {
+        setIsAdding(true)
+        setIsLoading(true)
+        const request = await sync.getProduction(id_dia)
+        setProductionList(request.response)
+        setIsLoading(false)
+        setIsAdding(false)
+    }
 
-            setProductionList(request.response)
-        }
+    useEffect(() => {
 
         if (isFocused) {
             const data = Array.isArray(params.data_dia_producao) ? params?.data_dia_producao[0] : params?.data_dia_producao || undefined;
@@ -86,15 +90,15 @@ export default function DayDetails() {
             if (id_dia_params) {
                 getProductions(id_dia_params)
             }
+            else {
+                setIsLoading(false)
+            }
         } else {
             setProductionList([])
-        }
-        return () => {
             setMode(undefined);
             setIsAdding(false)
             setProductionList([])
-            controller.abort();
-        };
+        }
     }, [isFocused]);
 
     function goBack() {
@@ -102,7 +106,7 @@ export default function DayDetails() {
             setMode("view");
         } else {
             if (!id_dia_params && productionList.length > 0) {
-                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dias e suas produções, deseja sair sem salva-las?", [
+                Alert.alert("Salvar suas produções?", "Você ainda não salvou esse dia e suas produções, deseja sair sem salva-las?", [
                     {
                         text: "Cancelar"
                     },
@@ -126,11 +130,16 @@ export default function DayDetails() {
     }
 
     async function saveDay(new_id?: string) {
+        setIsLoading(true)
         if (!id_dia_params) {
             const id_dia = new_id ? new_id : sync.nanoid()
             const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
             setMode("view")
 
+            for (const production of productionList) {
+                production.id_dia = id_dia
+            }
+            setProductionList(productionList)
             router.replace({
                 pathname: '../(tabs)/day',
                 params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia }
@@ -153,7 +162,7 @@ export default function DayDetails() {
             });
         }
         setMode("view");
-
+        setIsLoading(false)
     }
 
     async function deleteDay() {
@@ -164,6 +173,7 @@ export default function DayDetails() {
             {
                 text: "Confirmar",
                 onPress: async () => {
+                    setIsLoading(true)
                     const day: DayType = {
                         id_dia: id_dia_params,
                         id_pessoa: Number(params.id_pessoa),
@@ -171,6 +181,7 @@ export default function DayDetails() {
                     }
                     await sync.deleteDay(day)
                     router.replace("/")
+                    setIsLoading(false)
                 }
             }
         ])
@@ -200,18 +211,23 @@ export default function DayDetails() {
     async function handleSaveProduction(production: ProductionType) {
         setIsAdding(true)
         if (production.id_producao === "") {
-
             if (!production.id_dia) {
-                const id = sync.nanoid()
-                await saveDay(id)
-                production.id_dia = id
+                if (!id_dia_params) {
+                    const id = sync.nanoid()
+                    await saveDay(id)
+                    production.id_dia = id
+                } else {
+                    production.id_dia = id_dia_params
+                }
             }
 
             production.id_producao = sync.nanoid()
+            production.observacao = production.observacao ? production.observacao.replace(/\n/g, '\n') : ""
+
             const request = await sync.postProduction(production)
-            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
 
             setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== ""));
+            setProductionList((prevProductionList) => [request.response[0], ...prevProductionList]);
         }
         else {
             if (production.id_dia) {
@@ -228,8 +244,10 @@ export default function DayDetails() {
     }
 
     async function handleDeleteProduction(productionRemove: ProductionType) {
+        setIsLoading(true)
         await sync.deleteProduction(productionRemove)
         setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
+        setIsLoading(false)
     }
 
     function handleCancelProduction(productionId: string) {
@@ -246,12 +264,14 @@ export default function DayDetails() {
                         <View style={styles.dayContainer}>
                             <View style={styles.firstLine}>
                                 <View style={styles.backAndData}>
-                                    <Ionicons
-                                        onPress={goBack}
-                                        name="arrow-back-outline"
-                                        size={35}
-                                        color={colors.primary}
-                                    />
+                                    <TouchableOpacity onPress={goBack}>
+                                        <Ionicons
+                                            name="arrow-back-outline"
+                                            size={35}
+                                            color={colors.primary}
+                                        />
+                                    </TouchableOpacity>
+
                                     {
                                         mode && mode !== "view" ? (
                                             <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
@@ -261,24 +281,26 @@ export default function DayDetails() {
                                     }
                                 </View>
                                 {
-                                    mode && Number(id_pessoa_params) === user?.id_pessoa &&
+                                    mode &&
                                         mode === "edit" ?
                                         (
-                                            <Ionicons
-                                                onPress={deleteDay}
-                                                name={"trash-outline"}
-                                                size={35}
-                                                color={colors.error}
-                                            />
+                                            <TouchableOpacity onPress={deleteDay}>
+                                                <Ionicons
+                                                    name={"trash-outline"}
+                                                    size={35}
+                                                    color={colors.error}
+                                                />
+                                            </TouchableOpacity>
                                         ) :
-                                        mode === "view" && Number(id_pessoa_params) === user?.id_pessoa &&
+                                        mode === "view" &&
                                         (
-                                            <Ionicons
-                                                onPress={() => setMode("edit")}
-                                                name={"create-outline"}
-                                                size={35}
-                                                color={colors.primary}
-                                            />
+                                            <TouchableOpacity onPress={() => setMode("edit")}>
+                                                <Ionicons
+                                                    name={"create-outline"}
+                                                    size={35}
+                                                    color={colors.primary}
+                                                />
+                                            </TouchableOpacity>
                                         )}
                             </View>
                             <View style={styles.secondLine}>
@@ -290,9 +312,16 @@ export default function DayDetails() {
                 }
                 <View style={[globalStyles.container, styles.containerProducts]}>
                     <FlatList
+                        refreshing={false}
+                        onRefresh={() => {
+                            if (id_dia_params) {
+                                getProductions(id_dia_params)
+                            }
+                        }}
                         ListHeaderComponent={
                             <View style={styles.headerProducts}>
                                 <Text style={globalStyles.title}>Produções</Text>
+                                <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
                             </View>
                         }
                         keyboardShouldPersistTaps='handled'
@@ -307,10 +336,10 @@ export default function DayDetails() {
                             />
                         }
                         style={{ marginBottom: isKeyboardVisible ? 260 : 0 }}
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item, index) => String(index)}
                         contentContainerStyle={{ gap: 8 }}
                     />
-                    {mode && mode !== "edit" && Number(id_pessoa_params) === user?.id_pessoa
+                    {mode && mode !== "edit"
                         &&
                         < AddContainer
                             text="Adicionar produção"
@@ -321,10 +350,10 @@ export default function DayDetails() {
                 </View>
 
                 {
-                    mode && mode !== 'view' && Number(id_pessoa_params) === user?.id_pessoa &&
+                    mode && mode !== 'view' && !isLoading &&
                     <View style={{ flexDirection: "row", width: "100%", gap: 8 }}>
                         <Button style={{ flex: 1 }} title={"Descartar"} onPress={goBack} />
-                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={saveDay} />
+                        <Button style={{ flex: 1 }} title={isLoading ? "Carregando" : "Salvar"} onPress={saveDay} />
                     </View>
                 }
             </SafeAreaView>

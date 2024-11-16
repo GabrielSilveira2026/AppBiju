@@ -1,8 +1,7 @@
 import AddContainer from '@/src/components/AddContainer'
-import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
+import { useAuthContext } from '@/src/contexts/AuthContext'
 import { useSync } from '@/src/contexts/SyncContext'
-import { getPayment } from '@/src/httpservices/payment'
 import { PaymentType } from '@/src/types/types'
 import { colors } from '@/styles/color'
 import { IMAGE_PATHS } from '@/styles/constants'
@@ -11,10 +10,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, ImageBackground, StyleSheet, FlatList } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
+  const { user } = useAuthContext();
   const { id_pessoa } = useLocalSearchParams();
   const isFocused = useIsFocused();
   const sync = useSync()
@@ -22,14 +22,18 @@ export default function Payment() {
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  async function getPayment(id_pessoa?: number) {
+    setIsAdding(true)
+    setIsLoading(true)
+    const request = await sync.getPayment(id_pessoa)
+    setPaymentList(request.response)
+    setIsAdding(false)
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    async function getPayment(id_pessoa?: number) {
-      setIsAdding(true)
-      const request = await sync.getPayment(id_pessoa)
-      setPaymentList(request.response)
-      setIsAdding(false)
-    }
 
     if (isFocused) {
       getPayment(Number(id_pessoa))
@@ -37,7 +41,6 @@ export default function Payment() {
 
     return () => {
       if (!isFocused) {
-        setPaymentList([])
         setIsAdding(false)
       }
       controller.abort();
@@ -52,7 +55,7 @@ export default function Payment() {
       const newPayment: PaymentType = {
         id_pagamento: "",
         data_pagamento: (new Date()).toISOString(),
-        id_pessoa: 0,
+        id_pessoa: Number(id_pessoa) || 0,
         valor_pagamento: 0,
         nome: ""
       };
@@ -96,15 +99,25 @@ export default function Payment() {
       <SafeAreaView style={globalStyles.pageContainer}>
         <View style={[globalStyles.container, styles.paymentContainer]}>
           <View style={styles.titleContainer}>
-            <Ionicons
+            <TouchableOpacity
               onPress={() => {
-                router.navigate("/");
+                if (id_pessoa) {
+                  router.navigate({ pathname: "/", params: { id_pessoa: id_pessoa } })
+                } else {
+                  router.navigate("/");
+                }
               }}
-              name="arrow-back-outline"
-              size={35}
-              color={colors.primary}
-            />
+            >
+              <Ionicons
+                name="arrow-back-outline"
+                size={35}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+
             <Text style={globalStyles.title}>Pagamentos</Text>
+            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+
             {/* <Input
               value=""
               placeholder="Pesquisar"

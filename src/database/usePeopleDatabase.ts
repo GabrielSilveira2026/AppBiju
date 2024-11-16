@@ -76,17 +76,25 @@ export default function usePeopleDatabase() {
         }
     }
 
-    async function updatePeopleList(peopleList: UserType[]) {
-        const statementDelete = await database.prepareAsync(`DELETE FROM pessoa`);
-
+    async function updatePeopleList(peopleList: UserType[], id_pessoa?: number) {
+        const deleteQuery = id_pessoa
+            ? `DELETE FROM pessoa WHERE id_pessoa = $id_pessoa`
+            : `DELETE FROM pessoa`;
+    
+        const statementDelete = await database.prepareAsync(deleteQuery);
+    
         try {
-            await statementDelete.executeAsync();
+            if (id_pessoa) {
+                await statementDelete.executeAsync({ $id_pessoa: id_pessoa });
+            } else {
+                await statementDelete.executeAsync();
+            }
         } catch (error) {
             throw error;
         } finally {
             await statementDelete.finalizeAsync();
         }
-
+    
         const statement = await database.prepareAsync(`
             INSERT INTO pessoa (
                 id_pessoa,
@@ -101,11 +109,11 @@ export default function usePeopleDatabase() {
                 $id_perfil
             )
         `);
-
+    
         try {
             for await (const person of peopleList) {
                 await statement.executeAsync({
-                    $id_pessoa: person.id_pessoa || '', 
+                    $id_pessoa: person.id_pessoa || '',
                     $nome: person.nome || '',
                     $email: person.email || '',
                     $id_perfil: person.id_perfil !== undefined ? person.id_perfil : null,
@@ -117,6 +125,7 @@ export default function usePeopleDatabase() {
             await statement.finalizeAsync();
         }
     }
+    
     
     return { getPeople, updatePeopleList, updatePeople, postPeople };
 }
