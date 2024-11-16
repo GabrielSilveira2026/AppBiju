@@ -64,6 +64,12 @@ export default function Profile() {
   }
 
   useEffect(() => {
+    getDataDays();
+  
+  }, [page])
+  
+
+  useEffect(() => {
     if (isFocused) {
       if (id_pessoa_params || !!user?.id_pessoa) {
         setPage(0)
@@ -167,7 +173,7 @@ export default function Profile() {
               onRefresh={() => {
                 if (!isLoading) {
                   setPage(0)
-                  getDataDays()
+                  // getDataDays()
                 }
               }}
               data={viewMore ? dayList : dayList.slice(0, 30)}
@@ -186,7 +192,6 @@ export default function Profile() {
                 if (hasMore && !isLoading && viewMore) {
                   const currentPage = page + 1
                   setPage(currentPage)
-                  getDataDays()
                 }
               }}
               renderItem={renderItem}
