@@ -376,7 +376,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postProduction(production: ProductionType) {
-    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao}`
+    
+    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao.replace(/(?:\r\n|\r|\n)/g, "\n")}`
 
     const request: any = await axios.post(url).catch(function (error) {
       return { status: 571 }

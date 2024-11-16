@@ -246,8 +246,10 @@ export default function DayDetails() {
     }
 
     async function handleDeleteProduction(productionRemove: ProductionType) {
+        setIsLoading(true)
         await sync.deleteProduction(productionRemove)
         setProductionList((prevProductionList) => prevProductionList.filter(production => production.id_producao !== productionRemove.id_producao));
+        setIsLoading(false)
     }
 
     function handleCancelProduction(productionId: string) {
