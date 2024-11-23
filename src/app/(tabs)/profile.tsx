@@ -22,13 +22,19 @@ export type FormType = {
 
 export default function ProfileForm() {
     const { control, handleSubmit, watch, reset, formState: { errors } } = useForm<FormType>();
-    const { signOut } = useAuthContext()
+    const { signOut } = useAuthContext();
     const { user } = useAuthContext();
     const [error, setError] = useState<string>('');
     const password = watch('password');
     const isFocused = useIsFocused();
-    const database = useSQLiteContext()
-    const [erro, setErro] = useState<string>("")
+    const database = useSQLiteContext();
+    const [erro, setErro] = useState<string>('');
+
+    const [editStates, setEditStates] = useState({
+        name: false,
+        email: false,
+        password: false,
+    });
 
     useEffect(() => {
         async function fetchUserProfile() {
@@ -49,7 +55,6 @@ export default function ProfileForm() {
             }
         }
 
-
         if (isFocused) {
             fetchUserProfile();
         }
@@ -61,29 +66,32 @@ export default function ProfileForm() {
             if (user?.id_pessoa) {
                 const response = await updatePeople({
                     id_pessoa: user?.id_pessoa,
+                    id_perfil: user?.id_perfil,
                     nome: data.name.trim(),
                     email: data.email.trim(),
                     senha: data.password.trim(),
                 });
-                console.log(response);
-                
 
                 if (response?.status === 555) {
                     if (response.data.cause.includes("ORA-00001")) {
-                        setErro("Email já cadastrado")
+                        setErro("Email já cadastrado");
                     } else if (response.data.cause.includes("ORA-02291")) {
-                        setErro("Falha na conexão: Tipo de perfil não encontrado")
+                        setErro("Falha na conexão: Tipo de perfil não encontrado");
                     }
                 } else if (response?.status === 571) {
-                    setErro("Falha na conexão")
-                } else {
-                    setErro("Dados atualizados")
+                    setErro("Falha na conexão");
                 }
+                setEditStates({
+                    name: false,
+                    email: false,
+                    password: false,
+                });
             }
         } catch (e) {
             setError('Falha na conexão.');
         }
     };
+
 
     async function logout() {
         const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table'`);
@@ -92,6 +100,13 @@ export default function ProfileForm() {
         }
         signOut();
     }
+
+    const toggleEdit = (field: 'name' | 'email' | 'password') => {
+        setEditStates((prevState) => ({
+            ...prevState,
+            [field]: !prevState[field],
+        }));
+    };
 
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
@@ -102,14 +117,8 @@ export default function ProfileForm() {
                             <Text style={[globalStyles.title, { color: colors.primary }]}>
                                 Perfil
                             </Text>
-                            <TouchableOpacity
-                                onPress={logout}
-                            >
-                                <Ionicons
-                                    name={"exit-outline"}
-                                    size={30}
-                                    color={colors.error}
-                                />
+                            <TouchableOpacity onPress={logout}>
+                                <Ionicons name={"exit-outline"} size={30} color={colors.error} />
                             </TouchableOpacity>
                         </View>
                         {erro && <Text style={{ color: error === "Dados atualizados" ? colors.primary : colors.error }}>{erro}</Text>}
@@ -117,90 +126,96 @@ export default function ProfileForm() {
                         <View style={globalStyles.formContainer}>
                             {error && <Text style={{ color: colors.error }}>{error}</Text>}
 
-                            <Controller
-                                control={control}
-                                name="name"
-                                rules={{ required: 'Nome é obrigatório' }}
-                                render={({ field: { onChange, value } }) => (
-                                    <Input
-                                        label="Nome"
-                                        placeholder="Digite seu nome"
-                                        value={value}
-                                        onChangeText={onChange}
-                                        inputStyle={{ flex: 1 }}
+                            <View style={styles.inputContainer}>
+                                {editStates.name ? (
+                                    <Controller
+                                        control={control}
+                                        name="name"
+                                        rules={{ required: 'Nome é obrigatório' }}
+                                        render={({ field: { onChange, value } }) => (
+                                            <Input
+                                                label="Nome"
+                                                placeholder="Digite seu nome"
+                                                value={value}
+                                                onChangeText={onChange}
+                                                inputStyle={{ flex: 1 }}
+                                            />
+                                        )}
                                     />
+                                ) : (
+                                    <Text style={styles.text}>Nome: {watch("name")}</Text>
                                 )}
-                            />
+                                <TouchableOpacity onPress={() => toggleEdit('name')}>
+                                    <Ionicons name={editStates.name ? "arrow-back-outline" : "create-outline"} size={30} color={colors.primary} />
+                                </TouchableOpacity>
+                            </View>
                             {errors.name && <Text style={{ color: colors.error }}>{errors.name.message}</Text>}
 
-                            <Controller
-                                control={control}
-                                name="email"
-                                rules={{
-                                    required: 'Email é obrigatório',
-                                    pattern: {
-                                        value: /\S+@\S+\.\S+/,
-                                        message: 'Formato de email inválido',
-                                    },
-                                }}
-                                render={({ field: { onChange, value } }) => (
-                                    <Input
-                                        label="Email"
-                                        placeholder="Digite seu email"
-                                        value={value}
-                                        onChangeText={onChange}
-                                        autoCapitalize="none"
-                                        keyboardType="email-address"
-                                        textContentType="emailAddress"
-                                        inputStyle={{ flex: 1 }}
+                            <View style={styles.inputContainer}>
+                                {editStates.email ? (
+                                    <Controller
+                                        control={control}
+                                        name="email"
+                                        rules={{
+                                            required: 'Email é obrigatório',
+                                            pattern: {
+                                                value: /\S+@\S+\.\S+/,
+                                                message: 'Formato de email inválido',
+                                            },
+                                        }}
+                                        render={({ field: { onChange, value } }) => (
+                                            <Input
+                                                label="Email"
+                                                placeholder="Digite seu email"
+                                                value={value}
+                                                onChangeText={onChange}
+                                                autoCapitalize="none"
+                                                keyboardType="email-address"
+                                                textContentType="emailAddress"
+                                                inputStyle={{ flex: 1 }}
+                                            />
+                                        )}
                                     />
+                                ) : (
+                                    <Text style={styles.text}>Email: {watch("email")}</Text>
                                 )}
-                            />
+                                <TouchableOpacity onPress={() => toggleEdit('email')}>
+                                    <Ionicons name={editStates.email ? "arrow-back-outline" : "create-outline"} size={30} color={colors.primary} />
+                                </TouchableOpacity>
+                            </View>
                             {errors.email && <Text style={{ color: colors.error }}>{errors.email.message}</Text>}
 
-                            <Controller
-                                control={control}
-                                name="password"
-                                rules={{
-                                    minLength: { value: 6, message: 'A senha deve ter no mínimo 6 caracteres' },
-                                }}
-                                render={({ field: { onChange, value } }) => (
-                                    <Input
-                                        label="Senha (Opcional)"
-                                        placeholder="Digite sua nova senha"
-                                        value={value}
-                                        onChangeText={onChange}
-                                        secureTextEntry
-                                        autoCapitalize="none"
-                                        textContentType="password"
-                                        inputStyle={{ flex: 1 }}
+                            <View style={styles.inputContainer}>
+                                {editStates.password ? (
+                                    <Controller
+                                        control={control}
+                                        name="password"
+                                        rules={{ required: 'Senha é obrigatória' }}
+                                        render={({ field: { onChange, value } }) => (
+                                            <Input
+                                                label="Senha"
+                                                placeholder="Digite sua senha"
+                                                value={value}
+                                                onChangeText={onChange}
+                                                secureTextEntry={true}
+                                                textContentType="password"
+                                                inputStyle={{ flex: 1 }}
+                                            />
+                                        )}
                                     />
+                                ) : (
+                                    <Text style={styles.text}>Senha: ******</Text>
                                 )}
-                            />
+                                <TouchableOpacity onPress={() => toggleEdit('password')}>
+                                    <Ionicons name={editStates.password ? "arrow-back-outline" : "create-outline"} size={30} color={colors.primary} />
+                                </TouchableOpacity>
+                            </View>
                             {errors.password && <Text style={{ color: colors.error }}>{errors.password.message}</Text>}
-
-                            <Controller
-                                control={control}
-                                name="confirmPassword"
-                                rules={{
-                                    validate: value => value === password || 'As senhas não coincidem',
-                                }}
-                                render={({ field: { onChange, value } }) => (
-                                    <Input
-                                        label="Confirme sua senha (Opcional)"
-                                        placeholder="Digite sua nova senha"
-                                        value={value}
-                                        onChangeText={onChange}
-                                        secureTextEntry
-                                        textContentType="password"
-                                        inputStyle={{ flex: 1 }}
-                                    />
-                                )}
-                            />
-                            {errors.confirmPassword && <Text style={{ color: colors.error }}>{errors.confirmPassword.message}</Text>}
                         </View>
 
-                        <Button title="Salvar Alterações" onPress={handleSubmit(onSubmit)} />
+                        {(editStates.name || editStates.email || editStates.password) && (
+                            <Button title={"Salvar"} onPress={handleSubmit(onSubmit)} />
+                        )}
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -209,9 +224,16 @@ export default function ProfileForm() {
 }
 
 const styles = StyleSheet.create({
-    semCadastro: {
-        fontSize: 16,
-        textAlign: 'center',
-        color: colors.text,
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: "center",
+        justifyContent: 'space-between',
+        gap: 8,
+        marginVertical: 10,
     },
+    text: {
+        fontSize: 16,
+        color: colors.text,
+        flex: 1,
+    }
 });
