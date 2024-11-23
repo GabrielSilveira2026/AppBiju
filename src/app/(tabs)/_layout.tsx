@@ -80,7 +80,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="day copy"
+        name="day2"
         options={{
           // href: null,
           headerShown: false,

@@ -93,10 +93,10 @@ export default function DayDetails() {
                 setIsLoading(false)
             }
         } else {
-            setProductionList([])
-            setMode(undefined);
-            setIsAdding(false)
-            setProductionList([])
+            // setProductionList([])
+            // setMode(undefined);
+            // setIsAdding(false)
+            // setProductionList([])
         }
     }, [isFocused]);
 
@@ -257,6 +257,7 @@ export default function DayDetails() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
+                <Text>Teste</Text>
                 {
                     !isKeyboardVisible &&
                     <View style={globalStyles.container}>

@@ -10,7 +10,7 @@ export default function DayListItem({ day }: { day: DayType }) {
     <TouchableOpacity activeOpacity={0.7} style={[globalStyles.cardContainer, styles.container]}
       onPress={() => {
         router.navigate({
-          pathname: '../../(tabs)/day',
+          pathname: '../../(tabs)/day2',
           params: {
             id_dia: day.id_dia,
             data_dia_producao: day.data_dia_producao,

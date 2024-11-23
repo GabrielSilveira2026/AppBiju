@@ -165,8 +165,15 @@ export default function Product() {
             keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
-                <TouchableOpacity onPress={() => { router.navigate("/") }}>
+                <TouchableOpacity onPress={() => {
+                  if (nome_produto) {
+                    router.navigate("/(tabs)/day2")
+                  } else {
+                    router.navigate("/")
+                  }
+                }}>
                   <Ionicons
+
                     name="arrow-back-outline"
                     size={35}
                     color={colors.primary}
