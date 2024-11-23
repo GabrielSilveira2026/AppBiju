@@ -6,17 +6,17 @@ import { router } from 'expo-router';
 import { globalStyles } from '@/styles/styles';
 
 export default function DayListItem({ day }: { day: DayType }) {
+  
   return (
     <TouchableOpacity activeOpacity={0.7} style={[globalStyles.cardContainer, styles.container]}
       onPress={() => {
         router.navigate({
-          pathname: '../../(tabs)/day2',
+          pathname: '../../(tabs)/day',
           params: {
             id_dia: day.id_dia,
             data_dia_producao: day.data_dia_producao,
             id_pessoa: day.id_pessoa,
             pessoa: day.pessoa,
-            valor_dia: day.valor_dia?.toFixed(2),
           },
         });
       }}>

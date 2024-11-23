@@ -28,7 +28,7 @@ export default function DayDetails() {
     const isFocused = useIsFocused();
     const sync = useSync();
 
-    const id_pessoa_params = Array.isArray(params.id_pessoa) ? params.id_pessoa[0] : params.id_pessoa;
+    const id_pessoa_params = Number(params.id_pessoa);
 
     const id_dia_params = Array.isArray(params.id_dia) ? params.id_dia[0] : params.id_dia;
 
@@ -133,7 +133,7 @@ export default function DayDetails() {
         setIsLoading(true)
         if (!id_dia_params) {
             const id_dia = new_id ? new_id : sync.nanoid()
-            const response = await sync.postDay(parseInt(id_pessoa_params), localDate.toISOString(), id_dia);
+            const response = await sync.postDay(id_pessoa_params, localDate.toISOString(), id_dia);
             setMode("view")
 
             for (const production of productionList) {
@@ -328,6 +328,11 @@ export default function DayDetails() {
                         data={productionList}
                         renderItem={({ item }) =>
                             <CardProduction
+                                day={{
+                                    id_dia: id_dia_params,
+                                    id_pessoa: id_pessoa_params,
+                                    data_dia_producao: selectedDate.toISOString()
+                                }}
                                 production={item}
                                 mode={item.id_producao !== "" ? "view" : "create"}
                                 onCancel={() => handleCancelProduction(item.id_producao)}

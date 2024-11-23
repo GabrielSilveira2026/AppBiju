@@ -26,7 +26,7 @@ export default function Product() {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { nome_produto } = useLocalSearchParams();
+  const { nome_produto, id_dia, data_dia_producao, id_pessoa, pessoa } = useLocalSearchParams();
 
   async function getProductList() {
     setIsLoading(true)
@@ -167,13 +167,20 @@ export default function Product() {
               <View style={styles.titleContainer}>
                 <TouchableOpacity onPress={() => {
                   if (nome_produto) {
-                    router.navigate("/(tabs)/day2")
+                    router.navigate({
+                      pathname: '../../(tabs)/day',
+                      params: {
+                        id_dia: id_dia,
+                        data_dia_producao: data_dia_producao,
+                        id_pessoa: id_pessoa,
+                        pessoa: pessoa,
+                      },
+                    });
                   } else {
                     router.navigate("/")
                   }
                 }}>
                   <Ionicons
-
                     name="arrow-back-outline"
                     size={35}
                     color={colors.primary}

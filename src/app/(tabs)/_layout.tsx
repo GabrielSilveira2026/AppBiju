@@ -79,14 +79,6 @@ export default function AppLayout() {
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
-      <Tabs.Screen
-        name="day2"
-        options={{
-          // href: null,
-          headerShown: false,
-          tabBarIcon: () => <Ionicons name="calendar-number-outline" size={35} color={colors.primary} />,
-        }}
-      />
     </Tabs>
   );
 }
