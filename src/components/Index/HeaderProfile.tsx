@@ -13,6 +13,8 @@ type HeaderProfileProps = {
 }
 
 export default function HeaderProfile({ userData }: HeaderProfileProps) {
+    const { user } = useAuthContext();
+
     return (
         <View style={globalStyles.container}>
             <View style={styles.headerContainer}>
@@ -21,7 +23,15 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                         <Text style={styles.textValue}>
                             {userData ? userData?.nome : "Carregando"}
                         </Text>
-                        {/* <Ionicons name={"create-outline"} size={30} color={colors.primary} /> */}
+                        {
+                            userData.id_pessoa === user?.id_pessoa &&
+                            <TouchableOpacity
+                                onPress={() => router.push("/(tabs)/profile")}
+                            >
+                                <Ionicons name={"create-outline"} size={30} color={colors.primary} />
+                            </TouchableOpacity>
+                        }
+
                     </View>
 
                     <View style={styles.amountToReceiveContainer}>

@@ -72,6 +72,14 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="profile"
+        options={{
+          headerShown: false,
+          href: null,
+          tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
+        }}
+      />
+      <Tabs.Screen
         name="log"
         options={{
           headerShown: false,

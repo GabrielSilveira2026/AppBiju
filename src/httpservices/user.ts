@@ -35,6 +35,21 @@ export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">)
   return response
 }
 
+export async function updatePeople(userData: Partial<UserType> & { id_pessoa: number }) {
+  const response = await axios.put(`${baseUrl}/pessoa/${userData.id_pessoa}`, userData).catch(function (error) {
+    if (error.response) {
+      return error.response
+
+    } else if (error.request) {
+      return error.request;
+
+    } else {
+      return error.message;
+    }
+  });
+  return response
+}
+
 export function getPeople(id_pessoa?: number) {
 
   const query = id_pessoa ? `,"id_pessoa":${id_pessoa}` : "";
