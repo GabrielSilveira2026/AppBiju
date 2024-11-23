@@ -59,7 +59,7 @@ export default function Profile() {
         await sync.getProduction(day.id_dia);
       }
     }
-    
+
     setHasMore(response.hasMore)
     setDayList(page > 0 ? [...dayList, ...response.response] : response.response);
     setIsLoading(false)
@@ -68,7 +68,7 @@ export default function Profile() {
   useEffect(() => {
     getDataDays();
   }, [page])
-  
+
 
   useEffect(() => {
     if (isFocused) {
@@ -142,9 +142,9 @@ export default function Profile() {
                 viewMore &&
                 <TouchableOpacity onPress={() => {
                   setviewMore(!viewMore)
+                  setPage(0)
                 }}>
                   <Ionicons
-
                     name="arrow-back-outline"
                     size={40}
                     color={colors.primary} />
