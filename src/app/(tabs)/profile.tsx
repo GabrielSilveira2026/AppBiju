@@ -102,7 +102,7 @@ export default function ProfileForm() {
                 text: "Cancelar"
             },
             {
-                text: "Confirmar",
+                text: "Sair",
                 onPress: async () => {
                     const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type="table"`);
                     for (const table of tables) {
@@ -124,7 +124,7 @@ export default function ProfileForm() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={[globalStyles.pageContainer, { flex: 1, paddingBottom: 0 }]}>
-                <ScrollView style={{ flexGrow: 0, width: "100%" }}>
+                <ScrollView keyboardShouldPersistTaps style={{ flexGrow: 0, width: "100%" }}>
                     <View style={globalStyles.container}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                             <Text style={[globalStyles.title, { color: colors.primary }]}>
@@ -150,6 +150,7 @@ export default function ProfileForm() {
                                                 label="Nome"
                                                 placeholder="Digite seu nome"
                                                 value={value}
+                                                autoCapitalize="none"
                                                 onChangeText={onChange}
                                                 inputStyle={{ flex: 1 }}
                                             />
@@ -210,7 +211,8 @@ export default function ProfileForm() {
                                                 placeholder="Digite sua senha"
                                                 value={value}
                                                 onChangeText={onChange}
-                                                secureTextEntry={true}
+                                                secureTextEntry
+                                                autoCapitalize="none"
                                                 textContentType="password"
                                                 inputStyle={{ flex: 1 }}
                                             />
