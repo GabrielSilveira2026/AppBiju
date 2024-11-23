@@ -75,7 +75,7 @@ export default function AppLayout() {
         name="log"
         options={{
           headerShown: false,
-          // href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
+          href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
