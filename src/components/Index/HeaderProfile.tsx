@@ -28,7 +28,7 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                             <TouchableOpacity
                                 onPress={() => router.push("/(tabs)/profile")}
                             >
-                                <Ionicons name={"create-outline"} size={30} color={colors.primary} />
+                                <Ionicons name={"open-outline"} size={30} color={colors.primary} />
                             </TouchableOpacity>
                         }
 
