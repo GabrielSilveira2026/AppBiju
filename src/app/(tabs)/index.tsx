@@ -53,11 +53,13 @@ export default function Profile() {
     await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
 
     const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
+
     if (page === 0) {
       for (const day of response.response.slice(0, 7)) {
         await sync.getProduction(day.id_dia);
       }
     }
+    
     setHasMore(response.hasMore)
     setDayList(page > 0 ? [...dayList, ...response.response] : response.response);
     setIsLoading(false)
@@ -65,7 +67,6 @@ export default function Profile() {
 
   useEffect(() => {
     getDataDays();
-  
   }, [page])
   
 
@@ -74,7 +75,6 @@ export default function Profile() {
       if (id_pessoa_params || !!user?.id_pessoa) {
         setPage(0)
         getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
-        getDataDays();
       }
     }
   }, [isFocused]);
