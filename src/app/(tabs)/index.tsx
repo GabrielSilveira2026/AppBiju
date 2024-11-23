@@ -69,13 +69,15 @@ export default function Profile() {
     getDataDays();
   }, [page])
 
-
   useEffect(() => {
     if (isFocused) {
       if (id_pessoa_params || !!user?.id_pessoa) {
-        setPage(0)
+        getDataDays();
         getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
       }
+    }
+    else{
+      setPage(0)
     }
   }, [isFocused]);
 
@@ -173,7 +175,6 @@ export default function Profile() {
               onRefresh={() => {
                 if (!isLoading) {
                   setPage(0)
-                  // getDataDays()
                 }
               }}
               data={viewMore ? dayList : dayList.slice(0, 30)}
