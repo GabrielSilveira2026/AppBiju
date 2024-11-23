@@ -48,19 +48,19 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="product"
-        options={{
-          headerShown: false,
-          href: "/product",
-          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,
-        }}
-      />
-      <Tabs.Screen
         name="day"
         options={{
           href: null,
           headerShown: false,
           tabBarIcon: () => <Ionicons name="calendar-outline" size={35} color={colors.primary} />,
+        }}
+      />
+      <Tabs.Screen
+        name="product"
+        options={{
+          headerShown: false,
+          href: "/product",
+          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,
         }}
       />
       <Tabs.Screen
@@ -79,7 +79,14 @@ export default function AppLayout() {
           tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
-
+      <Tabs.Screen
+        name="day copy"
+        options={{
+          // href: null,
+          headerShown: false,
+          tabBarIcon: () => <Ionicons name="calendar-number-outline" size={35} color={colors.primary} />,
+        }}
+      />
     </Tabs>
   );
 }
