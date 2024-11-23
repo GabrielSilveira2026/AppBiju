@@ -12,6 +12,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { IMAGE_PATHS } from "@/styles/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
+import { router } from "expo-router";
 
 export type FormType = {
     email: string;
@@ -124,12 +125,23 @@ export default function ProfileForm() {
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={[globalStyles.pageContainer, { flex: 1, paddingBottom: 0 }]}>
-                <ScrollView keyboardShouldPersistTaps style={{ flexGrow: 0, width: "100%" }}>
+                <ScrollView keyboardShouldPersistTaps="always" style={{ flexGrow: 0, width: "100%" }}>
                     <View style={globalStyles.container}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Text style={[globalStyles.title, { color: colors.primary }]}>
-                                Perfil
-                            </Text>
+                            <View style={{ flexDirection: "row", gap: 8 }}>
+                                <TouchableOpacity onPress={() =>
+                                    router.navigate("/")
+                                }>
+                                    <Ionicons
+                                        name="arrow-back-outline"
+                                        size={35}
+                                        color={colors.primary}
+                                    />
+                                </TouchableOpacity>
+                                <Text style={[globalStyles.title, { color: colors.primary }]}>
+                                    Perfil
+                                </Text>
+                            </View>
                             <TouchableOpacity onPress={logout}>
                                 <Ionicons name={"exit-outline"} size={30} color={colors.error} />
                             </TouchableOpacity>

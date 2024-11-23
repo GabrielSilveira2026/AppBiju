@@ -2,6 +2,7 @@ import AddContainer from "@/src/components/AddContainer";
 import { Input } from "@/src/components/Input";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
+import { constants } from "@/src/constants/constants";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
 import { ProductType } from "@/src/types/types";
@@ -225,11 +226,14 @@ export default function Product() {
               />
             }
           />
-          <AddContainer
-            text="Criar produto"
-            disable={isCreating}
-            onPress={handleCreateProduct}
-          />
+          {
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            <AddContainer
+              text="Criar produto"
+              disable={isCreating}
+              onPress={handleCreateProduct}
+            />
+          }
         </View>
       </SafeAreaView>
     </ImageBackground>

@@ -40,6 +40,14 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="profile"
+        options={{
+          headerShown: false,
+          href: user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "/profile" : null,
+          tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary} />
+        }}
+      />
+      <Tabs.Screen
         name="employees"
         options={{
           headerShown: false,
@@ -69,14 +77,6 @@ export default function AppLayout() {
           headerShown: false,
           href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?id_pessoa=${user?.id_pessoa}` : "/payment",
           tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          headerShown: false,
-          href: null,
-          tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
         }}
       />
       <Tabs.Screen

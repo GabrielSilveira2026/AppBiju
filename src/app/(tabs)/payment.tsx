@@ -1,5 +1,6 @@
 import AddContainer from '@/src/components/AddContainer'
 import CardPayment from '@/src/components/Payment/CardPayment'
+import { constants } from '@/src/constants/constants'
 import { useAuthContext } from '@/src/contexts/AuthContext'
 import { useSync } from '@/src/contexts/SyncContext'
 import { PaymentType } from '@/src/types/types'
@@ -143,11 +144,14 @@ export default function Payment() {
               />
             )}
           />
-          <AddContainer
-            disable={isAdding}
-            onPress={handleCreatePayment}
-            text="Adicionar Pagamento"
-          />
+          {
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            <AddContainer
+              disable={isAdding}
+              onPress={handleCreatePayment}
+              text="Adicionar Pagamento"
+            />
+          }
         </View>
       </SafeAreaView>
     </ImageBackground>
