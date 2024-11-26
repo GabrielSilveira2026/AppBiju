@@ -74,16 +74,18 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     if (modeCard === "view") {
         return (
             <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
-                <View style={styles.line}>
-                    <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
-                    </View>
+                <View style={{ alignItems: "flex-start" }}>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
                         <View style={stylesView.textNameContainer}>
                             <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
                     }
+                </View>
+                <View style={styles.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
+                    </View>
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
@@ -104,16 +106,18 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                         <Ionicons style={{ textAlign: "right" }} name="chevron-up-outline" size={35} color={colors.primary} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.line}>
-                    <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
-                    </View>
+                <View style={{ alignItems: "flex-start" }}>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
                         <View style={stylesView.textNameContainer}>
                             <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
                     }
+                </View>
+                <View style={styles.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
+                    </View>
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>

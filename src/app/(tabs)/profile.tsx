@@ -106,8 +106,10 @@ export default function ProfileForm() {
                 text: "Sair",
                 onPress: async () => {
                     const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type="table"`);
+                    console.log(tables);
+                    
                     for (const table of tables) {
-                        await database.execAsync(`DELETE FROM ${table.name}`);
+                        await database.execAsync(`DELETE FROM ${table.name} where name <> operacoes_pendentes`);
                     }
                     signOut();
                 }

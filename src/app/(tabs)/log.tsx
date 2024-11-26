@@ -42,6 +42,7 @@ export default function log() {
 
   async function logout() {
     const tables = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table'`);
+    
     for (const table of tables) {
       await database.execAsync(`DELETE FROM ${table.name}`);
     }
