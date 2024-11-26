@@ -206,8 +206,8 @@ export default function Profile() {
                   router.navigate({
                     pathname: '../(tabs)/day',
                     params: {
-                      id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome,
+                      id_pessoa: userData?.id_pessoa,
+                      pessoa: userData?.nome,
                     },
                   });
                   setIsAdding(false)

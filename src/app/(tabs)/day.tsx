@@ -16,6 +16,7 @@ import CardProduction from "@/src/components/Production/CardProduction";
 import AddContainer from "@/src/components/AddContainer";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import DatePicker from "@/src/components/DatePicker";
+import { formatMinutesToHours } from "@/src/utils/utils";
 
 export type CardDayData = Partial<Omit<DayType, 'id_pessoa' | 'pessoa'>> & {
     id_pessoa: number;
@@ -39,6 +40,7 @@ export default function DayDetails() {
 
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [total, setTotal] = useState<number>()
+    const [tempo, setTempo] = useState<string>()
 
     const [productionList, setProductionList] = useState<ProductionType[]>([])
 
@@ -64,6 +66,11 @@ export default function DayDetails() {
             return sum + (production.historico_preco_unidade * production.quantidade);
         }, 0);
         setTotal(calculatedTotal);
+
+        const tempoAproximado = productionList.reduce((sum, production) => {
+            return sum + (production.tempo_minuto * production.quantidade);
+        }, 0);
+        setTempo(formatMinutesToHours(tempoAproximado))
 
     }, [productionList]);
 
@@ -321,6 +328,7 @@ export default function DayDetails() {
                         ListHeaderComponent={
                             <View style={styles.headerProducts}>
                                 <Text style={globalStyles.title}>Produções</Text>
+                                <Text style={{ color: colors.text }}>≈ {tempo}h</Text>
                                 <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
                             </View>
                         }
@@ -331,6 +339,7 @@ export default function DayDetails() {
                                 day={{
                                     id_dia: id_dia_params,
                                     id_pessoa: id_pessoa_params,
+                                    pessoa: String(params?.pessoa),
                                     data_dia_producao: selectedDate.toISOString()
                                 }}
                                 production={item}
