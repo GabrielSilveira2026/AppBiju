@@ -38,6 +38,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     useEffect(() => {
         setModeCard(mode)
         if (mode === "create") {
+            setAlert("")
             getProductList()
         }
         setProductionValues(production)
