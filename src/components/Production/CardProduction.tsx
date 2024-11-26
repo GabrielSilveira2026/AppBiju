@@ -237,10 +237,14 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             }}
                         />
                     }
-                    <Button
-                        style={{ flex: 1 }}
-                        title="Salvar"
-                        onPress={saveProduction} />
+                    {
+                        productionValues !== production &&
+                        <Button
+                            style={{ flex: 1 }}
+                            title="Salvar"
+                            onPress={saveProduction}
+                        />
+                    }
                 </View>
             </View>
         )

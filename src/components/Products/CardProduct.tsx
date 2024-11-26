@@ -308,10 +308,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               }}
             />
           }
-          <Button
-            style={{ flex: 1 }}
-            title="Salvar"
-            onPress={saveProduct} />
+          {
+            productValues !== product &&
+            <Button
+              style={{ flex: 1 }}
+              title="Salvar"
+              onPress={saveProduct} />
+          }
         </View>
       </View >
     )
