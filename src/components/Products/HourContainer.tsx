@@ -22,6 +22,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
     const [hourValue, setHourValue] = useState<string>(hourValueProp);
     const [modeHourValue, setModeHourValue] = useState<"view" | "edit">("view");
     const [initialDate, setInitialDate] = useState<Date>(new Date());
+    const localDate = new Date(initialDate.getTime() - initialDate.getTimezoneOffset() * 60000);
 
     useEffect(() => {
         if (isFocused) {
@@ -68,6 +69,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                             keyboardType="number-pad"
                             autoCapitalize="none"
                             style={styles.hourValue}
+                            selectTextOnFocus
                         />
                     </View>
                 )}
@@ -81,7 +83,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
                 <View style={styles.secondLine}>
                     <View style={styles.line}>
                         <Text style={styles.dataText}>A partir de: </Text>
-                        <DatePicker date={initialDate} onDateChange={setInitialDate} />
+                        <DatePicker date={localDate} onDateChange={setInitialDate} />
                     </View>
                     <Button title={"Salvar"} onPress={handleUpdateHourValue} />
                 </View>
