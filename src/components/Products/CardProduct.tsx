@@ -27,12 +27,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
   const [initialDate, setInitialDate] = useState<Date>(new Date());
+  const localDate = new Date(initialDate.getTime() - initialDate.getTimezoneOffset() * 60000);
   const [productValues, setFormValues] = useState<ProductType>(product);
 
   useEffect(() => {
     setModeCard(mode)
     setFormValues(product)
-    setInitialDate(new Date())
+    setInitialDate(localDate)
   }, [product])
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
