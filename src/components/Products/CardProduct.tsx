@@ -68,7 +68,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         setModeCard("view");
         onSave(productValues, initialDate);
       }
-      else {
+      else if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
         Alert.alert("Alterar valor do produto?", `Deseja alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
@@ -81,6 +81,10 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             }
           }
         ])
+      }
+      else {
+        setModeCard("view");
+        onSave(productValues, initialDate);
       }
     }
   }
@@ -285,7 +289,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
           </View>
         </View>
         {
-          modeCard === "edit" &&
+          modeCard === "edit" && (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) &&
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={styles.dataText}>Alterar partir de: </Text>
             <DatePicker date={initialDate} onDateChange={setInitialDate} />
