@@ -92,7 +92,7 @@ export default function DayDetails() {
                 setSelectedDate(new Date(data));
             } else {
                 setMode("create");
-                setSelectedDate(new Date());
+                setSelectedDate(localDate);
             }
             if (id_dia_params) {
                 getProductions(id_dia_params)
@@ -140,7 +140,7 @@ export default function DayDetails() {
         setIsLoading(true)
         if (!id_dia_params) {
             const id_dia = new_id ? new_id : sync.nanoid()
-            const response = await sync.postDay(id_pessoa_params, localDate.toISOString(), id_dia);
+            const response = await sync.postDay(id_pessoa_params, selectedDate.toISOString(), id_dia);
             setMode("view")
 
             for (const production of productionList) {
@@ -149,14 +149,14 @@ export default function DayDetails() {
             setProductionList(productionList)
             router.replace({
                 pathname: '../(tabs)/day',
-                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia }
+                params: { id_pessoa: params.id_pessoa, pessoa: params.pessoa, id_dia: id_dia, data_dia_producao: params.data_dia_producao }
             });
         }
         else {
             const day: DayType = {
                 id_dia: id_dia_params,
                 id_pessoa: Number(params.id_pessoa),
-                data_dia_producao: localDate.toISOString()
+                data_dia_producao: selectedDate.toISOString()
             }
 
             await sync.updateDay(day)
@@ -281,7 +281,7 @@ export default function DayDetails() {
 
                                     {
                                         mode && mode !== "view" ? (
-                                            <DatePicker textStyle={styles.dataText} date={localDate} onDateChange={setSelectedDate} />
+                                            <DatePicker textStyle={styles.dataText} date={selectedDate} onDateChange={setSelectedDate} />
                                         ) : (
                                             <Text style={styles.textValue}>{selectedDate?.toLocaleDateString("pt-BR", { timeZone: "UTC", })}</Text>
                                         )
