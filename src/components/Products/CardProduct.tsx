@@ -69,7 +69,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         onSave(productValues, initialDate);
       }
       else {
-        Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+        Alert.alert("Alterar valor do produto?", `Deseja alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
           },
@@ -87,7 +87,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   async function deleteProduct() {
     if (productValues.id_produto !== "") {
-      Alert.alert("Deletar produto?", `Deseja realmente deletar esse produto?`, [
+      Alert.alert("Deletar produto?", `Deseja deletar esse produto?`, [
         {
           text: "Cancelar"
         },

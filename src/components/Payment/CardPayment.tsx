@@ -57,7 +57,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
 
     async function deletePayment() {
         if (paymentValues.id_pagamento !== "") {
-            Alert.alert("Deletar pagamento?", `Deseja realmente deletar esse pagamento?`, [
+            Alert.alert("Deletar pagamento?", `Deseja deletar esse pagamento?`, [
                 {
                     text: "Cancelar"
                 },

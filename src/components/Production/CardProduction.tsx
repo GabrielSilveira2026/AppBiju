@@ -78,7 +78,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     }
 
     async function deleteProduction() {
-        Alert.alert("Excluir produto?", "Deseja realmente excluir esse produto desse dia?", [
+        Alert.alert("Excluir produto?", "Deseja excluir esse produto desse dia?", [
             {
                 text: "Cancelar"
             },

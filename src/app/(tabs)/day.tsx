@@ -173,7 +173,7 @@ export default function DayDetails() {
     }
 
     async function deleteDay() {
-        Alert.alert("Excluir Dia?", `Deseja realmente excluir esse dia e todas as produções dele?`, [
+        Alert.alert("Excluir Dia?", `Deseja excluir esse dia e todas as produções dele?`, [
             {
                 text: "Cancelar"
             },

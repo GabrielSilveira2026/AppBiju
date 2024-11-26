@@ -31,7 +31,7 @@ export default function HourContainer({ hourValueProp, onUpdateHourValue }: Hour
     }, [hourValueProp, isFocused]);
 
     async function handleUpdateHourValue() {
-        Alert.alert('Alterar valor da hora?', `Deseja realmente alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+        Alert.alert('Alterar valor da hora?', `Deseja alterar o valor da hora a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
             {
                 text: 'Cancelar'
             },
