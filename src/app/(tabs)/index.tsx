@@ -48,10 +48,12 @@ export default function Profile() {
     }
   }
 
+  async function getPeopleData() {
+    await sync.getPeople(Number(id_pessoa_params) || user?.id_pessoa);
+  }
+
   async function getDataDays() {
     setIsLoading(true)
-    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
-
     const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
 
     if (page === 0) {
@@ -73,10 +75,11 @@ export default function Profile() {
     if (isFocused) {
       if (id_pessoa_params || !!user?.id_pessoa) {
         getDataDays();
+        getPeopleData()
         getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
       }
     }
-    else{
+    else {
       setPage(0)
     }
   }, [isFocused]);

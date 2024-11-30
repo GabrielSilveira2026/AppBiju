@@ -19,7 +19,6 @@ export default function Payment() {
   const { id_pessoa } = useLocalSearchParams();
   const isFocused = useIsFocused();
   const sync = useSync()
-  const controller = new AbortController();
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
@@ -39,13 +38,9 @@ export default function Payment() {
     if (isFocused) {
       getPayment(Number(id_pessoa))
     }
-
-    return () => {
-      if (!isFocused) {
-        setIsAdding(false)
-      }
-      controller.abort();
-    };
+    else {
+      setIsAdding(false)
+    }
   }, [isFocused])
 
 

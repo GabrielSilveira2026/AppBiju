@@ -14,6 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
@@ -89,6 +90,24 @@ export default function Product() {
     };
   }, []);
 
+  const containerPosition = useSharedValue(400)
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: containerPosition.value
+        }
+      ]
+    }
+  })
+
+  useEffect(() => {
+    containerPosition.value = 400
+    containerPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+  }, [])
+
   async function updateHourValue(newHourValue: string, initialDate: string) {
     const request = await sync.updateHourValue(Number(newHourValue), initialDate);
     if (request.response.status === 200) {
@@ -149,7 +168,7 @@ export default function Product() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <View style={[globalStyles.container, styles.productContainer]}>
+        <Animated.View style={[containerStyle, globalStyles.container, styles.productContainer]}>
           <FlatList
             data={filteredProducts}
             refreshing={false}
@@ -234,7 +253,7 @@ export default function Product() {
               onPress={handleCreateProduct}
             />
           }
-        </View>
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   );
