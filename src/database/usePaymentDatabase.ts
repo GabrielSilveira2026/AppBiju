@@ -70,7 +70,7 @@ export default function usePaymentDatabase() {
                     PG.ultimo_pagamento,
                     COALESCE(SUM(
                         CASE 
-                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.Ultimo_Pagamento)
+                            WHEN strftime('%m-%Y', D.data_dia_producao) = strftime('%m-%Y', PG.ultimo_pagamento)
                             THEN PR.quantidade * PR.historico_preco_unidade
                             ELSE 0
                         END
@@ -78,7 +78,7 @@ export default function usePaymentDatabase() {
                 FROM 
                     pessoa P
                 LEFT JOIN 
-                    (SELECT id_pessoa, MAX(data_pagamento) AS ultimo_Pagamento
+                    (SELECT id_pessoa, MAX(data_pagamento) AS ultimo_pagamento
                     FROM pagamento
                     GROUP BY id_pessoa) PG
                     ON P.id_pessoa = PG.id_pessoa
@@ -89,7 +89,7 @@ export default function usePaymentDatabase() {
                 WHERE 
                     P.id_perfil = 3
                 GROUP BY 
-                    P.id_pessoa, P.nome, PG.ultimo_Pagamento
+                    P.id_pessoa, P.nome, PG.ultimo_pagamento
                 ORDER BY 
                     P.nome ASC`;
 

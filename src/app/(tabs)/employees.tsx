@@ -34,7 +34,7 @@ export default function Funcionarios() {
             getPendingPayment()
         }
     }, [isFocused])
-    
+
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
@@ -54,14 +54,6 @@ export default function Funcionarios() {
                         }
                     />
                 </View>
-                {/* <View style={{ marginTop: 30 }}>
-                                <Text>id_pessoa {item.id_pessoa}</Text>
-                                <Text>nome {item.nome}</Text>
-                                <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>
-                                <Text>total {item.total}</Text>
-                                <Button onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: item.id_pessoa }, })} title={"Consulta"}></Button>
-                                <Button onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: item.id_pessoa, pessoa: item.nome}, })} title={"Pagamento"}></Button>
-                            </View> */}
             </SafeAreaView >
         </ImageBackground>
     );

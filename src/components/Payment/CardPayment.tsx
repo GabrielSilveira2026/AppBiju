@@ -73,7 +73,13 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
 
     if (modeCard === "view") {
         return (
-            <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
+            <Pressable onPress={() => {
+                if (user?.id_perfil !== constants.perfil.funcionario.id_perfil) {
+                    setModeCard("details")
+                }
+            }}
+                style={[globalStyles.cardContainer, stylesView.cardContainer]}
+            >
                 <View style={{ alignItems: "flex-start" }}>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
@@ -89,7 +95,10 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
-                    <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+                    {
+                        user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+                        <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+                    }
                 </View>
             </Pressable>
         )

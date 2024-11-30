@@ -21,6 +21,8 @@ import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
 import { constants } from '../constants/constants';
 import usePaymentDatabase from '../database/usePaymentDatabase';
+import { Text, View } from 'react-native';
+import { colors } from '@/styles/color';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -56,6 +58,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
+  const [message, setMessage] = useState<string>("");
 
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
@@ -143,7 +146,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
       }
     }
-    
+
     await productionDatabase.deleteProduction()
   };
 
@@ -376,7 +379,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postProduction(production: ProductionType) {
-    
+
     const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao.replace(/(?:\r\n|\r|\n)/g, "\n")}`
 
     const request: any = await axios.post(url).catch(function (error) {
@@ -459,6 +462,10 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (response.status === 571) {
       const response = await paymentDatabase.getPendingPayment(id_pessoa)
+      setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+      setTimeout(() => {
+        setMessage("")
+      }, 3500);
       return { response: response, origemDados: "Local" }
     }
 
@@ -501,7 +508,33 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
-      {children}
+      <>
+        {children}
+        {
+          message &&
+          <View
+            style={{
+              position: 'absolute',
+              top: 60,
+              right: 8,
+              left: 8,
+              // width: "100%",
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: colors.text,
+                padding: 12,
+                backgroundColor: colors.backgroundSecundary,
+                borderRadius: 8
+              }}
+            >
+              {message}
+            </Text>
+          </View>
+        }
+      </>
     </SyncContext.Provider>
   );
 };
