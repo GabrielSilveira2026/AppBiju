@@ -32,11 +32,9 @@ export default function Product() {
 
   async function getProductList() {
     setIsLoading(true)
-    setIsCreating(true)
     const request = await sync.getProduct();
     setProductList(request.response);
     setFilteredProducts(request.response)
-    setIsCreating(false)
     setIsLoading(false)
   }
 
