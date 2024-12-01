@@ -358,7 +358,6 @@ export default function DayDetails() {
                     />
                     {mode && mode !== "edit"
                         &&
-                        !isAdding &&
                         < AddContainer
                             text="Adicionar produção"
                             disable={isAdding}
