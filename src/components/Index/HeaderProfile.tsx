@@ -50,7 +50,26 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                             Último Pagamento
                         </Text>
                         <TouchableOpacity
-                            onPress={() => router.push({ pathname: "/payment", params: { id_pessoa: userData.id_pessoa, pessoa: userData.nome }, })}
+                            onPress={() => {
+                                const nome =
+                                    user?.id_perfil === constants.perfil.administrador.id_perfil
+                                        ||
+                                        user?.id_perfil === constants.perfil.suporte.id_perfil
+                                        ?
+                                        userData.nome : null
+
+                                const id =
+                                    user?.id_perfil === constants.perfil.funcionario.id_perfil
+                                        ?
+                                        userData.id_pessoa : null
+                                router.push({
+                                    pathname: "/payment",
+                                    params: {
+                                        id_pessoa: id,
+                                        pessoa: nome
+                                    }
+                                })
+                            }}
                         >
                             <Ionicons
                                 name={"open-outline"} size={30} color={colors.primary} />

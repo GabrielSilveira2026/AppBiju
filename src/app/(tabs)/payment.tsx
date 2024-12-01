@@ -18,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
   const { user } = useAuthContext();
-  const { id_pessoa } = useLocalSearchParams();
+  const { id_pessoa, pessoa } = useLocalSearchParams();
   const isFocused = useIsFocused();
   const sync = useSync()
 
@@ -40,9 +40,11 @@ export default function Payment() {
   useEffect(() => {
 
     if (isFocused) {
+      setSearch(pessoa ? String(pessoa) : "")
       getPayment(Number(id_pessoa))
     }
     else {
+      setSearch("")
       setIsAdding(false)
     }
   }, [isFocused])
