@@ -381,14 +381,21 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function postProduction(production: ProductionType) {
 
-    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao.replace(/(?:\r\n|\r|\n)/g, "\n")}`
+    const url = `${baseUrl}/producao/${production.id_producao}`
 
-    const request: any = await axios.post(url).catch(function (error) {
+    const body = {
+      "id_dia": production.id_dia,
+      "id_produto": production.id_produto,
+      "quantidade": production.quantidade,
+      "observacao": production.observacao?.trim()
+    }
+
+    const request: any = await axios.post(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (request.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url, body: JSON.stringify(body) });
       const request = await productionDatabase.postProduction(production);
       return { response: request, origemDados: "Local" }
     }
@@ -462,8 +469,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const response = await getPendingRemote(id_pessoa);
 
     if (response.status === 571) {
-    const response = await paymentDatabase.getPendingPayment(id_pessoa)
-    return { response: response, origemDados: "Local" }
+      const response = await paymentDatabase.getPendingPayment(id_pessoa)
+      return { response: response, origemDados: "Local" }
     }
 
     return { response: response.data.items, origemDados: "Remoto" };

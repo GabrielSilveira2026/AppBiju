@@ -113,7 +113,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="log"
         options={{
-          href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
+          // href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
           tabBarIcon: ({ focused }) =>
             <Ionicons
               name="document-text-outline"

@@ -27,7 +27,7 @@ export default function CardEmployee({ pendingPayment }: CardPaymentProps) {
                     <View style={styles.textContainer}>
                         <TouchableOpacity
                             style={styles.line}
-                            onPress={() => router.push({ pathname: "/payment", params: { pessoa: pendingPayment.nome } })}
+                            onPress={() => router.push({ pathname: "/payment", params: { pessoa: pendingPayment.nome }, })}
                         >
                             <Text style={styles.textValue}>Último pagamento</Text>
                             <Ionicons
