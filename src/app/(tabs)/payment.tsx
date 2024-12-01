@@ -54,6 +54,8 @@ export default function Payment() {
       setFilteredPaymentList(
         paymentList.filter((payment) =>
           payment.nome.toLowerCase().includes(search.toLowerCase())
+          ||
+          payment.data_pagamento.includes(search.toLowerCase())
         )
       )
     }
@@ -146,7 +148,9 @@ export default function Payment() {
               />
             </TouchableOpacity>
 
-            <Text style={globalStyles.title}>Pagamentos</Text>
+            {
+              !search && <Text style={globalStyles.title}>Pagamentos</Text>
+            }
             <Input
               value={search}
               placeholder="Pesquisar"
