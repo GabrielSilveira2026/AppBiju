@@ -15,7 +15,9 @@ export default function CardEmployee({ pendingPayment }: CardPaymentProps) {
             <View style={{ flex: 1, gap: 16 }}>
                 <View style={styles.line}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.textValue}>{pendingPayment.nome}</Text>
+                        <TouchableOpacity onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: pendingPayment.id_pessoa } })} style={{ justifyContent: "center" }}>
+                            <Text style={styles.textValue}>{pendingPayment.nome}</Text>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.textContainer}>
                         <Text style={styles.textValue}>Valor a Pagar{"\n"}R${pendingPayment.total.toFixed(2)}</Text>
@@ -23,16 +25,14 @@ export default function CardEmployee({ pendingPayment }: CardPaymentProps) {
                 </View>
                 <View style={styles.line}>
                     <View style={styles.textContainer}>
-                        <View style={styles.line}>
+                        <TouchableOpacity
+                            style={styles.line}
+                            onPress={() => router.push({ pathname: "/payment", params: { pessoa: pendingPayment.nome }, })}
+                        >
                             <Text style={styles.textValue}>Último pagamento</Text>
-                            <TouchableOpacity
-                                onPress={() => router.push({ pathname: "/payment", params: { id_pessoa: pendingPayment.id_pessoa, pessoa: pendingPayment.nome }, })}
-                            >
-                                <Ionicons
-                                    name={"open-outline"} size={30} color={colors.primary} />
-                            </TouchableOpacity>
-
-                        </View>
+                            <Ionicons
+                                name={"open-outline"} size={30} color={colors.primary} />
+                        </TouchableOpacity>
                         <Text
                             style={[styles.textValue, { textAlign: "left" }]}>
                             {
@@ -42,7 +42,7 @@ export default function CardEmployee({ pendingPayment }: CardPaymentProps) {
                     </View>
                 </View>
             </View>
-            <TouchableOpacity onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: pendingPayment.id_pessoa }})} style={{ justifyContent: "center" }}>
+            <TouchableOpacity onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: pendingPayment.id_pessoa } })} style={{ justifyContent: "center" }}>
                 <Ionicons name={"arrow-forward-outline"} size={35} color={colors.primary} />
             </TouchableOpacity>
         </View>

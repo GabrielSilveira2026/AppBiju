@@ -20,6 +20,12 @@ export default function Funcionarios() {
     async function getPendingPayment() {
         setIsLoading(true)
         const response = await sync.getPendingPayment()
+        if (response.origemDados === "Local") {
+            sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+            setTimeout(() => {
+                sync.setMessage("")
+            }, 4000);
+        }
         setListPendingPayment(response.response)
         setIsLoading(false)
     }
@@ -32,9 +38,11 @@ export default function Funcionarios() {
         if (isFocused) {
             getPeople()
             getPendingPayment()
+        } else {
+            sync.setMessage("")
         }
     }, [isFocused])
-    
+
     return (
         <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
             <SafeAreaView style={globalStyles.pageContainer}>
@@ -44,6 +52,13 @@ export default function Funcionarios() {
                         <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
                     </View>
                     <FlatList
+                        refreshing={false}
+                        onRefresh={() => {
+                            if (!isLoading) {
+                                getPeople()
+                                getPendingPayment()
+                            }
+                        }}
                         data={listPendingPayment}
                         keyExtractor={item => String(item.id_pessoa)}
                         contentContainerStyle={{ gap: 16 }}
@@ -54,14 +69,6 @@ export default function Funcionarios() {
                         }
                     />
                 </View>
-                {/* <View style={{ marginTop: 30 }}>
-                                <Text>id_pessoa {item.id_pessoa}</Text>
-                                <Text>nome {item.nome}</Text>
-                                <Text>ultimo_pagamento {item.ultimo_pagamento}</Text>
-                                <Text>total {item.total}</Text>
-                                <Button onPress={() => router.navigate({ pathname: "/", params: { id_pessoa: item.id_pessoa }, })} title={"Consulta"}></Button>
-                                <Button onPress={() => router.navigate({ pathname: "/payment", params: { id_pessoa: item.id_pessoa, pessoa: item.nome}, })} title={"Pagamento"}></Button>
-                            </View> */}
             </SafeAreaView >
         </ImageBackground>
     );

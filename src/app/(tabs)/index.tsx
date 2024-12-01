@@ -38,6 +38,12 @@ export default function Profile() {
   async function getDataHeader(id_pessoa: number) {
     const response = await sync.getPendingPayment(id_pessoa);
 
+    if (response.origemDados === "Local") {
+      sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+      setTimeout(() => {
+        sync.setMessage("")
+      }, 4000);
+    }
     if (response.response[0]) {
 
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];
@@ -48,16 +54,20 @@ export default function Profile() {
     }
   }
 
-  async function getDataDays() {
-    setIsLoading(true)
-    await sync.getPeople(user?.id_pessoa || Number(id_pessoa_params));
+  async function getPeopleData() {
+    await sync.getPeople(Number(id_pessoa_params) || user?.id_pessoa);
+  }
 
-    const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
+  async function getDataDays(reset?: boolean) {
+    setIsLoading(true)
+    const response = await sync.getDay(reset ? 0 : page, Number(id_pessoa_params) || user?.id_pessoa);
+
     if (page === 0) {
       for (const day of response.response.slice(0, 7)) {
         await sync.getProduction(day.id_dia);
       }
     }
+
     setHasMore(response.hasMore)
     setDayList(page > 0 ? [...dayList, ...response.response] : response.response);
     setIsLoading(false)
@@ -65,17 +75,19 @@ export default function Profile() {
 
   useEffect(() => {
     getDataDays();
-  
   }, [page])
-  
 
   useEffect(() => {
     if (isFocused) {
       if (id_pessoa_params || !!user?.id_pessoa) {
-        setPage(0)
-        getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
         getDataDays();
+        getPeopleData()
+        getDataHeader(Number(id_pessoa_params) || Number(user?.id_pessoa));
       }
+    }
+    else {
+      setPage(0)
+      sync.setMessage("")
     }
   }, [isFocused]);
 
@@ -142,9 +154,9 @@ export default function Profile() {
                 viewMore &&
                 <TouchableOpacity onPress={() => {
                   setviewMore(!viewMore)
+                  setPage(0)
                 }}>
                   <Ionicons
-
                     name="arrow-back-outline"
                     size={40}
                     color={colors.primary} />
@@ -171,10 +183,7 @@ export default function Profile() {
             <FlatList
               refreshing={false}
               onRefresh={() => {
-                if (!isLoading) {
-                  setPage(0)
-                  // getDataDays()
-                }
+                getDataDays(true)
               }}
               data={viewMore ? dayList : dayList.slice(0, 30)}
               ListEmptyComponent={
@@ -205,8 +214,8 @@ export default function Profile() {
                   router.navigate({
                     pathname: '../(tabs)/day',
                     params: {
-                      id_pessoa: user?.id_pessoa,
-                      pessoa: user?.nome,
+                      id_pessoa: userData?.id_pessoa,
+                      pessoa: userData?.nome,
                     },
                   });
                   setIsAdding(false)

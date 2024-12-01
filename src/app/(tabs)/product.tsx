@@ -2,6 +2,7 @@ import AddContainer from "@/src/components/AddContainer";
 import { Input } from "@/src/components/Input";
 import CardProduct from "@/src/components/Products/CardProduct";
 import HourContainer from "@/src/components/Products/HourContainer";
+import { constants } from "@/src/constants/constants";
 import { useAuthContext } from "@/src/contexts/AuthContext";
 import { useSync } from "@/src/contexts/SyncContext";
 import { ProductType } from "@/src/types/types";
@@ -13,6 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, ImageBackground, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Product() {
@@ -25,16 +27,14 @@ export default function Product() {
   const [hourValue, setHourValue] = useState<string>("0");
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const { nome_produto } = useLocalSearchParams();
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const { nome_produto, id_dia, data_dia_producao, id_pessoa, pessoa } = useLocalSearchParams();
 
   async function getProductList() {
     setIsLoading(true)
-    setIsCreating(true)
     const request = await sync.getProduct();
     setProductList(request.response);
     setFilteredProducts(request.response)
-    setIsCreating(false)
     setIsLoading(false)
   }
 
@@ -74,12 +74,14 @@ export default function Product() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       setKeyboardVisible(true);
+      setKeyboardHeight(e.endCoordinates.height);
     });
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false);
+      setKeyboardHeight(0);
     });
 
     return () => {
@@ -87,6 +89,24 @@ export default function Product() {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  const containerPosition = useSharedValue(400)
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: containerPosition.value
+        }
+      ]
+    }
+  })
+
+  useEffect(() => {
+    containerPosition.value = 400
+    containerPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+  }, [])
 
   async function updateHourValue(newHourValue: string, initialDate: string) {
     const request = await sync.updateHourValue(Number(newHourValue), initialDate);
@@ -98,7 +118,7 @@ export default function Product() {
   function handleCreateProduct() {
     if (!isCreating) {
       setIsCreating(true)
-
+      setSearch("")
       const newProduct: ProductType = {
         id_produto: "",
         cod_referencia: 0,
@@ -148,7 +168,7 @@ export default function Product() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <View style={[globalStyles.container, styles.productContainer]}>
+        <Animated.View style={[containerStyle, globalStyles.container, styles.productContainer]}>
           <FlatList
             data={filteredProducts}
             refreshing={false}
@@ -159,13 +179,27 @@ export default function Product() {
                 setSearch("")
               }
             }}
-            style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
+            style={{ marginBottom: isKeyboardVisible ? keyboardHeight - 80 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             keyboardShouldPersistTaps='handled'
             ListHeaderComponent={<>
               <View style={styles.titleContainer}>
-                <TouchableOpacity onPress={() => { router.navigate("/") }}>
+                <TouchableOpacity onPress={() => {
+                  if (nome_produto) {
+                    router.navigate({
+                      pathname: '../../(tabs)/day',
+                      params: {
+                        id_dia: id_dia,
+                        data_dia_producao: data_dia_producao,
+                        id_pessoa: id_pessoa,
+                        pessoa: pessoa,
+                      },
+                    });
+                  } else {
+                    router.navigate("/")
+                  }
+                }}>
                   <Ionicons
                     name="arrow-back-outline"
                     size={35}
@@ -211,12 +245,15 @@ export default function Product() {
               />
             }
           />
-          <AddContainer
-            text="Criar produto"
-            disable={isCreating}
-            onPress={handleCreateProduct}
-          />
-        </View>
+          {
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil && !isCreating &&
+            <AddContainer
+              text="Criar produto"
+              disable={isCreating}
+              onPress={handleCreateProduct}
+            />
+          }
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   );

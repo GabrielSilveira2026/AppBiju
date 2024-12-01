@@ -13,6 +13,8 @@ type HeaderProfileProps = {
 }
 
 export default function HeaderProfile({ userData }: HeaderProfileProps) {
+    const { user } = useAuthContext();
+
     return (
         <View style={globalStyles.container}>
             <View style={styles.headerContainer}>
@@ -21,7 +23,15 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                         <Text style={styles.textValue}>
                             {userData ? userData?.nome : "Carregando"}
                         </Text>
-                        {/* <Ionicons name={"create-outline"} size={30} color={colors.primary} /> */}
+                        {
+                            userData.id_pessoa === user?.id_pessoa &&
+                            <TouchableOpacity
+                                onPress={() => router.push("/(tabs)/profile")}
+                            >
+                                <Ionicons name={"open-outline"} size={30} color={colors.primary} />
+                            </TouchableOpacity>
+                        }
+
                     </View>
 
                     <View style={styles.amountToReceiveContainer}>
@@ -35,17 +45,35 @@ export default function HeaderProfile({ userData }: HeaderProfileProps) {
                 </View>
 
                 <View>
-                    <View style={styles.lastPaymentTextContainer}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            const nome =
+                                user?.id_perfil === constants.perfil.administrador.id_perfil
+                                    ||
+                                    user?.id_perfil === constants.perfil.suporte.id_perfil
+                                    ?
+                                    userData.nome : null
+
+                            const id =
+                                user?.id_perfil === constants.perfil.funcionario.id_perfil
+                                    ?
+                                    userData.id_pessoa : null
+                            router.push({
+                                pathname: "/payment",
+                                params: {
+                                    id_pessoa: id,
+                                    pessoa: nome
+                                }
+                            })
+                        }}
+                        style={styles.lastPaymentTextContainer}
+                    >
                         <Text style={styles.textTitle}>
                             Último Pagamento
                         </Text>
-                        <TouchableOpacity
-                            onPress={() => router.push({ pathname: "/payment", params: { id_pessoa: userData.id_pessoa, pessoa: userData.nome }, })}
-                        >
-                            <Ionicons
-                                name={"open-outline"} size={30} color={colors.primary} />
-                        </TouchableOpacity>
-                    </View>
+                        <Ionicons
+                            name={"open-outline"} size={30} color={colors.primary} />
+                    </TouchableOpacity>
                     <Text style={styles.textValue}>
                         {userData ? userData?.ultimo_pagamento : "__/__/____"}
                     </Text>

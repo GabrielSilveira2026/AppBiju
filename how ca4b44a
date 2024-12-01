@@ -1,0 +1,319 @@
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: checkout: moving from master to main
+[33m568dc07[m[33m ([m[1;31mgithub/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{1}: checkout: moving from Atividade6 to master
+[33m171d0f3[m[33m ([m[1;32mAtividade6[m[33m)[m HEAD@{2}: checkout: moving from ca4b44ad61423c6f9291de6347a5409073aea116 to Atividade6
+[33mca4b44a[m HEAD@{3}: commit: Ajustes na paginação de dias
+[33mc07c49d[m HEAD@{4}: commit: removidos aborts.controllers
+[33m7534606[m HEAD@{5}: commit: Adicionado loading ao excluir producao
+[33mf308bde[m HEAD@{6}: commit: Implementada pesquisa em produtos, redirecionamento das producoes na tela de produto
+[33m2a6d87b[m HEAD@{7}: commit: Ao iniciar aplicativo tabela de produções é zerada para evitar registros antigos
+[33m4e14806[m HEAD@{8}: commit: dias e produçãoes podem ser aterados por adimin, produtos podem ser alterados somente pelo admin
+[33m49fa317[m HEAD@{9}: commit: Implementada Paginação de dias em index
+[33m171d0f3[m[33m ([m[1;32mAtividade6[m[33m)[m HEAD@{10}: checkout: moving from Atividade6 to 171d0f3f194c0b480bf2d4b135782b7ac837dc54
+[33m171d0f3[m[33m ([m[1;32mAtividade6[m[33m)[m HEAD@{11}: reset: moving to 171d0f3f194c0b480bf2d4b135782b7ac837dc54
+[33mc00c314[m HEAD@{12}: commit: Implementado paginação na flatlist de dias
+[33m171d0f3[m[33m ([m[1;32mAtividade6[m[33m)[m HEAD@{13}: commit: Ajustes em getDay
+[33m8fb5d23[m HEAD@{14}: commit: Retirado console.log
+[33m0f4bfc5[m HEAD@{15}: reset: moving to HEAD~2
+[33madf80a2[m[33m ([m[1;31mgithub/Atividade6[m[33m)[m HEAD@{16}: reset: moving to HEAD~1
+[33m1eea2fb[m HEAD@{17}: commit: Iniciando paginação em dias/index
+[33madf80a2[m[33m ([m[1;31mgithub/Atividade6[m[33m)[m HEAD@{18}: reset: moving to HEAD~1
+[33m1f52323[m HEAD@{19}: reset: moving to HEAD~1
+[33m7f2de4b[m HEAD@{20}: commit: Iniciando paginação em dias/index
+[33m1f52323[m HEAD@{21}: commit: Removidos console.logs
+[33madf80a2[m[33m ([m[1;31mgithub/Atividade6[m[33m)[m HEAD@{22}: commit: Ajustes visuais
+[33md38673e[m HEAD@{23}: commit: Adicionado get People em index
+[33m0f4bfc5[m HEAD@{24}: commit: Ajustes visuais e corrigido gap de salvar dia enquanto adicionava producao
+[33m36ecf90[m HEAD@{25}: commit: Adicionado indicador de loading nas telas principais
+[33m027b94c[m HEAD@{26}: commit: Adicionado touchableopacity nos icones
+[33m9075f65[m HEAD@{27}: commit: Ajustado consulta de header no index para consultar somente se tiver parametro
+[33m71b07cc[m HEAD@{28}: commit: Ajustado consulta de header no index para consultar somente se tiver parametro
+[33mcb51fe5[m HEAD@{29}: commit: Ajustes na tabela de pessoa, updatelistpeople estava deletando todos os usuarios quando consultava um
+[33m1ddb24c[m HEAD@{30}: commit: Ajustes nas chamadas de pagamentos
+[33me0d5203[m HEAD@{31}: commit: GetPayment ordena por data, e getPendingPayment ordena por nome dos funcionarios
+[33m568dc07[m[33m ([m[1;31mgithub/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{32}: checkout: moving from master to Atividade6
+[33m568dc07[m[33m ([m[1;31mgithub/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{33}: pull: Fast-forward
+[33mfefd475[m HEAD@{34}: checkout: moving from main to master
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{35}: checkout: moving from Atividade5 to main
+[33m0619c20[m[33m ([m[1;31mgithub/Atividade5[m[33m, [m[1;32mAtividade5[m[33m)[m HEAD@{36}: commit: Removido tabela pendingPayment por não haver necessidade uma vez que essa consulta pode ser realizada pelo payment normalmente
+[33m3adb147[m HEAD@{37}: commit: Ajustadas horas de pagamento, dia e produto
+[33m884337e[m HEAD@{38}: commit: Ajustadas horas de pagamento, dia e produto
+[33m2576d3a[m HEAD@{39}: commit: Implementada logica de deletar pagamentos
+[33m680324c[m HEAD@{40}: commit: Ajustes nas datas de day, product e payment
+[33m5e202c8[m HEAD@{41}: commit: Implementado DatePicker nas devidas telas
+[33ma1bf253[m HEAD@{42}: commit: Ajustes no isloading de authcontext
+[33m51e4582[m HEAD@{43}: reset: moving to head
+[33m51e4582[m HEAD@{44}: reset: moving to head
+[33m51e4582[m HEAD@{45}: commit: Criado component DataPicker, e implementado chamada de syncData na tela de loading
+[33md7713fe[m HEAD@{46}: commit: Ajustes em index para indicador de loading, ajuste em post payment para mandar d aleatorio
+[33m64efdcf[m HEAD@{47}: commit: Implementado lançamento de pagamento online
+[33m7c6855f[m HEAD@{48}: commit: Ajustes nos fluxos de autorização
+[33m9eec772[m HEAD@{49}: commit: Ajustes em relação a pagamentos
+[33m90b3618[m HEAD@{50}: commit: Ajustado getPeople
+[33mdbfc3b0[m HEAD@{51}: commit: Implementada função de getPayment, ajustes em cardPayment
+[33md646cd8[m HEAD@{52}: commit: Ajustes nas bordas dos cards
+[33m00e5baf[m HEAD@{53}: commit: Ajsutados bordas dos cards
+[33m435e1cd[m HEAD@{54}: commit: Criado variavel de constants para unificar codigo de produtos e id_perfil
+[33mc1a8d14[m HEAD@{55}: commit: Criada base de CardPayment, e ajustado função de atualizar valor da hora oflfine
+[33mbb24b96[m HEAD@{56}: commit: Ajustes nos acessos
+[33m6a48616[m HEAD@{57}: commit: Ajustes em updateProduct no sync
+[33mc8a73aa[m HEAD@{58}: commit: Ajustado função de adicionar produto em um novo dia, ao adicionar o primeiro produto a função de saveDay é chamada
+[33m1fcb452[m HEAD@{59}: commit: Ajustado adição de produção em novos dias
+[33m6d78944[m HEAD@{60}: commit: Implementada atualização de dias ofline
+[33me30195b[m HEAD@{61}: commit: Implementada atualização online de dias
+[33m46c2d7d[m HEAD@{62}: commit: Componentizado bottom de adicionar producoes dias produtos etc
+[33m5be787d[m HEAD@{63}: commit: Adicinada alerta para dias não salvos com produções
+[33mb546848[m HEAD@{64}: commit: Implementado workflow de criação de producao
+[33mfefd475[m HEAD@{65}: checkout: moving from master to Atividade5
+[33mfefd475[m HEAD@{66}: pull: Fast-forward
+[33m041a6e5[m HEAD@{67}: checkout: moving from Atividade4 to master
+[33mc2df8e6[m[33m ([m[1;31mgithub/Atividade4[m[33m, [m[1;32mAtividade4[m[33m)[m HEAD@{68}: commit: Ajustes no sinc
+[33me62ac5a[m HEAD@{69}: commit: Ajustes em inputDuration
+[33m08eeaa7[m HEAD@{70}: commit: Implementada função de exclusão de produtos somente para suporte
+[33md68370b[m HEAD@{71}: commit: Ajustes no redirecionamento de perfil de usuario
+[33ma046bb4[m HEAD@{72}: commit: Ajustes nas casas decimais ao consultar produtos
+[33m2be70dd[m HEAD@{73}: commit: Ajustes em InputDuration
+[33m01981af[m HEAD@{74}: commit: Refatorado componente de cardProduct
+[33m2e562b7[m HEAD@{75}: commit: Refatorado componete CardProduct em modo View
+[33mecf920c[m HEAD@{76}: commit: Ajustes em InputDuration
+[33mfcd1b1f[m HEAD@{77}: commit: Criado componete InputDuration para selecao de tempo
+[33m05853e1[m HEAD@{78}: commit: Ajustes na atualização de produto offline, e ajustes em cardProduction
+[33m220cc11[m HEAD@{79}: commit: Ajustes em styles do select
+[33mef89b95[m HEAD@{80}: commit: Criado componente Select para seleção de produtos
+[33mb88a41b[m HEAD@{81}: reset: moving to head
+[33mb88a41b[m HEAD@{82}: reset: moving to head
+[33mb88a41b[m HEAD@{83}: reset: moving to head
+[33mb88a41b[m HEAD@{84}: reset: moving to head
+[33mb88a41b[m HEAD@{85}: reset: moving to head
+[33mb88a41b[m HEAD@{86}: reset: moving to head
+[33mb88a41b[m HEAD@{87}: reset: moving to head
+[33mb88a41b[m HEAD@{88}: commit: Ajustado função de edição da producao
+[33mf7a22be[m HEAD@{89}: reset: moving to Head
+[33mf7a22be[m HEAD@{90}: reset: moving to Head
+[33mf7a22be[m HEAD@{91}: commit: Ajustado crud de producoes
+[33mecd4c13[m HEAD@{92}: commit: Ajustado flatlist de producoes e produtos para permitir clicks quando o teclado estiver aberto
+[33m511f728[m HEAD@{93}: commit: Ajustado opção de remoção de producoes, e implementada variavel para exibição dinamica do total do dia
+[33m559a6ae[m HEAD@{94}: commit: Ajuste na lista de producoes
+[33md6e7839[m HEAD@{95}: reset: moving to HEAD
+[33md6e7839[m HEAD@{96}: commit: Ajustes no style de cardProduction
+[33m6f09743[m HEAD@{97}: commit: Ajustes na criação de producao em dias ainda não salvos
+[33md8eb9b2[m HEAD@{98}: commit: Ajuste na função de getProduction para excluir somente as producoes de um determinado diaa caso tenha
+[33m3c15fba[m HEAD@{99}: commit: checkpoint
+[33mee56dea[m HEAD@{100}: reset: moving to HEAD~1
+[33mb0a2f18[m HEAD@{101}: commit: checkpoint
+[33mee56dea[m HEAD@{102}: commit: Ajustado getProductions offline e online,
+[33m70ab87e[m HEAD@{103}: commit: Implementado adição de producao
+[33m96aac4a[m HEAD@{104}: commit: Ajustado função de cancelar adição de produção
+[33m0a07393[m HEAD@{105}: commit: Ajustes em cardProduction e ajustado tela index para acessar tabela de pessoas antes de consultar os dias
+[33m250033b[m HEAD@{106}: commit: Ajustado get produto para retornar também valor_unidade de produto, afim de utilizar esse valor na producao
+[33m6936bd6[m HEAD@{107}: commit: Ajustando criação de nova produção
+[33mc922859[m HEAD@{108}: commit: Ajustado get producoes
+[33m9092f32[m HEAD@{109}: commit: Ajustado producoes
+[33ma73e8d7[m HEAD@{110}: commit: ajustado get day
+[33mf498f5e[m HEAD@{111}: commit: ajustado get day parcial
+[33m641d06d[m HEAD@{112}: commit: Ajustado create day
+[33m7fa37ed[m HEAD@{113}: commit: Ajustes producao
+[33m49e3955[m HEAD@{114}: commit: Ajustado crud de produto
+[33me9aacba[m HEAD@{115}: commit: Implementado produto com id gerado aleatoriamente
+[33m20e784f[m HEAD@{116}: reset: moving to HEAD
+[33m20e784f[m HEAD@{117}: commit: Ajustes visuais em cardProduction
+[33m3a0c2ee[m HEAD@{118}: commit: Ajustes no visual do cardProduction
+[33me9ef98e[m HEAD@{119}: commit: Criado base de select dropdown em producoes
+[33meb78f12[m HEAD@{120}: commit: Ajustes para chamada de produtos na hora de selecionar produtos em producaos
+[33m3cca357[m HEAD@{121}: commit: adicionado style para cards em styles global
+[33m153602d[m HEAD@{122}: commit: Ajustado http para usar id_dia
+[33m3349ce8[m HEAD@{123}: commit: Implementada base de getProductions, adaptado base do cardProduction, tela day busca producoes referente ao dia
+[33mae244e6[m HEAD@{124}: commit: ajustado base da tela de dia e producoes
+[33m3b0fe11[m HEAD@{125}: commit: Ajuste realizado em card de produtos para quando for criar novo produto validar se tem id Local, corrigido também função ao salvar um novo produto, para que não peça confirmação de data inicial
+[33m65aab39[m HEAD@{126}: commit: Ajustado card de produtos para permitir edição somente caso o produto ja tenha sido enviado ao banco remoto
+[33md182062[m HEAD@{127}: commit: Ajustado ordem das funções nos bancos locais e no sync
+[33me9b1d22[m HEAD@{128}: commit: Implementada função trim em descricao e nome na criação/alteração de produtos
+[33m2c49704[m HEAD@{129}: commit: Ajustado tabelas locais para ids locais para lidar com offiline first
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{130}: checkout: moving from Atividade4.0 to Atividade4
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{131}: checkout: moving from Atividade4 to Atividade4.0
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{132}: checkout: moving from main to Atividade4
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{133}: checkout: moving from Atividade4.0 to main
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{134}: Branch: renamed refs/heads/Atividade4 to refs/heads/Atividade4.0
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{136}: checkout: moving from main to Atividade4
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{137}: checkout: moving from Atividade4 to main
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{138}: checkout: moving from Atividade4 to Atividade4
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{139}: checkout: moving from 00ff2d2a38f683b16b1fcbfe233ca1500cb3d826 to Atividade4
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{140}: checkout: moving from Atividade4 to 00ff2d2a38f683b16b1fcbfe233ca1500cb3d826
+[33m510ee44[m[33m ([m[1;32mAtividade4.0[m[33m)[m HEAD@{141}: commit: Checkpoint de alterações nas tabelas locais
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{142}: checkout: moving from main to Atividade4
+[33m00ff2d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{143}: pull github master: Fast-forward
+[33ma5430bd[m[33m ([m[1;31mgithub/Atividade3.1[m[33m, [m[1;32mAtividade3.1[m[33m)[m HEAD@{144}: checkout: moving from Atividade3.1 to main
+[33ma5430bd[m[33m ([m[1;31mgithub/Atividade3.1[m[33m, [m[1;32mAtividade3.1[m[33m)[m HEAD@{145}: commit: Adicionada confirmação na alteração dos produtos
+[33m6cc12e3[m HEAD@{146}: commit: Alterado nome de produtos para product
+[33me65c1a3[m HEAD@{147}: commit: Ajustado tamanho da tabbar
+[33mb1c7f07[m HEAD@{148}: commit: Ajustado componente dayListItem para mostrar a data corretamente com o fuso horario
+[33mc0eeecb[m HEAD@{149}: commit: Ajustado componente cardProduct para atualizar as informações sempre que atualziar a tela
+[33m12363af[m HEAD@{150}: commit: Ajustado sync de update em produtos
+[33m7dd1c98[m HEAD@{151}: commit: Ajustado componente button para functions assincronas, e implementado update em produtos com sync
+[33m1937aec[m HEAD@{152}: commit: Ajustado tela de produtos para reagir ao teclado
+[33m9a0dd8b[m HEAD@{153}: commit: Ajustado criação de produto para não usar body, e sim ir pela url
+[33m5b01c0e[m HEAD@{154}: commit: Ajustado criação de produto
+[33mf54100d[m HEAD@{155}: commit: Implementado envio de criação de produto remoto
+[33mbc12327[m HEAD@{156}: commit: Ajustes em card Product
+[33m4e21806[m HEAD@{157}: commit: Ajustado tamanho das fontes para melhor uso da tela
+[33meff2c39[m HEAD@{158}: commit: Ajustes em styles da image background para lidar com teclado
+[33ma2db4d5[m HEAD@{159}: reset: moving to HEAD
+[33ma2db4d5[m HEAD@{160}: reset: moving to HEAD
+[33ma2db4d5[m HEAD@{161}: commit: Ajustado tela produtos, ao abrir teclado componentes permanecem nos seus lugares, tabar também não aparece
+[33m620e480[m HEAD@{162}: commit: Ajustado styles globais, componente input ajustado para ser sem flex por defautl
+[33mdb2c754[m HEAD@{163}: commit: Ajustado campo de tempo de produção em exibição
+[33mc84525d[m HEAD@{164}: commit: Ajustado funcionalidade de adicionar produto
+[33mc6d2f38[m HEAD@{165}: commit: Implementada logica de cancelar criação de novo produto
+[33m1f956db[m HEAD@{166}: commit: Ajustado operação de cancelar mudança do valor da hora
+[33m0e155f5[m HEAD@{167}: commit: Ajustado modos visuais do cardProduct
+[33mf039c6b[m HEAD@{168}: commit: checkopoint
+[33m805125f[m HEAD@{169}: reset: moving to HEAD
+[33m805125f[m HEAD@{170}: commit: Criado modo detalhes do cardProduct
+[33m56aaa54[m HEAD@{171}: commit: Criado modo detalhes do cardProduct
+[33med1a43f[m HEAD@{172}: commit: Criado modo view do cardProduct
+[33m4cb9fae[m HEAD@{173}: commit: Criado basica da logica dos modos do cardproduct
+[33mbbe59a8[m HEAD@{174}: commit: Função de busca do valor da hora passada para pagina de produtos para uso no componente hourcontainer e nos cards de produtos
+[33me17d5df[m HEAD@{175}: commit: Função editar hora somente para suporte e admin, removido logs
+[33m6f93663[m HEAD@{176}: commit: Funcionalidade de atualização do valor da hora a partir de datas, com sincronismo e operação pendente
+[33ma7f196c[m HEAD@{177}: commit: Implementada função de alterar valor da hora apartir de uma determianda data
+[33ma606a9f[m HEAD@{178}: commit: Implementada função de alterar valor da hora apartir de uma determianda data
+[33m8b9725e[m HEAD@{179}: commit: Componentizado HourContainer
+[33m68da63d[m HEAD@{180}: commit: ajustado data inicio no componente de edicao do valor da hora
+[33m266c913[m HEAD@{181}: commit: Ajustado opção para editar valor hora se for diferente de tipo perfil 3 (funcionario)
+[33mc375b36[m HEAD@{182}: commit: Implementada tabela de parametro e funcao de getHourValue
+[33m7a057d2[m HEAD@{183}: commit: Criada componente de valor hora
+[33m0ae07d3[m HEAD@{184}: checkout: moving from TabelasLocais to Atividade3.1
+[33m0ae07d3[m HEAD@{185}: commit: Implementada tabelas locais, para select de header em index
+[33m0cb363c[m HEAD@{186}: commit: Criada tabelas locais
+[33m9846af1[m[33m ([m[1;32mAtividade3[m[33m)[m HEAD@{187}: checkout: moving from Animacoes to TabelasLocais
+[33m9846af1[m[33m ([m[1;32mAtividade3[m[33m)[m HEAD@{188}: checkout: moving from Atividade3 to Animacoes
+[33m9846af1[m[33m ([m[1;32mAtividade3[m[33m)[m HEAD@{189}: commit: Ajustado layouts
+[33m98846b5[m HEAD@{190}: commit: Criada funcionalidade de criação de dia
+[33m5c9766c[m HEAD@{191}: commit: Ajustado componente de DayDetails
+[33m8c276de[m HEAD@{192}: commit: Abandonado compoente CardDay devido a não ser necessario, uma vez que vai ser usado em uma tela somente
+[33mabd03ac[m HEAD@{193}: commit: Ajustado componente de CardDay
+[33mccce819[m HEAD@{194}: commit: Ajustado componente de CardDay
+[33m7cc05ae[m HEAD@{195}: commit: Reformulado tela de DayDetails
+[33m6b25db0[m HEAD@{196}: commit: Criada base de componente CardDay e tela de Detalhes de um dia de produção
+[33m041a6e5[m HEAD@{197}: checkout: moving from master to Atividade3
+[33m041a6e5[m HEAD@{198}: pull: Fast-forward
+[33ma699ab2[m HEAD@{199}: checkout: moving from Atividade2 to master
+[33m51cebfb[m[33m ([m[1;31mgithub/Atividade2[m[33m)[m HEAD@{200}: commit: Implementado funcionalidade de consultar dias, usando sync, exibição de todos os dias, funcionalidade para consulta de varios funcionarios para administradores
+[33m4823027[m HEAD@{201}: commit: Ajustes em styles globais e implementado safeareaview
+[33m8a888e5[m HEAD@{202}: commit: Ajustes em styles globais
+[33m66fda95[m HEAD@{203}: commit: Ajustes em styles globais e component input
+[33m0003da6[m HEAD@{204}: commit: Ajustado ordencao de datas decrescente
+[33m54e8857[m HEAD@{205}: commit: Ajustado bug de duplicidade no banco local ao trocar de telas rapidamente
+[33m6667039[m HEAD@{206}: commit: Ajustado contagem de dias em HeaderDyas
+[33m6a23324[m HEAD@{207}: commit: Ajustado container dos dias de produção e incluido botão para adicionar novos dias
+[33m2ed35e9[m HEAD@{208}: commit: Ajustado container dos dias de produção
+[33m2caff54[m HEAD@{209}: commit: Ajustado funcao de consulta de dias local para receber opcionalmente id_pessoa
+[33md9331af[m HEAD@{210}: commit: Criado base componete DayListItem
+[33ma699ab2[m HEAD@{211}: checkout: moving from AsyncStorage to Atividade2
+[33m4887479[m HEAD@{212}: checkout: moving from Atividade2 to AsyncStorage
+[33ma699ab2[m HEAD@{213}: checkout: moving from AsyncStorage to Atividade2
+[33m4887479[m HEAD@{214}: commit: implementada base de offline usando async
+[33ma699ab2[m HEAD@{215}: checkout: moving from Atividade2 to AsyncStorage
+[33ma699ab2[m HEAD@{216}: checkout: moving from master to Atividade2
+[33ma699ab2[m HEAD@{217}: checkout: moving from Atividade1 to master
+[33md56a8df[m[33m ([m[1;31mgithub/Atividade1[m[33m)[m HEAD@{218}: checkout: moving from master to Atividade1
+[33ma699ab2[m HEAD@{219}: pull: Fast-forward
+[33m3f38bb5[m HEAD@{220}: checkout: moving from Atividade1 to master
+[33md56a8df[m[33m ([m[1;31mgithub/Atividade1[m[33m)[m HEAD@{221}: checkout: moving from d56a8df8706b23de329ec1ac6bb128012dcba1a2 to Atividade1
+[33md56a8df[m[33m ([m[1;31mgithub/Atividade1[m[33m)[m HEAD@{222}: checkout: moving from 74066b6ab1aa30aed1eba5dfcff0a5e1d58c171e to d56a8df8706b23de329ec1ac6bb128012dcba1a2
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{223}: checkout: moving from Sync to 74066b6
+[33m44b65c0[m HEAD@{224}: checkout: moving from AsyncStorage to Sync
+[33mab16ce0[m HEAD@{225}: checkout: moving from 74066b6ab1aa30aed1eba5dfcff0a5e1d58c171e to AsyncStorage
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{226}: checkout: moving from Atv1 to 74066b6
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{227}: checkout: moving from 74066b6ab1aa30aed1eba5dfcff0a5e1d58c171e to Atv1
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{228}: checkout: moving from Atv1 to 74066b6
+[33mf5d7676[m HEAD@{229}: reset: moving to f5d767654254e45ab04d0114448dd4e91d855ebf
+[33mf5d7676[m HEAD@{230}: checkout: moving from d56a8df8706b23de329ec1ac6bb128012dcba1a2 to Atv1
+[33md56a8df[m[33m ([m[1;31mgithub/Atividade1[m[33m)[m HEAD@{231}: commit: Implementada logica para consultar pagamentospendentes na tela index adequadamente
+[33m2da3150[m HEAD@{232}: commit: criado função getPendingPayment no Sinc, index/profile usa essa função para puxar os dados, também é possivel usar a tela profile para outro funcionarios (afins de adminstração)
+[33mbbaa019[m HEAD@{233}: commit: Ajustado componente header, não mais resonsavel pela requisição
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{234}: checkout: moving from Sync to 74066b6ab1aa30aed1eba5dfcff0a5e1d58c171e
+[33m44b65c0[m HEAD@{235}: commit: Ajustado componente HeaderProfile, agora responsavel por fazer a requisição dos dados
+[33m74066b6[m[33m ([m[1;31mgithub/Atv1[m[33m)[m HEAD@{236}: commit: Implementado base de DayDatabase
+[33m74f4129[m HEAD@{237}: commit: Implementado sincprovider, realizado teste de getProduct offline e online
+[33m1650d58[m HEAD@{238}: commit: Ajustado initializedatabase, pendingoperation e productdatabase e synccontext
+[33m06f8d38[m HEAD@{239}: commit: Ajustado initializedatabase, pendingoperation e productdatabase, e sinc
+[33mf5d7676[m HEAD@{240}: checkout: moving from Atv1 to Sync
+[33mf5d7676[m HEAD@{241}: commit: Ajustado tela de profile para poder receber ids (para uso do administrador)
+[33m12d590c[m HEAD@{242}: checkout: moving from Atv1 to Atv1
+[33m12d590c[m HEAD@{243}: checkout: moving from Atv1 to Atv1
+[33m12d590c[m HEAD@{244}: commit: Implementada funcao para consulta de pagamento pendentes (valor e data de ultimo pagamento)
+[33mf8e0c5e[m HEAD@{245}: commit: Ajustes na tabBar
+[33m2d64a84[m HEAD@{246}: commit: Componentizado Header de Profile
+[33me48f3cd[m HEAD@{247}: commit: Ajustes no Css do Header
+[33mbe5e5b3[m HEAD@{248}: commit: Base de componente Header (nome, valor a receber e ultimo pagamento)
+[33m3f38bb5[m HEAD@{249}: checkout: moving from master to Atv1
+[33m3f38bb5[m HEAD@{250}: pull: Fast-forward
+[33m649101c[m HEAD@{251}: checkout: moving from RedirecionarTelasPorPerfil to master
+[33mf2b3313[m[33m ([m[1;31mgithub/RedirecionarTelasPorPerfil[m[33m)[m HEAD@{252}: commit: Corrigido logica de verSenha nos inputs
+[33mfd45375[m HEAD@{253}: commit: Criado função para redirecionar funcionario, login e useEffect usam ela para passar a roda por id_perfil
+[33me656c7b[m HEAD@{254}: commit: Ajustado redirecionamento no auth e definido tela de profile como index, ajustado fluxo, e implementado atualização dos dados do usuario ao abrir o aplicativo para possiveis mudanças
+[33m649101c[m HEAD@{255}: reset: moving to HEAD
+[33m649101c[m HEAD@{256}: checkout: moving from master to RedirecionarTelasPorPerfil
+[33m649101c[m HEAD@{257}: checkout: moving from NormalizacaoDaLingua to master
+[33m9c8e199[m HEAD@{258}: checkout: moving from master to NormalizacaoDaLingua
+[33m649101c[m HEAD@{259}: pull: Fast-forward
+[33m3ad6f1b[m HEAD@{260}: checkout: moving from 59bda83b2d276ed8d8c9bb9a795ae625855c9fd6 to master
+[33m59bda83[m[33m ([m[1;31mgithub/LoginCadastroControleDeAcessos[m[33m)[m HEAD@{261}: checkout: moving from LoginCadastroControleDeAcessos to 59bda83b2d276ed8d8c9bb9a795ae625855c9fd6
+[33m59bda83[m[33m ([m[1;31mgithub/LoginCadastroControleDeAcessos[m[33m)[m HEAD@{262}: checkout: moving from LoginCadastroControleDeAcessos to LoginCadastroControleDeAcessos
+[33m59bda83[m[33m ([m[1;31mgithub/LoginCadastroControleDeAcessos[m[33m)[m HEAD@{263}: commit: Implementada função de cadastro e login completa, controle de autenticação implementado, tambem realizada padronização dos nomes em ingles em todas as paginas
+[33m9c8e199[m HEAD@{264}: checkout: moving from NormalizacaoDaLingua to LoginCadastroControleDeAcessos
+[33m9c8e199[m HEAD@{265}: commit: Renomeada variaveis de cores, funções e componentes para inglês para padronização
+[33m49a75f4[m HEAD@{266}: checkout: moving from LoginEControleDeAutenticacao to NormalizacaoDaLingua
+[33m49a75f4[m HEAD@{267}: checkout: moving from 49a75f42a72cb7426ed9fa0a6fa6b58508d996a7 to LoginEControleDeAutenticacao
+[33m49a75f4[m HEAD@{268}: commit: Implementado armazenamento das inforamações de login e ajustado fluxos de autenticação de tela
+[33m5b1946e[m HEAD@{269}: commit: Ajustada estrutura de pastas de app
+[33m49afcfc[m HEAD@{270}: commit: Ajustados href de links e layouts
+[33m4d9b86e[m HEAD@{271}: commit: Fluxo de autenticação OK
+[33me3151cf[m HEAD@{272}: commit: Fluxo de login e logout ok
+[33m8a1a85f[m HEAD@{273}: commit: Checkpoint
+[33m8f91016[m HEAD@{274}: checkout: moving from AsyncStorage to 8f91016006645b05277fb6b2de974da8ed8c47ae
+[33m8f91016[m HEAD@{275}: checkout: moving from AsyncStorage to 8f91016006645b05277fb6b2de974da8ed8c47ae
+[33mab16ce0[m HEAD@{276}: commit: checkpoint
+[33m8f91016[m HEAD@{277}: reset: moving to HEAD
+[33m8f91016[m HEAD@{278}: commit: Ajustado fluxo de login
+[33m905880d[m HEAD@{279}: commit: Implementada tela de login
+[33me3752c0[m HEAD@{280}: reset: moving to e3752c0
+[33md094847[m HEAD@{281}: reset: moving to d094847
+[33md094847[m HEAD@{282}: reset: moving to d094847
+[33me3752c0[m HEAD@{283}: commit: Implementada base da logica de tela de loading 2
+[33md094847[m HEAD@{284}: reset: moving to d094847
+[33mf5cb4f4[m HEAD@{285}: reset: moving to f5cb4f4
+[33mf5cb4f4[m HEAD@{286}: reset: moving to f5cb4f4
+[33mf5cb4f4[m HEAD@{287}: reset: moving to f5cb4f4
+[33mf5cb4f4[m HEAD@{288}: reset: moving to f5cb4f4
+[33md094847[m HEAD@{289}: commit: Implementada base da logica de tela de loading
+[33mf5cb4f4[m HEAD@{290}: reset: moving to HEAD
+[33mf5cb4f4[m HEAD@{291}: reset: moving to HEAD
+[33mf5cb4f4[m HEAD@{292}: commit: ajustados fluxo de login
+[33m3ad6f1b[m HEAD@{293}: checkout: moving from master to AsyncStorage
+[33m3ad6f1b[m HEAD@{294}: pull: Fast-forward
+[33m8c2cbef[m HEAD@{295}: checkout: moving from Cadastro to master
+[33m4bee940[m[33m ([m[1;31mgithub/Cadastro[m[33m)[m HEAD@{296}: commit: Corrigido ver senha nos inputs de senha
+[33me7741be[m HEAD@{297}: commit: Implementado cadastro do usuario
+[33m8c2cbef[m HEAD@{298}: checkout: moving from master to Cadastro
+[33m8c2cbef[m HEAD@{299}: commit: Criada tela de cadastro com validações, ajustadas variaveis de styles
+[33m90e687f[m HEAD@{300}: commit: removido função trim
+[33m258820c[m HEAD@{301}: checkout: moving from MinhaNovaBrach to master
+[33m258820c[m HEAD@{302}: checkout: moving from master to MinhaNovaBrach
+[33m258820c[m HEAD@{303}: commit: Implementado base do login, com autenticação nas telas
+[33m3b97612[m HEAD@{304}: commit: Ajustado tamanho do icone de ver senha
+[33md5a0627[m HEAD@{305}: commit: Adicionado funcao trim() no value de inputs, inserido olhinho de ver senha, criado componente Button, e ajustado tela de login
+[33m3e5949d[m HEAD@{306}: commit: Criado component Input
+[33md643c4b[m HEAD@{307}: commit: Ajustes Css, criado componente Container com fundo 75%
+[33m61a557b[m HEAD@{308}: commit: Adicionado imagebackground
+[33m1aacb1a[m HEAD@{309}: commit: Implementado logica do login
+[33mc17ad9d[m HEAD@{310}: reset: moving to HEAD
+[33mc17ad9d[m HEAD@{311}: commit: Ajustado dotEnv e criada base para login
+[33m77efba9[m HEAD@{312}: commit: ajustado SignOut
+[33m7be5605[m HEAD@{313}: reset: moving to HEAD
+[33m7be5605[m HEAD@{314}: reset: moving to HEAD
+[33m7be5605[m HEAD@{315}: reset: moving to HEAD
+[33m7be5605[m HEAD@{316}: reset: moving to HEAD
+[33m7be5605[m HEAD@{317}: commit: implementada logica de rotas com autenticacao
+[33m042b5e1[m HEAD@{318}: commit: implementada base de autenticacao
+[33mb965105[m HEAD@{319}: commit (initial): Initial commit

@@ -21,6 +21,8 @@ import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
 import { constants } from '../constants/constants';
 import usePaymentDatabase from '../database/usePaymentDatabase';
+import { Text, Touchable, TouchableOpacity, View } from 'react-native';
+import { colors } from '@/styles/color';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -48,6 +50,7 @@ type SyncContextType = {
   getPayment: (id_pessoa?: number) => Promise<any>,
   postPayment: (payment: PaymentType) => Promise<any>,
   deletePayment: (id_payment: string) => Promise<any>,
+  setMessage: Dispatch<SetStateAction<string>>
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -56,6 +59,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
   const { user } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
+  const [message, setMessage] = useState<string>("");
 
   const productDatabase = useProductDatabase();
   const peopleDatabase = usePeopleDatabase();
@@ -143,7 +147,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
       }
     }
-    
+
     await productionDatabase.deleteProduction()
   };
 
@@ -376,15 +380,22 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function postProduction(production: ProductionType) {
-    
-    const url = `${baseUrl}/producao/${production.id_producao}?id_dia=${production.id_dia}&id_produto=${production.id_produto}&quantidade=${production.quantidade}&observacao=${production.observacao.replace(/(?:\r\n|\r|\n)/g, "\n")}`
 
-    const request: any = await axios.post(url).catch(function (error) {
+    const url = `${baseUrl}/producao/${production.id_producao}`
+
+    const body = {
+      "id_dia": production.id_dia,
+      "id_produto": production.id_produto,
+      "quantidade": production.quantidade,
+      "observacao": production.observacao?.trim()
+    }
+
+    const request: any = await axios.post(url, body).catch(function (error) {
       return { status: 571 }
     });
 
     if (request.status === 571) {
-      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url });
+      await pendingOperationDatabase.postPendingOperation({ metodo: "POST", url: url, body: JSON.stringify(body) });
       const request = await productionDatabase.postProduction(production);
       return { response: request, origemDados: "Local" }
     }
@@ -500,8 +511,36 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
-      {children}
+    <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid, setMessage }}>
+      <>
+        {children}
+        {
+          message &&
+          <View
+            style={{
+              position: 'absolute',
+              top: 45,
+              right: 8,
+              left: 8,
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              style={{
+                color: colors.text,
+                fontSize: 16,
+                padding: 12,
+                backgroundColor: colors.backgroundSecundary,
+                borderColor: colors.text,
+                borderWidth: 1,
+                borderRadius: 8
+              }}
+            >
+              {message}
+            </Text>
+          </View>
+        }
+      </>
     </SyncContext.Provider>
   );
 };

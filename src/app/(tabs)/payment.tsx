@@ -1,5 +1,7 @@
 import AddContainer from '@/src/components/AddContainer'
+import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
+import { constants } from '@/src/constants/constants'
 import { useAuthContext } from '@/src/contexts/AuthContext'
 import { useSync } from '@/src/contexts/SyncContext'
 import { PaymentType } from '@/src/types/types'
@@ -10,18 +12,20 @@ import { Ionicons } from '@expo/vector-icons'
 import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
   const { user } = useAuthContext();
-  const { id_pessoa } = useLocalSearchParams();
+  const { id_pessoa, pessoa } = useLocalSearchParams();
   const isFocused = useIsFocused();
   const sync = useSync()
-  const controller = new AbortController();
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
+  const [filteredPaymentList, setFilteredPaymentList] = useState<PaymentType[]>([]);
+  const [search, setSearch] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   async function getPayment(id_pessoa?: number) {
@@ -36,30 +40,65 @@ export default function Payment() {
   useEffect(() => {
 
     if (isFocused) {
+      setSearch(pessoa ? String(pessoa) : "")
       getPayment(Number(id_pessoa))
     }
-
-    return () => {
-      if (!isFocused) {
-        setIsAdding(false)
-      }
-      controller.abort();
-    };
+    else {
+      setSearch("")
+      setIsAdding(false)
+    }
   }, [isFocused])
 
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilteredPaymentList(paymentList);
+    } else {
+      setFilteredPaymentList(
+        paymentList.filter((payment) =>
+          payment.nome.toLowerCase().includes(search.toLowerCase())
+          ||
+          payment.data_pagamento.includes(search.toLowerCase())
+        )
+      )
+    }
+  }, [search, paymentList]);
 
-  function handleCreatePayment() {
+  const containerPosition = useSharedValue(400)
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: containerPosition.value
+        }
+      ]
+    }
+  })
+
+  useEffect(() => {
+    containerPosition.value = 400
+    containerPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+  }, [])
+
+  async function handleCreatePayment() {
     if (!isAdding) {
       setIsAdding(true)
-
-      const newPayment: PaymentType = {
-        id_pagamento: "",
-        data_pagamento: (new Date()).toISOString(),
-        id_pessoa: Number(id_pessoa) || 0,
-        valor_pagamento: 0,
-        nome: ""
-      };
-      setPaymentList((prevPaymentList) => [newPayment, ...prevPaymentList]);
+      const request = await sync.getPendingPayment()
+      if (request.origemDados === "Remoto") {
+        const newPayment: PaymentType = {
+          id_pagamento: "",
+          data_pagamento: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString(),
+          id_pessoa: Number(id_pessoa) || 0,
+          valor_pagamento: 0,
+          nome: ""
+        };
+        setPaymentList((prevPaymentList) => [newPayment, ...prevPaymentList]);
+      }
+      else {
+        Alert.alert("Falha na conexão", "Ocorreu uma falha na conexão ao consultar os pagamentos pendentes, por favor, verifique sua conexão")
+        setIsAdding(false)
+      }
     }
     else {
       setIsAdding(false)
@@ -71,10 +110,6 @@ export default function Payment() {
 
     if (payment.id_pagamento === "") {
       payment.id_pagamento = sync.nanoid()
-      let localDate = new Date(payment.data_pagamento)
-      localDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-      payment.data_pagamento = localDate.toISOString();
-
       const request = await sync.postPayment(payment)
       setPaymentList((prevPaymentList) => [payment, ...prevPaymentList]);
 
@@ -97,7 +132,7 @@ export default function Payment() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <View style={[globalStyles.container, styles.paymentContainer]}>
+        <Animated.View style={[containerStyle, globalStyles.container, styles.paymentContainer]}>
           <View style={styles.titleContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -115,17 +150,31 @@ export default function Payment() {
               />
             </TouchableOpacity>
 
-            <Text style={globalStyles.title}>Pagamentos</Text>
-            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+            {
+              !search && <Text style={globalStyles.title}>Pagamentos</Text>
+            }
+            <Input
+              value={search}
+              inputStyle={{ flex: 1 }}
+              placeholder={user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "Nome ou data" : "Pesquisar"}
+              onChangeText={setSearch}
+            />
+            {
+              search &&
+              <TouchableOpacity
+                onPress={() => setSearch("")}
+              >
+                <Ionicons name="close-circle-outline" color={colors.primary} size={30} />
+              </TouchableOpacity>
+            }
+            {
+              isLoading &&
+              <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+            }
 
-            {/* <Input
-              value=""
-              placeholder="Pesquisar"
-              onChangeText={() => { }}
-            /> */}
           </View>
           <FlatList
-            data={paymentList}
+            data={filteredPaymentList}
             refreshing={false}
             onRefresh={() => {
               getPayment()
@@ -143,12 +192,15 @@ export default function Payment() {
               />
             )}
           />
-          <AddContainer
-            disable={isAdding}
-            onPress={handleCreatePayment}
-            text="Adicionar Pagamento"
-          />
-        </View>
+          {
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            <AddContainer
+              disable={isAdding}
+              onPress={handleCreatePayment}
+              text="Adicionar Pagamento"
+            />
+          }
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   )

@@ -29,57 +29,100 @@ export default function AppLayout() {
           paddingVertical: 8,
         },
         tabBarShowLabel: false,
+        headerShown: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          headerShown: false,
           href: user?.id_perfil !== constants.perfil.administrador.id_perfil ? `/?${user?.id_pessoa}` : null,
-          tabBarIcon: () => <Ionicons name="person-outline" size={35} color={colors.primary} />
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="person-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />
         }}
       />
       <Tabs.Screen
         name="employees"
         options={{
-          headerShown: false,
           href: user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "/employees" : null,
-          tabBarIcon: () => <Ionicons name="people-outline" size={35} color={colors.primary} />
-        }}
-      />
-      <Tabs.Screen
-        name="product"
-        options={{
-          headerShown: false,
-          href: "/product",
-          tabBarIcon: () => <Ionicons name="pricetags-outline" size={35} color={colors.primary} />,
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="people-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />
         }}
       />
       <Tabs.Screen
         name="day"
         options={{
           href: null,
-          headerShown: false,
-          tabBarIcon: () => <Ionicons name="calendar-outline" size={35} color={colors.primary} />,
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="calendar-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />,
+        }}
+      />
+      <Tabs.Screen
+        name="product"
+        options={{
+          href: "/product",
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="pricetags-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />,
         }}
       />
       <Tabs.Screen
         name="payment"
         options={{
-          headerShown: false,
           href: user?.id_perfil === constants.perfil.funcionario.id_perfil ? `/payment?id_pessoa=${user?.id_pessoa}` : "/payment",
-          tabBarIcon: () => <Ionicons name="cash-outline" size={35} color={colors.primary} />
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="cash-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          href: user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "/profile" : null,
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="person-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />
         }}
       />
       <Tabs.Screen
         name="log"
         options={{
-          headerShown: false,
-          // href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
-          tabBarIcon: () => <Ionicons name="document-text-outline" size={35} color={colors.primary} />
+          href: user?.id_perfil === constants.perfil.suporte.id_perfil ? "/log" : null,
+          tabBarIcon: ({ focused }) =>
+            <Ionicons
+              name="document-text-outline"
+              size={focused ? 40 : 35}
+              color={colors.primary}
+              style={{ opacity: focused ? 1 : 0.5 }}
+            />
         }}
       />
-
     </Tabs>
   );
 }

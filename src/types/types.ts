@@ -38,7 +38,7 @@ export type PendingPaymentType = {
 export type PaymentType = {
     id_pagamento: string;
     data_pagamento: string;
-    nome?: string;
+    nome: string;
     id_pessoa: number;
     valor_pagamento: number;
 };

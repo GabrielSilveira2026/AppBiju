@@ -37,8 +37,6 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
         if (mode === "create") {
             getPendingPayment()
         }
-        return () => {
-        }
     }, [])
 
     const handleInputChange = (field: keyof PaymentType, value: string | number) => {
@@ -57,7 +55,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
 
     async function deletePayment() {
         if (paymentValues.id_pagamento !== "") {
-            Alert.alert("Deletar pagamento?", `Deseja realmente deletar esse pagamento?`, [
+            Alert.alert("Deletar pagamento?", `Deseja deletar esse pagamento? Essa ação não poderá ser desfeita`, [
                 {
                     text: "Cancelar"
                 },
@@ -73,21 +71,32 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
 
     if (modeCard === "view") {
         return (
-            <Pressable onPress={() => setModeCard("details")} style={[globalStyles.cardContainer, stylesView.cardContainer]}>
-                <View style={styles.line}>
-                    <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
-                    </View>
+            <Pressable onPress={() => {
+                if (user?.id_perfil !== constants.perfil.funcionario.id_perfil) {
+                    setModeCard("details")
+                }
+            }}
+                style={[globalStyles.cardContainer, stylesView.cardContainer]}
+            >
+                <View style={{ alignItems: "flex-start" }}>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
                         <View style={stylesView.textNameContainer}>
                             <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
                     }
+                </View>
+                <View style={styles.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
+                    </View>
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
-                    <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+                    {
+                        user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+                        <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+                    }
                 </View>
             </Pressable>
         )
@@ -104,16 +113,18 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                         <Ionicons style={{ textAlign: "right" }} name="chevron-up-outline" size={35} color={colors.primary} />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.line}>
-                    <View style={stylesView.textContainer}>
-                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
-                    </View>
+                <View style={{ alignItems: "flex-start" }}>
                     {
                         user?.id_pessoa !== payment.id_pessoa &&
                         <View style={stylesView.textNameContainer}>
                             <Text style={styles.textValue}>{payment.nome}</Text>
                         </View>
                     }
+                </View>
+                <View style={styles.line}>
+                    <View style={stylesView.textContainer}>
+                        <Text style={styles.textValue}>{new Date(payment.data_pagamento).toLocaleDateString("pt-BR", { timeZone: "UTC", day: "2-digit", month: "2-digit", year: "2-digit" })}</Text>
+                    </View>
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
@@ -134,6 +145,8 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                             handleInputChange("nome", item.nome)
                             handleInputChange("valor_pagamento", item.total)
                         }}
+                        titleSecondLabel="Valor"
+                        secondLabel="total"
                         textButton="Selecione um funcionário"
                         list={pendingPaymentList}
                     />
@@ -150,7 +163,10 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                 </View>
                 <View style={stylesCreate.line}>
                     <Button style={{ flex: 1 }} title={"Descartar"} onPress={onCancel} />
-                    <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
+                    {
+                        payment !== paymentValues &&
+                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
+                    }
                 </View>
             </Pressable>
         )

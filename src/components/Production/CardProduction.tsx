@@ -1,7 +1,7 @@
 import { colors } from '@/styles/color'
 import { Ionicons } from '@expo/vector-icons'
 import { View, Text, StyleSheet, Pressable, FlatList, Alert, TouchableOpacity } from 'react-native'
-import { ProductionType, ProductType } from '../../types/types';
+import { DayType, ProductionType, ProductType } from '../../types/types';
 import { useEffect, useState } from 'react';
 import { globalStyles } from '@/styles/styles';
 import { Input } from '../Input';
@@ -14,6 +14,7 @@ import { constants } from '@/src/constants/constants';
 import { router } from 'expo-router';
 
 type CardProductionProps = {
+    day: DayType,
     production: ProductionType;
     mode: "view" | "details" | "create" | "edit";
     onCancel?: () => void;
@@ -21,7 +22,7 @@ type CardProductionProps = {
     onRemove: (production: ProductionType) => void;
 };
 
-export default function CardProduction({ onSave, onRemove, onCancel, production, mode }: CardProductionProps) {
+export default function CardProduction({ onSave, onRemove, onCancel, production, day, mode }: CardProductionProps) {
 
     const sync = useSync();
     const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
@@ -37,6 +38,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     useEffect(() => {
         setModeCard(mode)
         if (mode === "create") {
+            setAlert("")
             getProductList()
         }
         setProductionValues(production)
@@ -77,7 +79,7 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
     }
 
     async function deleteProduction() {
-        Alert.alert("Excluir produto?", "Deseja realmente excluir esse produto desse dia?", [
+        Alert.alert("Excluir produto?", "Deseja excluir esse produto desse dia?", [
             {
                 text: "Cancelar"
             },
@@ -160,9 +162,9 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                     <Input
                                         inputStyle={{ flex: 1, textAlign: "center" }}
                                         lineStyle={{ flex: 1 }}
-                                        onChangeText={(text) => handleInputChange('quantidade', text)}
+                                        onChangeText={(text) => handleInputChange('quantidade', text.replace(/,/g, '.').replace(/[^0-9.]/g, ''))}
                                         placeholder="Qtde"
-                                        keyboardType='numeric'
+                                        keyboardType='decimal-pad'
                                         selectTextOnFocus={true}
                                         value={productionValues.quantidade === 0 ? "" : String(productionValues.quantidade)}
                                     />
@@ -236,10 +238,14 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             }}
                         />
                     }
-                    <Button
-                        style={{ flex: 1 }}
-                        title="Salvar"
-                        onPress={saveProduction} />
+                    {
+                        productionValues !== production &&
+                        <Button
+                            style={{ flex: 1 }}
+                            title="Salvar"
+                            onPress={saveProduction}
+                        />
+                    }
                 </View>
             </View>
         )
@@ -274,9 +280,13 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                             </View>
                             <View style={{ flex: 1 }}>
                                 <TouchableOpacity
-                                    onPress={() => router.replace({ 
-                                        pathname: "/product", 
+                                    onPress={() => router.replace({
+                                        pathname: "/product",
                                         params: {
+                                            id_dia: day.id_dia,
+                                            data_dia_producao: day.data_dia_producao,
+                                            id_pessoa: day.id_pessoa,
+                                            pessoa: day.pessoa,
                                             nome_produto: productionValues.nome_produto
                                         }
                                     })}

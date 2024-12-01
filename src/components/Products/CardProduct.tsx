@@ -27,12 +27,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const [modeCard, setModeCard] = useState<"view" | "details" | "create" | "edit">(mode);
   const [alert, setAlert] = useState<string>("")
   const [initialDate, setInitialDate] = useState<Date>(new Date());
+  const localDate = new Date(initialDate.getTime() - initialDate.getTimezoneOffset() * 60000);
   const [productValues, setFormValues] = useState<ProductType>(product);
 
   useEffect(() => {
     setModeCard(mode)
     setFormValues(product)
-    setInitialDate(new Date())
+    setInitialDate(localDate)
   }, [product])
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
@@ -68,8 +69,8 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         setModeCard("view");
         onSave(productValues, initialDate);
       }
-      else {
-        Alert.alert("Alterar valor do produto?", `Deseja realmente alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
+      else if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
+        Alert.alert("Alterar valor do produto?", `Deseja alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
           },
@@ -82,12 +83,16 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
           }
         ])
       }
+      else {
+        setModeCard("view");
+        onSave(productValues, initialDate);
+      }
     }
   }
 
   async function deleteProduct() {
     if (productValues.id_produto !== "") {
-      Alert.alert("Deletar produto?", `Deseja realmente deletar esse produto?`, [
+      Alert.alert("Deletar produto?", `Deseja deletar esse produto?`, [
         {
           text: "Cancelar"
         },
@@ -139,7 +144,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         <View style={styles.cardOpened}>
           <View style={styles.line}>
             {
-              user?.id_perfil === constants.perfil.administrador.id_perfil &&
+              user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
               <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
                 <Ionicons name="create-outline" size={35} color={colors.primary} />
               </TouchableOpacity>
@@ -230,14 +235,14 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               selectTextOnFocus={true}
               keyboardType="numeric"
-              style={[styles.inputValue]}
+              style={[styles.inputValue,{ flex: 1 }]}
               placeholderTextColor={colors.textInput}
             />
           </View>
         </View>
         <View style={styles.line}>
           <Input
-            placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
+            placeholder="Digite uma descrição para o produto, como por exemplo, quantidade de materiais, medidas, etc (Opcional)"
             value={productValues.descricao}
             label="Descrição"
             multiline
@@ -285,7 +290,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
           </View>
         </View>
         {
-          modeCard === "edit" &&
+          modeCard === "edit" && (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) &&
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
             <Text style={styles.dataText}>Alterar partir de: </Text>
             <DatePicker date={initialDate} onDateChange={setInitialDate} />
@@ -304,10 +309,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               }}
             />
           }
-          <Button
-            style={{ flex: 1 }}
-            title="Salvar"
-            onPress={saveProduct} />
+          {
+            productValues !== product &&
+            <Button
+              style={{ flex: 1 }}
+              title="Salvar"
+              onPress={saveProduct} />
+          }
         </View>
       </View >
     )
