@@ -27,7 +27,7 @@ export default function Product() {
   const [hourValue, setHourValue] = useState<string>("0");
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { nome_produto, id_dia, data_dia_producao, id_pessoa, pessoa } = useLocalSearchParams();
 
   async function getProductList() {
@@ -76,12 +76,14 @@ export default function Product() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       setKeyboardVisible(true);
+      setKeyboardHeight(e.endCoordinates.height);
     });
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false);
+      setKeyboardHeight(0);
     });
 
     return () => {
@@ -179,7 +181,7 @@ export default function Product() {
                 setSearch("")
               }
             }}
-            style={{ marginBottom: isKeyboardVisible ? 280 : 0 }}
+            style={{ marginBottom: isKeyboardVisible ? keyboardHeight - 80 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             keyboardShouldPersistTaps='handled'

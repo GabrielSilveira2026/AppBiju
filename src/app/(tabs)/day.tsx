@@ -45,14 +45,17 @@ export default function DayDetails() {
     const [productionList, setProductionList] = useState<ProductionType[]>([])
 
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
             setKeyboardVisible(true);
+            setKeyboardHeight(e.endCoordinates.height);
         });
 
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             setKeyboardVisible(false);
+            setKeyboardHeight(0)
         });
 
         return () => {
@@ -349,7 +352,7 @@ export default function DayDetails() {
                                 onRemove={handleDeleteProduction}
                             />
                         }
-                        style={{ marginBottom: isKeyboardVisible ? 260 : 0 }}
+                        style={{ marginBottom: isKeyboardVisible ? keyboardHeight -80 : 0 }}
                         keyExtractor={(item, index) => String(index)}
                         contentContainerStyle={{ gap: 8 }}
                     />
