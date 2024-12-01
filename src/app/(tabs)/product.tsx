@@ -179,7 +179,7 @@ export default function Product() {
                 setSearch("")
               }
             }}
-            style={{ marginBottom: isKeyboardVisible ? keyboardHeight : 0 }}
+            style={{ marginBottom: isKeyboardVisible ? keyboardHeight -80 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             keyboardShouldPersistTaps='handled'
