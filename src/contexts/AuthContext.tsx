@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response.status === 571) {
             console.warn('Erro ao recuperar o usuário nos base remota');
           }
+          setIsAuthenticated(true);
 
           if (response?.data?.items.length) {
             const userDataRemote = response.data.items[0]
@@ -43,7 +44,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             redirectUser(userDataLocalJson.id_perfil)
           }
           
-          setIsAuthenticated(true);
         }
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
