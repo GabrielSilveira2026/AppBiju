@@ -162,9 +162,9 @@ export default function CardProduction({ onSave, onRemove, onCancel, production,
                                     <Input
                                         inputStyle={{ flex: 1, textAlign: "center" }}
                                         lineStyle={{ flex: 1 }}
-                                        onChangeText={(text) => handleInputChange('quantidade', text)}
+                                        onChangeText={(text) => handleInputChange('quantidade', text.replace(/,/g, '.').replace(/[^0-9.]/g, ''))}
                                         placeholder="Qtde"
-                                        keyboardType='numeric'
+                                        keyboardType='decimal-pad'
                                         selectTextOnFocus={true}
                                         value={productionValues.quantidade === 0 ? "" : String(productionValues.quantidade)}
                                     />

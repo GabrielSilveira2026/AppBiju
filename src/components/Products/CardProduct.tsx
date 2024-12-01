@@ -235,7 +235,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               selectTextOnFocus={true}
               keyboardType="numeric"
-              style={[styles.inputValue]}
+              style={[styles.inputValue,{ flex: 1 }]}
               placeholderTextColor={colors.textInput}
             />
           </View>
