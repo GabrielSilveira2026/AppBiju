@@ -50,6 +50,7 @@ type SyncContextType = {
   getPayment: (id_pessoa?: number) => Promise<any>,
   postPayment: (payment: PaymentType) => Promise<any>,
   deletePayment: (id_payment: string) => Promise<any>,
+  setMessage: Dispatch<SetStateAction<string>>
 };
 
 const SyncContext = createContext<SyncContextType | undefined>(undefined);
@@ -84,6 +85,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       syncData();
     }
   }, [isConnected]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setMessage("")
+    }, 3500);
+  }, [message])
+
 
   async function syncData() {
 
@@ -462,10 +470,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (response.status === 571) {
       const response = await paymentDatabase.getPendingPayment(id_pessoa)
-      setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
-      setTimeout(() => {
-        setMessage("")
-      }, 3500);
       return { response: response, origemDados: "Local" }
     }
 
@@ -507,7 +511,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid }}>
+    <SyncContext.Provider value={{ deletePayment, postPayment, getPayment, deleteDay, updateDay, deleteProduct, deleteProduction, postProduction, getProduction, updateProduction, updateProduct, updateHourValue, setIsConnected, isConnected, syncData, postProduct, getProduct, getPeople, getDay, postDay, getPendingPayment, getHourValue, nanoid, setMessage }}>
       <>
         {children}
         {
@@ -518,7 +522,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
               top: 60,
               right: 8,
               left: 8,
-              // width: "100%",
               alignItems: 'center',
             }}
           >

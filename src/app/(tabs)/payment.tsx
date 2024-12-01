@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
@@ -44,18 +44,24 @@ export default function Payment() {
   }, [isFocused])
 
 
-  function handleCreatePayment() {
+  async function handleCreatePayment() {
     if (!isAdding) {
       setIsAdding(true)
-
-      const newPayment: PaymentType = {
-        id_pagamento: "",
-        data_pagamento: (new Date()).toISOString(),
-        id_pessoa: Number(id_pessoa) || 0,
-        valor_pagamento: 0,
-        nome: ""
-      };
-      setPaymentList((prevPaymentList) => [newPayment, ...prevPaymentList]);
+      const request = await sync.getPendingPayment()
+      if (request.origemDados === "Remoto") {
+        const newPayment: PaymentType = {
+          id_pagamento: "",
+          data_pagamento: (new Date()).toISOString(),
+          id_pessoa: Number(id_pessoa) || 0,
+          valor_pagamento: 0,
+          nome: ""
+        };
+        setPaymentList((prevPaymentList) => [newPayment, ...prevPaymentList]);
+      }
+      else {
+        Alert.alert("Falha na conexão", "Ocorreu uma falha na conexão ao consultar os pagamentos pendentes, por favor, verifique sua conexão")
+      }
+      setIsAdding(false)
     }
     else {
       setIsAdding(false)

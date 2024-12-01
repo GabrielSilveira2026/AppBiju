@@ -20,6 +20,9 @@ export default function Funcionarios() {
     async function getPendingPayment() {
         setIsLoading(true)
         const response = await sync.getPendingPayment()
+        if (response.origemDados === "Local") {
+            sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+        }
         setListPendingPayment(response.response)
         setIsLoading(false)
     }
@@ -44,6 +47,13 @@ export default function Funcionarios() {
                         <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
                     </View>
                     <FlatList
+                        refreshing={false}
+                        onRefresh={() => {
+                            if (!isLoading) {
+                                getPeople()
+                                getPendingPayment()
+                            }
+                        }}
                         data={listPendingPayment}
                         keyExtractor={item => String(item.id_pessoa)}
                         contentContainerStyle={{ gap: 16 }}

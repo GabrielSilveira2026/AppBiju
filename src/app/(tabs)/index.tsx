@@ -38,6 +38,9 @@ export default function Profile() {
   async function getDataHeader(id_pessoa: number) {
     const response = await sync.getPendingPayment(id_pessoa);
 
+    if (response.origemDados === "Local") {
+      sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+    }
     if (response.response[0]) {
 
       let { id_pessoa, nome, total, ultimo_pagamento } = response.response[0];

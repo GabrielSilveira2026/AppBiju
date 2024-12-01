@@ -147,6 +147,8 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                             handleInputChange("nome", item.nome)
                             handleInputChange("valor_pagamento", item.total)
                         }}
+                        titleSecondLabel="Valor"
+                        secondLabel="total"
                         textButton="Selecione um funcionário"
                         list={pendingPaymentList}
                     />
