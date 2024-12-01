@@ -153,7 +153,7 @@ export default function Payment() {
             }
             <Input
               value={search}
-              placeholder="Pesquisar"
+              placeholder={user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "Nome ou data": "Pesquisar"}
               onChangeText={setSearch}
             />
             {
