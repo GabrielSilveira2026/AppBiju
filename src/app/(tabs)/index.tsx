@@ -87,6 +87,7 @@ export default function Profile() {
     }
     else {
       setPage(0)
+      sync.setMessage("")
     }
   }, [isFocused]);
 

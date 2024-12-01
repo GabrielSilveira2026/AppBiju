@@ -38,6 +38,8 @@ export default function Funcionarios() {
         if (isFocused) {
             getPeople()
             getPendingPayment()
+        } else {
+            sync.setMessage("")
         }
     }, [isFocused])
 
