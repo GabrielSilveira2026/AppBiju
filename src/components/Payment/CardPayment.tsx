@@ -37,8 +37,6 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
         if (mode === "create") {
             getPendingPayment()
         }
-        return () => {
-        }
     }, [])
 
     const handleInputChange = (field: keyof PaymentType, value: string | number) => {

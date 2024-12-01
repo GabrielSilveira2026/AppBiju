@@ -51,7 +51,7 @@ export default function Payment() {
       if (request.origemDados === "Remoto") {
         const newPayment: PaymentType = {
           id_pagamento: "",
-          data_pagamento: (new Date()).toISOString(),
+          data_pagamento: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString(),
           id_pessoa: Number(id_pessoa) || 0,
           valor_pagamento: 0,
           nome: ""
@@ -60,8 +60,8 @@ export default function Payment() {
       }
       else {
         Alert.alert("Falha na conexão", "Ocorreu uma falha na conexão ao consultar os pagamentos pendentes, por favor, verifique sua conexão")
+        setIsAdding(false)
       }
-      setIsAdding(false)
     }
     else {
       setIsAdding(false)
@@ -73,10 +73,6 @@ export default function Payment() {
 
     if (payment.id_pagamento === "") {
       payment.id_pagamento = sync.nanoid()
-      let localDate = new Date(payment.data_pagamento)
-      localDate = new Date(localDate.getTime() - localDate.getTimezoneOffset() * 60000);
-      payment.data_pagamento = localDate.toISOString();
-
       const request = await sync.postPayment(payment)
       setPaymentList((prevPaymentList) => [payment, ...prevPaymentList]);
 
