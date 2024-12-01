@@ -40,6 +40,9 @@ export default function Profile() {
 
     if (response.origemDados === "Local") {
       sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+      setTimeout(() => {
+        sync.setMessage("")
+      }, 4000);
     }
     if (response.response[0]) {
 
@@ -55,9 +58,9 @@ export default function Profile() {
     await sync.getPeople(Number(id_pessoa_params) || user?.id_pessoa);
   }
 
-  async function getDataDays() {
+  async function getDataDays(reset?: boolean) {
     setIsLoading(true)
-    const response = await sync.getDay(page, Number(id_pessoa_params) || user?.id_pessoa);
+    const response = await sync.getDay(reset ? 0 : page, Number(id_pessoa_params) || user?.id_pessoa);
 
     if (page === 0) {
       for (const day of response.response.slice(0, 7)) {
@@ -179,9 +182,7 @@ export default function Profile() {
             <FlatList
               refreshing={false}
               onRefresh={() => {
-                if (!isLoading) {
-                  setPage(0)
-                }
+                getDataDays(true)
               }}
               data={viewMore ? dayList : dayList.slice(0, 30)}
               ListEmptyComponent={

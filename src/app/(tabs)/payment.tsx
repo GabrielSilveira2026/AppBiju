@@ -12,6 +12,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { View, Text, ImageBackground, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Payment() {
@@ -43,6 +44,23 @@ export default function Payment() {
     }
   }, [isFocused])
 
+  const containerPosition = useSharedValue(400)
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: containerPosition.value
+        }
+      ]
+    }
+  })
+
+  useEffect(() => {
+    containerPosition.value = 400
+    containerPosition.value = withTiming(0, {
+      duration: 1000,
+    })
+  }, [])
 
   async function handleCreatePayment() {
     if (!isAdding) {
@@ -95,7 +113,7 @@ export default function Payment() {
   return (
     <ImageBackground source={IMAGE_PATHS.backgroundImage} style={globalStyles.backgroundImage}>
       <SafeAreaView style={globalStyles.pageContainer}>
-        <View style={[globalStyles.container, styles.paymentContainer]}>
+        <Animated.View style={[containerStyle, globalStyles.container, styles.paymentContainer]}>
           <View style={styles.titleContainer}>
             <TouchableOpacity
               onPress={() => {
@@ -149,7 +167,7 @@ export default function Payment() {
               text="Adicionar Pagamento"
             />
           }
-        </View>
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   )

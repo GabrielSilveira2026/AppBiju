@@ -22,6 +22,9 @@ export default function Funcionarios() {
         const response = await sync.getPendingPayment()
         if (response.origemDados === "Local") {
             sync.setMessage("Os dados foram resgatados localmente, eles podem estar desatualizados, por favor, verifique sua conexão")
+            setTimeout(() => {
+                sync.setMessage("")
+            }, 4000);
         }
         setListPendingPayment(response.response)
         setIsLoading(false)

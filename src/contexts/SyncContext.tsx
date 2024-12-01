@@ -86,13 +86,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isConnected]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setMessage("")
-    }, 3500);
-  }, [message])
-
-
   async function syncData() {
 
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
