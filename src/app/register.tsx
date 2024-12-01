@@ -138,6 +138,7 @@ export default function RegisterForm() {
                   placeholder="Digite sua senha novamente"
                   value={value}
                   onChangeText={onChange}
+                  autoCapitalize="none"
                   secureTextEntry
                   textContentType="password"
                   inputStyle={{ flex: 1 }}

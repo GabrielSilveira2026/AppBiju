@@ -55,7 +55,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
 
     async function deletePayment() {
         if (paymentValues.id_pagamento !== "") {
-            Alert.alert("Deletar pagamento?", `Deseja deletar esse pagamento?`, [
+            Alert.alert("Deletar pagamento?", `Deseja deletar esse pagamento? Essa ação não poderá ser desfeita`, [
                 {
                     text: "Cancelar"
                 },
@@ -72,9 +72,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
     if (modeCard === "view") {
         return (
             <Pressable onPress={() => {
-                if (user?.id_perfil !== constants.perfil.funcionario.id_perfil) {
-                    setModeCard("details")
-                }
+                setModeCard("details")
             }}
                 style={[globalStyles.cardContainer, stylesView.cardContainer]}
             >
@@ -93,10 +91,7 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                     <View style={stylesView.textContainer}>
                         <Text style={styles.textValue}>R${payment.valor_pagamento.toFixed(2)}</Text>
                     </View>
-                    {
-                        user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
-                        <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
-                    }
+                    <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
                 </View>
             </Pressable>
         )

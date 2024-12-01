@@ -153,7 +153,8 @@ export default function Payment() {
             }
             <Input
               value={search}
-              placeholder={user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "Nome ou data": "Pesquisar"}
+              inputStyle={{ flex: 1 }}
+              placeholder={user?.id_perfil !== constants.perfil.funcionario.id_perfil ? "Nome ou data" : "Pesquisar"}
               onChangeText={setSearch}
             />
             {
@@ -190,7 +191,7 @@ export default function Payment() {
             )}
           />
           {
-            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            // user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
             <AddContainer
               disable={isAdding}
               onPress={handleCreatePayment}
