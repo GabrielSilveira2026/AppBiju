@@ -191,7 +191,7 @@ export default function Payment() {
             )}
           />
           {
-            // user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
             <AddContainer
               disable={isAdding}
               onPress={handleCreatePayment}
