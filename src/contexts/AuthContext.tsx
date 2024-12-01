@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(userDataRemote);
             redirectUser(userDataRemote.id_perfil)
           }else{
+            setUser(userDataLocalJson);
             redirectUser(userDataLocalJson.id_perfil)
           }
           
