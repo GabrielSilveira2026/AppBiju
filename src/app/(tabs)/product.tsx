@@ -118,7 +118,7 @@ export default function Product() {
   function handleCreateProduct() {
     if (!isCreating) {
       setIsCreating(true)
-
+      setSearch("")
       const newProduct: ProductType = {
         id_produto: "",
         cod_referencia: 0,

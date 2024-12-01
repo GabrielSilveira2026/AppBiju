@@ -1,4 +1,5 @@
 import AddContainer from '@/src/components/AddContainer'
+import { Input } from '@/src/components/Input'
 import CardPayment from '@/src/components/Payment/CardPayment'
 import { constants } from '@/src/constants/constants'
 import { useAuthContext } from '@/src/contexts/AuthContext'
@@ -23,6 +24,8 @@ export default function Payment() {
 
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [paymentList, setPaymentList] = useState<PaymentType[]>([])
+  const [filteredPaymentList, setFilteredPaymentList] = useState<PaymentType[]>([]);
+  const [search, setSearch] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   async function getPayment(id_pessoa?: number) {
@@ -43,6 +46,18 @@ export default function Payment() {
       setIsAdding(false)
     }
   }, [isFocused])
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFilteredPaymentList(paymentList);
+    } else {
+      setFilteredPaymentList(
+        paymentList.filter((payment) =>
+          payment.nome.toLowerCase().includes(search.toLowerCase())
+        )
+      )
+    }
+  }, [search, paymentList]);
 
   const containerPosition = useSharedValue(400)
   const containerStyle = useAnimatedStyle(() => {
@@ -132,16 +147,27 @@ export default function Payment() {
             </TouchableOpacity>
 
             <Text style={globalStyles.title}>Pagamentos</Text>
-            <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
-
-            {/* <Input
-              value=""
+            <Input
+              value={search}
               placeholder="Pesquisar"
-              onChangeText={() => { }}
-            /> */}
+              onChangeText={setSearch}
+            />
+            {
+              search &&
+              <TouchableOpacity
+                onPress={() => setSearch("")}
+              >
+                <Ionicons name="close-circle-outline" color={colors.primary} size={30} />
+              </TouchableOpacity>
+            }
+            {
+              isLoading &&
+              <ActivityIndicator animating={isLoading} style={{ marginLeft: "auto" }} color={colors.primary} />
+            }
+
           </View>
           <FlatList
-            data={paymentList}
+            data={filteredPaymentList}
             refreshing={false}
             onRefresh={() => {
               getPayment()

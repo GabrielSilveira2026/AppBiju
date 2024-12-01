@@ -25,7 +25,7 @@ export function getPending(id_pessoa?: number) {
 export function getPayment(id_pessoa?: number) {
     const query = id_pessoa ? `,"id_pessoa":${id_pessoa}}` : "}"
 
-    const response = axios.get(`${baseUrl}/pagamento/?q={"$orderby":{"data_pagamento":"desc"}${query}`).catch(function (error) {
+    const response = axios.get(`${baseUrl}/pagamento/?limit=100&q={"$orderby":{"data_pagamento":"desc"}${query}`).catch(function (error) {
         return { data: null, status: 571 }
     });
 
