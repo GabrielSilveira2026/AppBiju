@@ -248,7 +248,7 @@ export default function Product() {
             }
           />
           {
-            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil && !isCreating &&
             <AddContainer
               text="Criar produto"
               disable={isCreating}

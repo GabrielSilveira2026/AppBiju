@@ -242,7 +242,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
         </View>
         <View style={styles.line}>
           <Input
-            placeholder="Digite uma descrição pro produto, como quantidade de materiais, medidas, etc (Opcional)"
+            placeholder="Digite uma descrição para o produto, como por exemplo, quantidade de materiais, medidas, etc (Opcional)"
             value={productValues.descricao}
             label="Descrição"
             multiline

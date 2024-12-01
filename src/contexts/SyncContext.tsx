@@ -21,7 +21,7 @@ import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
 import { constants } from '../constants/constants';
 import usePaymentDatabase from '../database/usePaymentDatabase';
-import { Text, View } from 'react-native';
+import { Text, Touchable, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/styles/color';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
@@ -463,8 +463,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     const response = await getPendingRemote(id_pessoa);
 
     if (response.status === 571) {
-      const response = await paymentDatabase.getPendingPayment(id_pessoa)
-      return { response: response, origemDados: "Local" }
+    const response = await paymentDatabase.getPendingPayment(id_pessoa)
+    return { response: response, origemDados: "Local" }
     }
 
     return { response: response.data.items, origemDados: "Remoto" };
@@ -513,7 +513,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
           <View
             style={{
               position: 'absolute',
-              top: 60,
+              top: 45,
               right: 8,
               left: 8,
               alignItems: 'center',
@@ -522,8 +522,11 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
             <Text
               style={{
                 color: colors.text,
+                fontSize: 16,
                 padding: 12,
                 backgroundColor: colors.backgroundSecundary,
+                borderColor: colors.text,
+                borderWidth: 1,
                 borderRadius: 8
               }}
             >

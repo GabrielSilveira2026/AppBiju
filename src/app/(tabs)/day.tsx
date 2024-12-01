@@ -352,12 +352,13 @@ export default function DayDetails() {
                                 onRemove={handleDeleteProduction}
                             />
                         }
-                        style={{ marginBottom: isKeyboardVisible ? keyboardHeight -80 : 0 }}
+                        style={{ marginBottom: isKeyboardVisible ? keyboardHeight - 80 : 0 }}
                         keyExtractor={(item, index) => String(index)}
                         contentContainerStyle={{ gap: 8 }}
                     />
                     {mode && mode !== "edit"
                         &&
+                        !isAdding &&
                         < AddContainer
                             text="Adicionar produção"
                             disable={isAdding}
