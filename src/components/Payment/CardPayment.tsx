@@ -165,7 +165,10 @@ export default function CardPayment({ onDelete, onSave, onCancel, payment, mode 
                 </View>
                 <View style={stylesCreate.line}>
                     <Button style={{ flex: 1 }} title={"Descartar"} onPress={onCancel} />
-                    <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
+                    {
+                        payment !== paymentValues &&
+                        <Button style={{ flex: 1 }} title={"Salvar"} onPress={savePayment} />
+                    }
                 </View>
             </Pressable>
         )
