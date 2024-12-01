@@ -39,10 +39,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response?.data?.items.length) {
             const userDataRemote = response.data.items[0]
             setUser(userDataRemote);
-            setIsAuthenticated(true);
             redirectUser(userDataRemote.id_perfil)
           }
-
+          setIsAuthenticated(true);
         }
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
