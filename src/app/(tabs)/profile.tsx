@@ -246,7 +246,7 @@ export default function ProfileForm() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-            <Text style={{ textAlign: "center", color: colors.text }}>V.1.0.0</Text>
+            <Text style={{ textAlign: "center", color: colors.text }}>V.1.0.1</Text>
         </ImageBackground>
     );
 }
