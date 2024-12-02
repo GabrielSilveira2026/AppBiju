@@ -92,8 +92,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     for (const operacaoPendente of operacoesPendentes) {
       if (operacaoPendente.metodo === "POST") {
-
-        await axios.post(operacaoPendente.url)
+        const body = operacaoPendente.body? JSON.parse(operacaoPendente.body) : null
+        await axios.post(operacaoPendente.url, body)
           .catch(function (error) {
             if (error.response) {
               console.warn("Erro de resposta:", error.response.status, error.response.data);
