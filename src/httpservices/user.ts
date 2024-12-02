@@ -54,7 +54,7 @@ export function getPeople(id_pessoa?: number) {
 
   const query = id_pessoa ? `,"id_pessoa":${id_pessoa}` : "";
 
-  const response = axios.get(`${baseUrl}/pessoa/?q={"$orderby":{"nome":"asc"}${query}}`).catch(function (error) {
+  const response = axios.get(`${baseUrl}/pessosa/?q={"$orderby":{"nome":"asc"}${query}}`).catch(function (error) {
     return { data: [], status: 571 };
     // if (error.response) {
     //   console.log(error.response)
