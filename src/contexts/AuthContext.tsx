@@ -38,14 +38,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response?.data?.items.length) {
             const userDataRemote = response.data.items[0]
             setUser(userDataRemote);
-            setIsAuthenticated(true);
             redirectUser(userDataRemote.id_perfil)
-          }else{
-            setUser(userDataLocalJson);
             setIsAuthenticated(true);
-            redirectUser(userDataLocalJson.id_perfil)
+          }else{
+            setUser(userDataLocalJson.user);
+            redirectUser(userDataLocalJson.user.id_perfil)
+            setIsAuthenticated(true);
           }
-          
         }
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
@@ -58,6 +57,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   function redirectUser(id_perfil: number) {
+    console.log("redirect", id_perfil);
+    
     if (id_perfil === constants.perfil.suporte.id_perfil) {
       router.replace("/(tabs)")
     } else if (id_perfil === constants.perfil.administrador.id_perfil) {
