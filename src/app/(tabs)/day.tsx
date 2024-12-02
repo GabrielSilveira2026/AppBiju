@@ -108,6 +108,7 @@ export default function DayDetails() {
             setMode(undefined);
             setIsAdding(false)
             setProductionList([])
+            sync.setMessage("")
         }
     }, [isFocused]);
 

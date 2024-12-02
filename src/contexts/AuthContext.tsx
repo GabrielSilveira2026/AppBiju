@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   function redirectUser(id_perfil: number) {
-    console.log("redirect", id_perfil);
     
     if (id_perfil === constants.perfil.suporte.id_perfil) {
       router.replace("/(tabs)")

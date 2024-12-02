@@ -86,13 +86,20 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isConnected]);
 
+  function setMessageGetDataLocal() {
+    setMessage("Dados resgatados localmente, verifique sua conexão")
+    setTimeout(() => {
+      setMessage("")
+    }, 2000);
+  }
+
   async function syncData() {
 
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
       if (operacaoPendente.metodo === "POST") {
-        const body = operacaoPendente.body? JSON.parse(operacaoPendente.body) : null
+        const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null
         await axios.post(operacaoPendente.url, body)
           .catch(function (error) {
             if (error.response) {
@@ -202,6 +209,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (request.status === 571) {
       const localData = await dayDatabase.getDay(id_pessoa)
+      setMessageGetDataLocal()
       return { response: localData, origemDados: "Local" }
     }
     if (page === 0) {
@@ -286,6 +294,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (request.status === 571) {
       const request = await productDatabase.getProduct()
+      setMessageGetDataLocal()
       return { response: request, origemDados: "Local" }
     }
 
@@ -369,6 +378,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (requestRemote.status === 571) {
       const request = await productionDatabase.getProduction(id_dia)
+      setMessageGetDataLocal()
       return { response: request, origemDados: "Local" }
     }
 
@@ -456,6 +466,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (requestRemote.status === 571) {
       const request = await paymentDatabase.getPayment(id_pessoa)
+      setMessageGetDataLocal()
       return { response: request, origemDados: "Local" }
     }
     await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
@@ -467,9 +478,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getPendingPayment(id_pessoa?: number) {
     const response = await getPendingRemote(id_pessoa);
-
     if (response.status === 571) {
       const response = await paymentDatabase.getPendingPayment(id_pessoa)
+      setMessageGetDataLocal()
       return { response: response, origemDados: "Local" }
     }
 

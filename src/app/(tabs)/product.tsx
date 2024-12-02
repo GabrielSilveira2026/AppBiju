@@ -54,6 +54,7 @@ export default function Product() {
     } else {
       setIsCreating(false)
       setSearch("")
+      sync.setMessage("")
     }
   }, [isFocused]);
 

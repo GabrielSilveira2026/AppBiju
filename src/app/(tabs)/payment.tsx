@@ -46,6 +46,7 @@ export default function Payment() {
     else {
       setSearch("")
       setIsAdding(false)
+      sync.setMessage("")
     }
   }, [isFocused])
 
