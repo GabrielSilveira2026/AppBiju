@@ -1,50 +1,74 @@
-# Welcome to your Expo app 👋
+📝 Aplicativo SCPP - Sistema Controlador de Produções e Pagamentos 📝
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Sistema voltado para o controle de produções e pagamentos, especialmente projetado para uma empresa de bijuterias. Este projeto teve como foco principal:
 
-## Get started
+📍 O registro das produções realizadas pelos funcionários.
 
-1. Install dependencies
+📍 A consulta do valor a receber pelas produções realizadas.
 
-   ```bash
-   npm install
-   ```
+📍 A gestão das produções da empresa e dos pagamentos aos funcionários.
 
-2. Start the app
+Funcionalidades do Sistema
 
-   ```bash
-    npx expo start
-   ```
+Cada funcionário possui um usuário exclusivo, onde pode:
 
-In the output, you'll find options to open the app in a
+🔹 Registrar seus "Dias de Produção" com detalhes como os produtos produzidos, quantidades e observações opcionais.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🔹 Consultar o tempo estimado e o valor de produção antes mesmo de iniciar a atividade.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+🔹 Visualizar o valor total das produções realizadas em um dia específico, calculado automaticamente.
 
-## Get a fresh project
+No perfil de cada funcionário, o sistema exibe:
 
-When you're ready, run:
+🔸 O valor a receber (produções pendentes de pagamento com base no mês do último pagamento).
 
-```bash
-npm run reset-project
-```
+🔸 A data do último pagamento realizado.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+No de administrador, o sistema exibe:
 
-## Learn more
+🔸 A lista de funcionários, com valor a pagar e data do ultimo pagamento, podendo também acessar o perfil dos funcionários para consultar as produções dos mesmos.
 
-To learn more about developing your project with Expo, look at the following resources:
+Além disso, o sistema oferece abas específicas para:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+📍Produtos: Cadastro detalhado com código de referência, descrição, tempo de produção, valor da mão de obra e cálculo automático do valor total (baseado no Valor da Hora).
 
-## Join the community
+📍Pagamentos: Histórico de pagamentos e funcionalidade para que administradores insiram novos pagamentos.
 
-Join our community of developers creating universal apps.
+Principais Funcionalidades:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+✅ CRUD Completo:
+
+◾Dias de Produção
+
+◾Produções
+
+◾Produtos
+
+◾Pagamentos
+
+✅ Offline First: Todas as operações (exceto lançamentos de pagamentos, devido a regras de negócio) podem ser realizadas offline. Os dados são sincronizados automaticamente com o banco de dados quando a conexão com a internet é restabelecida.
+
+Tecnologias Utilizadas:
+
+🔹 React Native
+
+🔹 SQLite
+
+🔹 Oracle Cloud Infrastructure (OCI)
+
+🔹 Oracle Autonomous Database
+
+🔹 Oracle REST Data Services (ORDS)
+
+
+Aprendizados e Conquistas:
+
+📘 Prática avançada dos conceitos de Offline First.
+
+📘 Desenvolvimento aprofundado em React Native, com foco em componentização, renderização eficiente e otimização de performance.
+
+📘 Uso extensivo de TypeScript, garantindo maior segurança e clareza no código.
+
+Impacto e Resultados:
+
+Esse projeto foi uma experiência incrível, desde o planejamento até a entrega final. A maior recompensa foi ver a satisfação dos usuários ao utilizar o sistema, agora mais ágil e eficiente. Com o SCPP, eles podem economizar tempo valioso ao calcular produções e pagamentos, além de ter uma visão clara das atividades diárias e do tempo de trabalho. Receber feedbacks positivos, como “Agora temos visibilidade total das produções e pagamentos”, é a verdadeira sensação de dever cumprido.
