@@ -13,11 +13,6 @@ https://github.com/user-attachments/assets/e2810951-307d-413d-abc4-15ae84864097
 
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="assets/images/screenshots/Frame 42.png" alt="Screenshot" width="300"/>
-  <img src="assets/images/screenshots/Frame 43.png" alt="Screenshot" width="300"/>
-  <img src="assets/images/screenshots/Frame 44.png" alt="Screenshot" width="300"/>
-  <img src="assets/images/screenshots/Frame 45.png" alt="Screenshot" width="300"/>
-  <img src="assets/images/screenshots/Frame 46.png" alt="Screenshot" width="300"/>
 </div>
 
 
@@ -31,21 +26,32 @@ Cada funcionário possui um usuário exclusivo, onde pode:
 
 🔹 Visualizar o valor total das produções realizadas em um dia específico, calculado automaticamente.
 
+<img src="assets/images/screenshots/Frame 42.png" alt="Screenshot" width="300"/>
+
 No perfil de cada funcionário, o sistema exibe:
 
 🔸 O valor a receber (produções pendentes de pagamento com base no mês do último pagamento).
 
 🔸 A data do último pagamento realizado.
 
-No de administrador, o sistema exibe:
+<img src="assets/images/screenshots/Frame 43.png" alt="Screenshot" width="300"/>
+
+
+No perfil de administrador, o sistema exibe:
 
 🔸 A lista de funcionários, com valor a pagar e data do ultimo pagamento, podendo também acessar o perfil dos funcionários para consultar as produções dos mesmos.
+
+<img src="assets/images/screenshots/Frame 44.png" alt="Screenshot" width="300"/>
+
 
 Além disso, o sistema oferece abas específicas para:
 
 📍Produtos: Cadastro detalhado com código de referência, descrição, tempo de produção, valor da mão de obra e cálculo automático do valor total (baseado no Valor da Hora).
 
 📍Pagamentos: Histórico de pagamentos e funcionalidade para que administradores insiram novos pagamentos.
+
+<img src="assets/images/screenshots/Frame 45.png" alt="Screenshot" width="300"/>
+
 
 Principais Funcionalidades:
 
@@ -60,6 +66,9 @@ Principais Funcionalidades:
 ◾Pagamentos
 
 ✅ Offline First: Todas as operações (exceto lançamentos de pagamentos, devido a regras de negócio) podem ser realizadas offline. Os dados são sincronizados automaticamente com o banco de dados quando a conexão com a internet é restabelecida.
+
+<img src="assets/images/screenshots/Frame 46.png" alt="Screenshot" width="300"/>
+
 
 Tecnologias Utilizadas:
 
