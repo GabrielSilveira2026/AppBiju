@@ -9,7 +9,11 @@ Sistema voltado para o controle de produções e pagamentos, especialmente proje
 📍 A gestão das produções da empresa e dos pagamentos aos funcionários.
 
 <div style="display: flex; justify-content: space-between;">
-  <img src="assets/images/screenshots/fRAME 42.png" alt="Screenshot" width="300"/>
+  <img src="assets/images/screenshots/Frame 42.png" alt="Screenshot" width="300"/>
+  <img src="assets/images/screenshots/Frame 43.png" alt="Screenshot" width="300"/>
+  <img src="assets/images/screenshots/Frame 44.png" alt="Screenshot" width="300"/>
+  <img src="assets/images/screenshots/Frame 45.png" alt="Screenshot" width="300"/>
+  <img src="assets/images/screenshots/Frame 46.png" alt="Screenshot" width="300"/>
 </div>
 
 Funcionalidades do Sistema
