@@ -34,22 +34,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response.status === 571) {
             console.warn('Erro ao recuperar o usuário nos base remota');
           }
-          
+
           if (response?.data?.items.length) {
             const userDataRemote = response.data.items[0]
             setUser(userDataRemote);
-            redirectUser(userDataRemote.id_perfil)
-            setIsAuthenticated(true);
-          }else{
+            // redirectUser(userDataRemote.id_perfil)
+          } else {
             setUser(userDataLocalJson.user);
-            redirectUser(userDataLocalJson.user.id_perfil)
-            setIsAuthenticated(true);
+            // redirectUser(userDataLocalJson.user.id_perfil)
           }
+          setIsAuthenticated(true);
+          router.replace("/(tabs)")
+        }
+        else {
+          router.replace("/login")
         }
       } catch (error) {
         console.warn('Erro ao recuperar o usuário:', error);
-      } finally {
-        setIsLoading(false)
       }
     }
 
@@ -57,9 +58,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   function redirectUser(id_perfil: number) {
-    
+
     if (id_perfil === constants.perfil.suporte.id_perfil) {
-      router.replace("/(tabs)")
+
     } else if (id_perfil === constants.perfil.administrador.id_perfil) {
       router.replace("/(tabs)/employees")
     } else {
@@ -81,10 +82,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(true)
       try {
         await AsyncStorage.setItem("@user", JSON.stringify({ user: userData }))
-        redirectUser(userData.id_perfil)
       } catch (error) {
         console.warn(error);
       } finally {
+        router.replace("/(tabs)")
         setTimeout(() => {
           setIsLoading(false)
         }, 1000);
