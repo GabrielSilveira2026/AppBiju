@@ -57,7 +57,7 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
-  const { user } = useAuthContext()
+  const { user, setIsLoading } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
   const [message, setMessage] = useState<string>("");
 
@@ -98,64 +98,43 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
-      if (operacaoPendente.metodo === "POST") {
-        const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null
-        await axios.post(operacaoPendente.url, body)
-          .catch(function (error) {
-            if (error.response) {
-              console.warn("Erro de resposta:", error.response.status, error.response.data);
-              return
-            } else if (error.request) {
-              console.warn("Erro de requisição:", error.request);
-              return
-            } else {
-              console.warn("Erro:", error.message);
-              return
-            }
+      try {
+        if (operacaoPendente.metodo === "POST") {
+          const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null;
+          await axios.post(operacaoPendente.url, body);
+        }
+        else if (operacaoPendente.metodo === "PUT") {
+          const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null;
+          await axios.put(operacaoPendente.url, body, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           });
+        }
+        else if (operacaoPendente.metodo === "DELETE") {
+          await axios.delete(operacaoPendente.url);
+        }
+
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
-      }
-      else if (operacaoPendente.metodo === "PUT") {
-
-        await axios.put(operacaoPendente.url, operacaoPendente.body, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }).catch(function (error) {
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
           if (error.response) {
-            console.warn(error.response)
-            return
+            console.warn(error.response.status, error.response.data);
           } else if (error.request) {
-            console.warn(error.request)
-            return
+            console.warn(error.request);
           } else {
-            console.warn(error.message)
-            return
+            console.warn(error.message);
           }
-        });
-
-        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
-      } else if (operacaoPendente.metodo === "DELETE") {
-        await axios.delete(operacaoPendente.url).catch(function (error) {
-          if (error.response) {
-            console.warn(error.response)
-            return
-          } else if (error.request) {
-            console.warn(error.request)
-            return
-          } else {
-            console.warn(error.message)
-            return
-          }
-        });
-
-        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+        } else if (error instanceof Error) {
+          console.warn(error.message);
+        } else {
+          console.warn(error);
+        }
       }
     }
 
     await productionDatabase.deleteProduction()
+    setIsLoading(false)
   };
 
   async function getHourValue() {
@@ -300,9 +279,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await productDatabase.updateProductList(request.data.items)
 
-    const localData = await productDatabase.getProduct()
-
-    return { response: localData, origemDados: "Remoto" };
+    return { response: request.data.items, origemDados: "Remoto" };
   }
 
   async function postProduct(produto: ProductType) {
@@ -384,9 +361,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await productionDatabase.updateProductionList(requestRemote.data.items, id_dia)
 
-    const localData = await productionDatabase.getProduction(id_dia)
-
-    return { response: localData, origemDados: "Remoto" };
+    return { response: requestRemote.data.items, origemDados: "Remoto" };
   }
 
   async function postProduction(production: ProductionType) {
@@ -471,9 +446,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
     await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
 
-    const localData = await paymentDatabase.getPayment(id_pessoa)
-
-    return { response: localData, origemDados: "Remoto" };
+    return { response: requestRemote.data.items, origemDados: "Remoto" };
   }
 
   async function getPendingPayment(id_pessoa?: number) {
