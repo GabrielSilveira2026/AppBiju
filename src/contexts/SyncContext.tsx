@@ -83,6 +83,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isConnected) {
       syncData();
+    } else {
+      setIsLoading(false)
     }
   }, [isConnected]);
 
