@@ -147,7 +147,7 @@ export default function log() {
         <LogComponent titulo={"Pessoa"} log={JSON.stringify(log6, 0, 2)} />
         <LogComponent titulo={"Payment"} log={JSON.stringify(log3, 0, 2)} />
         <LogComponent titulo={"Dias"} log={JSON.stringify(log4, 0, 2)} />
-        <LogComponent titulo={"Operacoes"} log={JSON.stringify(log5, 0, 2)} />
+        <LogComponent titulo={"Operacoes Pendentes"} log={JSON.stringify(log5, 0, 2)} />
 
         {/* <Text>
           Produtos:{JSON.stringify(log1, 0, 2)}

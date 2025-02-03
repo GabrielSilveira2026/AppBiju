@@ -315,8 +315,12 @@ export default function DayDetails() {
                                         )}
                             </View>
                             <View style={styles.secondLine}>
-                                <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
-                                <Text style={styles.textValue}>{params?.pessoa}</Text>
+                                <View>
+                                    <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
+                                </View>
+                                <View style={{ flex: 1, alignItems: "flex-end"}}>
+                                    <Text style={styles.textValue} numberOfLines={1} ellipsizeMode="tail">{params?.pessoa}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -410,7 +414,8 @@ const styles = StyleSheet.create({
     secondLine: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        gap: 8
     },
     textValue: {
         fontSize: 24,
