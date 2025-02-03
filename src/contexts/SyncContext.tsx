@@ -448,7 +448,9 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
     await paymentDatabase.updatePaymentList(requestRemote.data.items, id_pessoa)
 
-    return { response: requestRemote.data.items, origemDados: "Remoto" };
+    const localData = await paymentDatabase.getPayment(id_pessoa)
+
+    return { response: localData, origemDados: "Remoto" };
   }
 
   async function getPendingPayment(id_pessoa?: number) {
