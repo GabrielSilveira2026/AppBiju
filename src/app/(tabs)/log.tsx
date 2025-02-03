@@ -18,6 +18,7 @@ import { Input } from '@/src/components/Input';
 import { formatMinutesToHours } from '@/src/utils/utils';
 import HourContainer from '@/src/components/Products/HourContainer';
 import usePaymentDatabase from '@/src/database/usePaymentDatabase';
+import { Ionicons } from '@expo/vector-icons';
 const nanoid = customAlphabet('1234567890abcdef', 10)
 
 export default function log() {
@@ -28,7 +29,6 @@ export default function log() {
   const peopleDatabase = usePeopleDatabase();
   const dayDatabase = useDayDatabase();
   const pendingOperationDatabase = usePendingOperationDatabase()
-
 
   const [log1, setLog1] = useState([])
   const [log2, setLog2] = useState([])
@@ -42,7 +42,7 @@ export default function log() {
 
   async function logout() {
     const tables = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table'`);
-    
+
     for (const table of tables) {
       await database.execAsync(`DELETE FROM ${table.name}`);
     }
@@ -115,43 +115,41 @@ export default function log() {
     setAlarmString(tempo)
   }
 
+  function LogComponent({ titulo, log }: { titulo: String, log: String }) {
+    const [showDetails, setShowDetails] = useState<boolean>(false)
+    return (
+      <View style={{ backgroundColor: "#CCC", margin: 10 }}>
+        <Text>{titulo}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flex: 1 }}>
+            {
+              showDetails &&
+              <Text>
+                {log}
+              </Text>
+            }
+          </View>
+          <TouchableOpacity style={{ backgroundColor: "#BBB", justifyContent: "center" }} onPress={() => setShowDetails(!showDetails)}>
+            <Ionicons name={showDetails ? "eye-off" : "eye"} size={30} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <SafeAreaView>
       <ScrollView>
-        <Text>Vc esta esta logado</Text>
-        <Button onPress={logout} title={"Sign Out"} style={{ backgroundColor: "black" }} />
         <Button onPress={cleanData} title={"Limpar tabelas"} style={{ backgroundColor: "black" }} />
-        <Button onPress={geraID} title={"Gera ID"} style={{ backgroundColor: "black" }} />
 
+        <LogComponent titulo={"Produtos"} log={JSON.stringify(log1, 0, 2)} />
+        <LogComponent titulo={"Producoes"} log={JSON.stringify(log2, 0, 2)} />
+        <LogComponent titulo={"Pessoa"} log={JSON.stringify(log6, 0, 2)} />
+        <LogComponent titulo={"Payment"} log={JSON.stringify(log3, 0, 2)} />
+        <LogComponent titulo={"Dias"} log={JSON.stringify(log4, 0, 2)} />
+        <LogComponent titulo={"Operacoes"} log={JSON.stringify(log5, 0, 2)} />
 
-        <Button onPress={() => setShowPicker(!showPicker)} title={"Timer"} style={{ backgroundColor: "black" }} />
-
-        <Pressable onPress={() => setShowPicker(!showPicker)}>
-          <Input
-            value={""}
-            placeholder="Tempo"
-            onChangeText={() => { }}
-            editable={false}
-            keyboardType="numeric"
-            style={[{ textAlign: "center" }]}
-          />
-        </Pressable>
-
-        <TimerPickerModal
-          visible={showPicker}
-          setIsVisible={setShowPicker}
-          onConfirm={(pickedDuration) => {
-            formatTimer(pickedDuration);
-          }}
-          onCancel={() => setShowPicker(false)}
-          closeOnOverlayPress
-          hideSeconds
-          styles={{
-            theme: "dark",
-          }}
-        />
-
-        <Text>
+        {/* <Text>
           Produtos:{JSON.stringify(log1, 0, 2)}
           {"\n"}
 
@@ -169,7 +167,7 @@ export default function log() {
 
           Operacoes:{JSON.stringify(log5, 0, 2)}
           {"\n"}
-        </Text>
+        </Text> */}
       </ScrollView>
     </SafeAreaView>
   )
