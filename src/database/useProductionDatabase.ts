@@ -131,7 +131,29 @@ export default function useProductionDatabase() {
             await statement.finalizeAsync();
         }
     }
+
+    async function getOrphanProductions() {
+        const query = `SELECT * FROM producao WHERE id_dia NOT IN (SELECT id_dia FROM dia)`;
+        const statement = await database.prepareAsync(query);
+        const results = await statement.executeAsync(query);
+        return results;
+    }
     
+    async function deleteOrphanProduction() {
+        const query = `DELETE FROM producao WHERE id_dia NOT IN (SELECT id_dia FROM dia)`
+    
+        const statement = await database.prepareAsync(query);
+    
+        try {
+            const result = await statement.executeAsync();
+    
+            return result.changes > 0;
+        } catch (error) {
+            throw error;
+        } finally {
+            await statement.finalizeAsync();
+        }
+    }
 
     async function updateProduction(production: ProductionType) {
         const statementUpdateProduction = await database.prepareAsync(`
@@ -225,5 +247,5 @@ export default function useProductionDatabase() {
         }
     }
 
-    return { getProduction, postProduction, updateProduction, deleteProduction, updateProductionList };
+    return { getProduction, postProduction, updateProduction, deleteProduction, updateProductionList,getOrphanProductions, deleteOrphanProduction };
 }
