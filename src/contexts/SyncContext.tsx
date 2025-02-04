@@ -135,7 +135,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    const log = await productionDatabase.deleteOrphanProduction()
+    await productionDatabase.deleteOrphanProduction()
     setIsLoading(false)
   };
 

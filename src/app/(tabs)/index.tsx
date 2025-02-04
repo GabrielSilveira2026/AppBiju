@@ -56,7 +56,7 @@ export default function Profile() {
     const response = await sync.getDay(reset ? 0 : page, Number(id_pessoa_params) || user?.id_pessoa);
 
     if (page === 0) {
-      for (const day of response.response) {
+      for (const day of response.response.slice(0, 7)) {
         await sync.getProduction(day.id_dia);
       }
     }

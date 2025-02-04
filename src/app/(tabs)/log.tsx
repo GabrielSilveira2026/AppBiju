@@ -19,10 +19,12 @@ import { formatMinutesToHours } from '@/src/utils/utils';
 import HourContainer from '@/src/components/Products/HourContainer';
 import usePaymentDatabase from '@/src/database/usePaymentDatabase';
 import { Ionicons } from '@expo/vector-icons';
+import { useSync } from '@/src/contexts/SyncContext';
 const nanoid = customAlphabet('1234567890abcdef', 10)
 
 export default function log() {
   const usePeople = usePeopleDatabase()
+  const sync = useSync()
   const productDatabase = useProductDatabase();
   const paymentDatabase = usePaymentDatabase();
   const productionDatabase = useProductionDatabase();
@@ -141,6 +143,7 @@ export default function log() {
     <SafeAreaView>
       <ScrollView>
         <Button onPress={cleanData} title={"Limpar tabelas"} style={{ backgroundColor: "black" }} />
+        <Button onPress={sync.syncData} title={"Sync"} style={{ backgroundColor: "black" }} />
 
         <LogComponent titulo={"Produtos"} log={JSON.stringify(log1, 0, 2)} />
         <LogComponent titulo={"Producoes"} log={JSON.stringify(log2, 0, 2)} />
