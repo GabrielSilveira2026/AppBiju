@@ -29,10 +29,11 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const localDate = new Date(initialDate.getTime() - initialDate.getTimezoneOffset() * 60000);
   const [productValues, setFormValues] = useState<ProductType>(product);
-
+  const [descriptionEditable, setDescriptionEditable] = useState(false)
   useEffect(() => {
     setModeCard(mode)
     setFormValues(product)
+    setDescriptionEditable(false);
     setInitialDate(localDate)
   }, [product])
 
@@ -108,7 +109,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   if (modeCard === "view") {
     return (
-      <Pressable style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
+      <TouchableOpacity style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
         <View style={styles.line}>
           <View style={styleViews.nameAndCode}>
             <View style={styleViews.textContainer}>
@@ -135,7 +136,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
           </View>
         </View>
-      </Pressable>
+      </TouchableOpacity>
     )
   }
   else if (modeCard === "details") {
@@ -143,25 +144,46 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
         <View style={styles.cardOpened}>
           <View style={styles.line}>
+
+            <TouchableOpacity onPress={() => {
+              if (user?.id_perfil !== constants.perfil.funcionario.id_perfil) {
+                setModeCard("edit")
+              }
+              else {
+                setDescriptionEditable(!descriptionEditable)
+              }
+            }}
+              style={{ flex: 1 }}>
+              <Ionicons name={!descriptionEditable ? "create-outline" : "arrow-back-outline"} size={35} color={colors.primary} />
+            </TouchableOpacity>
             {
-              user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
-              <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
-                <Ionicons name="create-outline" size={35} color={colors.primary} />
+              !descriptionEditable &&
+              <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
+                <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
               </TouchableOpacity>
             }
-
-            <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
-              <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
-            </TouchableOpacity>
           </View>
           <View style={styles.line}>
             <Text style={[styles.textValue, { flex: 1 }]}>{productValues.nome}</Text>
             <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{productValues.cod_referencia}</Text>
           </View>
           <View style={styles.line}>
-            <View style={stylesCreateAndEdit.textDescription}>
-              <Text style={[styles.textValue, { fontSize: 14 }]}>{productValues.descricao}</Text>
-            </View>
+            {
+              descriptionEditable ?
+                <Input
+                  placeholder="Digite uma descrição para o produto, como por exemplo, quantidade de materiais, medidas, etc (Opcional)"
+                  value={productValues.descricao}
+                  label="Descrição"
+                  multiline
+                  style={[styles.inputValue, stylesCreateAndEdit.textDescription]}
+                  onChangeText={value => handleInputChange('descricao', value)}
+                  placeholderTextColor={colors.textInput}
+                />
+                :
+                <View style={stylesCreateAndEdit.textDescription}>
+                  <Text style={[styles.textValue, { fontSize: 14 }]}>{productValues.descricao}</Text>
+                </View>
+            }
           </View>
           <View style={styles.line}>
 
@@ -189,6 +211,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               </Text>
             </View>
           </View>
+          {
+            productValues !== product &&
+            <Button
+              style={{ flex: 1 }}
+              title="Salvar"
+              onPress={saveProduct} />
+          }
         </View>
       </View>
     )
@@ -235,7 +264,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               selectTextOnFocus={true}
               keyboardType="numeric"
-              style={[styles.inputValue,{ flex: 1 }]}
+              style={[styles.inputValue, { flex: 1 }]}
               placeholderTextColor={colors.textInput}
             />
           </View>
