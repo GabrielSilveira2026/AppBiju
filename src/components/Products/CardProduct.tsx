@@ -109,7 +109,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
   if (modeCard === "view") {
     return (
-      <TouchableOpacity style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
+      <Pressable style={[globalStyles.cardContainer, styleViews.cardContainer]} onPress={() => setModeCard("details")}>
         <View style={styles.line}>
           <View style={styleViews.nameAndCode}>
             <View style={styleViews.textContainer}>
@@ -133,10 +133,12 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             </Text>
           </View>
           <View style={styles.buttonOpen}>
-            <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+            <TouchableOpacity onPress={() => setModeCard("details")}>
+              <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+            </TouchableOpacity>
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     )
   }
   else if (modeCard === "details") {

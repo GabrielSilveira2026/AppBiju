@@ -7,12 +7,17 @@ import { Input } from "../components/Input";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getAccess, updatePeople } from "../httpservices/user";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
   const [email, setEmail] = useState<string>("");
+  const [idPessoa, setIdPessoa] = useState<number>();
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [erro, setErro] = useState<string>("")
+  const [showRegisterPassword, setShowRegisterPassword] = useState<boolean>(false)
+  const [showInputPassword, setShowInputPassword] = useState<boolean>(false)
 
   async function login() {
     const response = await signIn(email.trim(), password.trim())
@@ -21,6 +26,46 @@ export default function HomeScreen() {
     }
     else if (response?.status === 571) {
       setErro("Falha na conexão")
+    }
+  }
+
+  async function createPassword() {
+    setErro("")
+    if (idPessoa) {
+      if (password === confirmPassword) {
+        const response = await updatePeople({
+          id_pessoa: idPessoa,
+          senha: password.trim(),
+        })
+
+        if (response?.status === 571) {
+          setErro("Falha na conexão");
+        }
+        else {
+          login()
+        }
+      }
+      else {
+        setErro("As senhas não coincidem")
+      }
+    }
+  }
+
+  async function getAcesss() {
+    const response = await getAccess(email)
+    setErro("")
+    console.log(response.data.items);
+
+    if (response.data?.items?.length) {
+      if (response.data?.items?.[0].primeiro_acesso === "true") {
+        setIdPessoa(response.data?.items?.[0].id_pessoa)
+        setShowRegisterPassword(true)
+      } else {
+        setShowInputPassword(true)
+      }
+    }
+    else {
+      setErro("Email não cadastrado pelo administrador")
     }
   }
 
@@ -33,31 +78,77 @@ export default function HomeScreen() {
         {erro && <Text style={{ color: colors.error }}>{erro}</Text>}
 
         <View style={globalStyles.formContainer}>
-          <Input
-            label="Email"
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            textContentType="emailAddress"
-            inputStyle={{ flex: 1 }}
-          />
-          <Input
-            label="Senha"
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            textContentType="password"
-            autoCapitalize="none"
-            onSubmitEditing={login}
-            inputStyle={{ flex: 1 }}
-          />
+          {
+            <Input
+              label="Email"
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              inputStyle={{ flex: 1 }}
+            />
+          }
+          {
+            showRegisterPassword &&
+            <>
+              <Input
+                label="Cadastre sua senha"
+                placeholder="Senha"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                textContentType="password"
+                autoCapitalize="none"
+                onSubmitEditing={login}
+                inputStyle={{ flex: 1 }}
+              />
+              <Input
+                label="Confirme sua senha"
+                placeholder="Senha"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                textContentType="password"
+                autoCapitalize="none"
+                onSubmitEditing={login}
+                inputStyle={{ flex: 1 }}
+              />
+            </>
+          }
+          {
+            showInputPassword &&
+            <Input
+              label="Senha"
+              placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              textContentType="password"
+              autoCapitalize="none"
+              onSubmitEditing={login}
+              inputStyle={{ flex: 1 }}
+            />
+          }
         </View>
         <Button
           title={"Entrar"}
-          onPress={login}
+          onPress={() => {
+            if (!showRegisterPassword && !showInputPassword) {
+              console.log("validando email");
+
+              getAcesss()
+            }
+            else if (showInputPassword) {
+              console.log("login");
+              login()
+            }
+            else {
+              console.log("cadastrando senha");
+              createPassword()
+            }
+          }}
         />
         <Text style={styles.registerRedirect}>
           Ainda não tem cadastro?

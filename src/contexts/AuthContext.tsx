@@ -38,10 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response?.data?.items.length) {
             const userDataRemote = response.data.items[0]
             setUser(userDataRemote);
-            // redirectUser(userDataRemote.id_perfil)
           } else {
             setUser(userDataLocalJson.user);
-            // redirectUser(userDataLocalJson.user.id_perfil)
           }
           setIsAuthenticated(true);
           router.replace("/(tabs)")
@@ -56,17 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkUser();
   }, []);
-
-  function redirectUser(id_perfil: number) {
-
-    if (id_perfil === constants.perfil.suporte.id_perfil) {
-
-    } else if (id_perfil === constants.perfil.administrador.id_perfil) {
-      router.replace("/(tabs)/employees")
-    } else {
-      router.replace({ pathname: "/", params: { id_pessoa: user?.id_pessoa }, })
-    }
-  }
 
   async function signIn(email: string, senha: string) {
     setIsLoading(true)

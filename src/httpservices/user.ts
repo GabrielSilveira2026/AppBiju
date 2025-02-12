@@ -36,6 +36,8 @@ export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">)
 }
 
 export async function updatePeople(userData: Partial<UserType> & { id_pessoa: number }) {
+  console.log(userData, userData.id_pessoa);
+  
   const response = await axios.put(`${baseUrl}/pessoa/${userData.id_pessoa}`, userData).catch(function (error) {
     if (error.response) {
       return error.response
@@ -56,15 +58,14 @@ export function getPeople(id_pessoa?: number) {
 
   const response = axios.get(`${baseUrl}/pessoa/?q={"$orderby":{"nome":"asc"}${query}}`).catch(function (error) {
     return { data: [], status: 571 };
-    // if (error.response) {
-    //   console.log(error.response)
+  });
+  return response;
+}
 
-    // } else if (error.request) {
-    //   console.log(error.request)
+export function getAccess(email: string) {
 
-    // } else {
-    //   console.log(error.message)
-    // }
+  const response = axios.get(`${baseUrl}/pessoa/validaAcesso/${email}`).catch(function (error) {
+    return { data: [], status: 571 };
   });
   return response;
 }
