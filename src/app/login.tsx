@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { globalStyles } from "@/styles/styles";
 import { colors } from "../../styles/color";
 import { Input } from "../components/Input";
@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccess, updatePeople } from "../httpservices/user";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
@@ -65,16 +66,34 @@ export default function HomeScreen() {
       }
     }
     else {
-      setErro("Email não cadastrado pelo administrador")
+      setErro("Email não cadastrado")
     }
   }
 
   return (
     <SafeAreaView style={[globalStyles.pageContainer, { flex: 1, paddingBottom: 0 }]}>
       <View style={globalStyles.container}>
-        <Text style={[globalStyles.title, { color: colors.primary }]}>
-          Login
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          {
+            (showRegisterPassword || showInputPassword) &&
+            <TouchableOpacity onPress={() => {
+              setEmail('')
+              setPassword('')
+              setConfirmPassword('')
+              setShowRegisterPassword(false)
+              setShowInputPassword(false)
+            }}>
+              <Ionicons
+                name="arrow-back-outline"
+                size={35}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+          }
+          <Text style={[globalStyles.title, { color: colors.primary }]}>
+            Login
+          </Text>
+        </View>
         {erro && <Text style={{ color: colors.error }}>{erro}</Text>}
 
         <View style={globalStyles.formContainer}>
@@ -150,10 +169,10 @@ export default function HomeScreen() {
             }
           }}
         />
-        <Text style={styles.registerRedirect}>
+        {/* <Text style={styles.registerRedirect}>
           Ainda não tem cadastro?
           <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
-        </Text>
+        </Text> */}
       </View>
     </SafeAreaView>
   );
