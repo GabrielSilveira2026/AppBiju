@@ -35,6 +35,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     setFormValues(product)
     setDescriptionEditable(false);
     setInitialDate(localDate)
+    
   }, [product])
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
@@ -66,11 +67,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
     if (onSave) {
       setAlert("");
-      if (productValues.id_produto === "") {
-        setModeCard("view");
-        onSave(productValues, initialDate);
-      }
-      else if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
+      if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
         Alert.alert("Alterar valor do produto?", `Deseja alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
@@ -79,6 +76,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             text: "Confirmar",
             onPress: async () => {
               setModeCard("view");
+              setDescriptionEditable(false)
               onSave(productValues, initialDate);
             }
           }
@@ -86,6 +84,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       }
       else {
         setModeCard("view");
+        setDescriptionEditable(false)
         onSave(productValues, initialDate);
       }
     }
@@ -160,7 +159,10 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             </TouchableOpacity>
             {
               !descriptionEditable &&
-              <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
+              <TouchableOpacity onPress={() => {
+                setFormValues(product);
+                setModeCard("view")
+              }} style={{ flex: 5, alignItems: 'flex-end' }}>
                 <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
               </TouchableOpacity>
             }
@@ -214,7 +216,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             </View>
           </View>
           {
-            productValues !== product &&
+            productValues !== product && descriptionEditable &&
             <Button
               style={{ flex: 1 }}
               title="Salvar"
