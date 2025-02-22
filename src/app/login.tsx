@@ -107,6 +107,7 @@ export default function HomeScreen() {
               autoCapitalize="none"
               keyboardType="email-address"
               textContentType="emailAddress"
+              editable={!showRegisterPassword && !showInputPassword}
               inputStyle={{ flex: 1 }}
             />
           }
