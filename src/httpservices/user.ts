@@ -40,13 +40,13 @@ export async function updatePeople(userData: Partial<UserType> & { id_pessoa: nu
   
   const response = await axios.put(`${baseUrl}/pessoa/${userData.id_pessoa}`, userData).catch(function (error) {
     if (error.response) {
-      return error.response
+      console.log(error.response)
 
     } else if (error.request) {
-      return error.request;
+      console.log(error.request)
 
     } else {
-      return error.message;
+      console.log(error.message)
     }
   });
   return response

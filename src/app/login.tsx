@@ -36,6 +36,7 @@ export default function HomeScreen() {
       if (password === confirmPassword) {
         const response = await updatePeople({
           id_pessoa: idPessoa,
+          email: email,
           senha: password.trim(),
         })
 
@@ -153,18 +154,14 @@ export default function HomeScreen() {
         </View>
         <Button
           title={"Entrar"}
-          onPress={() => {
+          onPress={async() => {
             if (!showRegisterPassword && !showInputPassword) {
-              console.log("validando email");
-
               getAcesss()
             }
             else if (showInputPassword) {
-              console.log("login");
               login()
             }
             else {
-              console.log("cadastrando senha");
               createPassword()
             }
           }}
