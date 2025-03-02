@@ -252,7 +252,7 @@ export default function ProfileForm() {
                 flexDirection: "row",
                 gap: 8
             }}>
-                <Text style={{ textAlign: "center", color: colors.text }}>Termos de uso e privacidade</Text>
+                <Text style={{ textAlign: "center", color: colors.text }}>Termos de política e privacidade</Text>
                 <TouchableOpacity>
                     <Ionicons name="open-outline" size={20} color={colors.primary} />
                 </TouchableOpacity>

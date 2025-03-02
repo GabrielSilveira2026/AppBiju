@@ -168,7 +168,7 @@ export default function HomeScreen() {
         />
         <View style={styles.registerRedirect}>
           <Text style={styles.text}>
-            Termos de uso e privacidade
+            Termos de política e privacidade
           </Text>
           <TouchableOpacity>
             <Ionicons name="open-outline" size={20} color={colors.primary} />
