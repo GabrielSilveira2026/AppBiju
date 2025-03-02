@@ -154,7 +154,7 @@ export default function HomeScreen() {
         </View>
         <Button
           title={"Entrar"}
-          onPress={async() => {
+          onPress={async () => {
             if (!showRegisterPassword && !showInputPassword) {
               getAcesss()
             }
@@ -166,10 +166,15 @@ export default function HomeScreen() {
             }
           }}
         />
-        {/* <Text style={styles.registerRedirect}>
-          Ainda não tem cadastro?
-          <Link href={"/register"} style={styles.registerRedirectLink}> Clique aqui</Link>
-        </Text> */}
+        <View style={styles.registerRedirect}>
+          <Text style={styles.text}>
+            Termos de uso e privacidade
+          </Text>
+          <TouchableOpacity>
+            <Ionicons name="open-outline" size={20} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.text}>v2.0.0</Text>
       </View>
     </SafeAreaView>
   );
@@ -177,11 +182,15 @@ export default function HomeScreen() {
 
 export const styles = StyleSheet.create({
   registerRedirect: {
-    fontSize: 16,
-    textAlign: "center",
-    color: colors.text
+    paddingTop: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8
   },
-  registerRedirectLink: {
-    color: colors.primary
+  text: {
+    color: colors.text,
+    fontSize: 12,
+    textAlign: "center",
   }
 });

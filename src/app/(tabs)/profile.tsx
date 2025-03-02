@@ -246,7 +246,18 @@ export default function ProfileForm() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-            <Text style={{ textAlign: "center", color: colors.text }}>V.1.1.0</Text>
+            <View style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+                gap: 8
+            }}>
+                <Text style={{ textAlign: "center", color: colors.text }}>Termos de uso e privacidade</Text>
+                <TouchableOpacity>
+                    <Ionicons name="open-outline" size={20} color={colors.primary} />
+                </TouchableOpacity>
+            </View>
+            <Text style={{ textAlign: "center", color: colors.text }}>v2.0.0</Text>
         </ImageBackground>
     );
 }

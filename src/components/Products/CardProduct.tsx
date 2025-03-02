@@ -35,7 +35,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
     setFormValues(product)
     setDescriptionEditable(false);
     setInitialDate(localDate)
-    
+
   }, [product])
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
@@ -142,7 +142,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else if (modeCard === "details") {
     return (
-      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
+      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: descriptionEditable ? colors.primary : colors.text }]}>
         <View style={styles.cardOpened}>
           <View style={styles.line}>
 

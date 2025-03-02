@@ -76,7 +76,7 @@ export default function RegisterForm() {
               render={({ field: { onChange, value } }) => (
                 <Input
                   label="Nome"
-                  placeholder="Digite seu nome"
+                  placeholder="Digite o nome do funcionário"
                   value={value}
                   onChangeText={onChange}
                   inputStyle={{ flex: 1 }}
@@ -98,7 +98,7 @@ export default function RegisterForm() {
               render={({ field: { onChange, value } }) => (
                 <Input
                   label="Email"
-                  placeholder="Digite seu email"
+                  placeholder="Digite o email do funcionário"
                   value={value}
                   onChangeText={onChange}
                   autoCapitalize="none"
