@@ -56,7 +56,6 @@ export default function HomeScreen() {
   async function getAcesss() {
     const response = await getAccess(email)
     setErro("")
-    console.log(response.data.items);
 
     if (response.data?.items?.length) {
       if (response.data?.items?.[0].primeiro_acesso === "true") {
