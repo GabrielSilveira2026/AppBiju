@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 type AddContainerProps = {
     text: string;
     onPress: () => void | Promise<void>;
-    disable: boolean
+    disable?: boolean
 };
 
 export default function AddContainer({ disable, text, onPress }: AddContainerProps) {
