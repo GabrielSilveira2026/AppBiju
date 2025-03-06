@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert, Linking } from "react-native";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { globalStyles } from "@/styles/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import { router } from "expo-router";
+import About from "@/src/components/About";
 
 export type FormType = {
     email: string;
@@ -129,9 +130,14 @@ export default function ProfileForm() {
                     <View style={globalStyles.container}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                             <View style={{ flexDirection: "row", gap: 8 }}>
-                                <TouchableOpacity onPress={() =>
+                                <TouchableOpacity onPress={() => {
+                                    setEditStates({
+                                        name: false,
+                                        email: false,
+                                        password: false
+                                    })
                                     router.navigate("/")
-                                }>
+                                }}>
                                     <Ionicons
                                         name="arrow-back-outline"
                                         size={35}
@@ -246,18 +252,7 @@ export default function ProfileForm() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-            <View style={{
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row",
-                gap: 8
-            }}>
-                <Text style={{ textAlign: "center", color: colors.text }}>Termos de política e privacidade</Text>
-                <TouchableOpacity>
-                    <Ionicons name="open-outline" size={20} color={colors.primary} />
-                </TouchableOpacity>
-            </View>
-            <Text style={{ textAlign: "center", color: colors.text }}>v2.0.0</Text>
+            <About />
         </ImageBackground>
     );
 }

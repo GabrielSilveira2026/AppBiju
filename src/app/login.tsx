@@ -9,6 +9,7 @@ import { Link, Redirect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccess, updatePeople } from "../httpservices/user";
 import { Ionicons } from "@expo/vector-icons";
+import About from "../components/About";
 
 export default function HomeScreen() {
   const { signIn } = useAuthContext()
@@ -166,22 +167,16 @@ export default function HomeScreen() {
             }
           }}
         />
-        <View style={styles.registerRedirect}>
-          <Text style={styles.text}>
-            Termos de política e privacidade
-          </Text>
-          <TouchableOpacity>
-            <Ionicons name="open-outline" size={20} color={colors.primary} />
-          </TouchableOpacity>
+        <View style={styles.about}>
+          <About/>
         </View>
-        <Text style={styles.text}>v2.0.0</Text>
       </View>
     </SafeAreaView>
   );
 }
 
 export const styles = StyleSheet.create({
-  registerRedirect: {
+  about: {
     paddingTop: 16,
     justifyContent: "center",
     alignItems: "center",
