@@ -5,12 +5,13 @@ import Loading from "..";
 import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
 import { constants } from "@/src/constants/constants";
+import HomeScreen from "../login";
 
 export default function AppLayout() {
-  const { isLoading, user } = useAuthContext();
+  const { isAuthenticated, user } = useAuthContext();
 
-  if (isLoading) {
-    return <Loading />
+  if (!isAuthenticated) {
+    return <Redirect href={"/login"}/>
   }
 
   return (

@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(userDataLocalJson.user);
           }
           setIsAuthenticated(true);
-          router.replace("/(tabs)")
+          router.replace("/")
         }
         else {
           router.replace("/login")
