@@ -30,7 +30,6 @@ export default function Loading() {
         loading()
     }, [])
 
-
     return (
         <View style={globalStyles.pageContainer}>
             <ActivityIndicator color={colors.primary} size={64} />
