@@ -8,7 +8,7 @@ import { Redirect, router } from "expo-router";
 
 export default function Loading() {
     const { isAuthenticated } = useAuthContext()
-    const { syncData } = useSync()
+    const { syncData, isConnected } = useSync()
 
     async function loading() {
         const checkUserAuthenticated = await isAuthenticated()
@@ -20,7 +20,10 @@ export default function Loading() {
             return
         }
 
-        await syncData()
+        if (isConnected) {
+            await syncData()
+        }
+        
         setTimeout(() => {
             router.replace("/(tabs)")
         }, 1000);

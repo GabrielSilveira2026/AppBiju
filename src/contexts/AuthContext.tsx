@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.warn('Erro ao recuperar o usuário nos base remota');
         }
 
-        if (response?.data?.items.length) {
+        if (response?.data?.items?.length) {
           const userDataRemote = response.data.items[0]
           setUser(userDataRemote);
         } else {
