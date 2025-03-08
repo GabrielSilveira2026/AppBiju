@@ -66,7 +66,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const productionDatabase = useProductionDatabase()
   const paymentDatabase = usePaymentDatabase()
 
-
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
@@ -78,7 +77,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected) {      
       syncData();
     }
   }, [isConnected]);
@@ -91,6 +90,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function syncData() {
+    console.log("sincronizando");
 
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
@@ -129,7 +129,8 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     }
-
+    
+    console.log("sincronizado");
     await productionDatabase.deleteOrphanProduction()
   };
 

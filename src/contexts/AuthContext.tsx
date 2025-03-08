@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return response
     }
 
-    if (response?.data?.items.length) {
+    if (response?.data?.items?.length) {
       const userData: UserType = response.data.items[0]
       setUser(userData)
       try {
