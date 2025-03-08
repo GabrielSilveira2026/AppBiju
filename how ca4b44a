@@ -269,7 +269,7 @@
 [33m5b1946e[m HEAD@{269}: commit: Ajustada estrutura de pastas de app
 [33m49afcfc[m HEAD@{270}: commit: Ajustados href de links e layouts
 [33m4d9b86e[m HEAD@{271}: commit: Fluxo de autenticação OK
-[33me3151cf[m HEAD@{272}: commit: Fluxo de login e logout ok
+[33me3151cf[m HEAD@{272}: commit: Fluxo de login e signOut ok
 [33m8a1a85f[m HEAD@{273}: commit: Checkpoint
 [33m8f91016[m HEAD@{274}: checkout: moving from AsyncStorage to 8f91016006645b05277fb6b2de974da8ed8c47ae
 [33m8f91016[m HEAD@{275}: checkout: moving from AsyncStorage to 8f91016006645b05277fb6b2de974da8ed8c47ae

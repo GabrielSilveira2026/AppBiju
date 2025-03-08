@@ -5,7 +5,7 @@ import { globalStyles } from "@/styles/styles";
 import { colors } from "../../styles/color";
 import { Input } from "../components/Input";
 import Button from "../components/Button";
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccess, updatePeople } from "../httpservices/user";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,11 +23,18 @@ export default function HomeScreen() {
 
   async function login() {
     const response = await signIn(email.trim(), password.trim())
-    if (response?.status === 401) {
+    
+    if (response.status === 401) {
       setErro("Email ou senha inválidos")
     }
-    else if (response?.status === 571) {
+    else if (response.status === 571) {
       setErro("Falha na conexão")
+    }
+    else if (response.status === 500) {
+      setErro("Falha na ao armazenar o usuário")
+    }
+    else if (response.status === 200) {
+      router.replace("/(tabs)")
     }
   }
 
@@ -168,7 +175,7 @@ export default function HomeScreen() {
           }}
         />
         <View style={styles.about}>
-          <About/>
+          <About />
         </View>
       </View>
     </SafeAreaView>

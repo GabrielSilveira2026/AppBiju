@@ -4,15 +4,33 @@ import { useSync } from "../contexts/SyncContext";
 import { useEffect } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { colors } from "@/styles/color";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 
 export default function Loading() {
-    const { isLoading } = useAuthContext()
+    const { isAuthenticated } = useAuthContext()
+    const { syncData } = useSync()
 
-    if (!isLoading) {
-        return <Redirect href={"/(tabs)"} />
+    async function loading() {
+        const checkUserAuthenticated = await isAuthenticated()
+
+        if (!checkUserAuthenticated) {
+            setTimeout(() => {
+                router.replace("/login")
+            }, 1000);
+            return
+        }
+
+        await syncData()
+        setTimeout(() => {
+            router.replace("/(tabs)")
+        }, 1000);
     }
-    
+
+    useEffect(() => {
+        loading()
+    }, [])
+
+
     return (
         <View style={globalStyles.pageContainer}>
             <ActivityIndicator color={colors.primary} size={64} />

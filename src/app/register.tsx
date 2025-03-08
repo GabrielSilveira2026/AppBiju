@@ -20,9 +20,7 @@ export type FormType = {
 };
 
 export default function RegisterForm() {
-  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormType>();
-  const { signIn } = useAuthContext()
-
+  const { control, handleSubmit, formState: { errors } } = useForm<FormType>();
   const [erro, setErro] = useState<string>("")
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {

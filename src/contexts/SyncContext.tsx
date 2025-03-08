@@ -11,7 +11,6 @@ import { getPayment as getPaymentRemote } from '../httpservices/payment';
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
 import { DayType, PaymentType, ProductionType, ProductType } from '../types/types';
-import { useAuthContext } from './AuthContext';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
@@ -19,9 +18,8 @@ import useParamDatabase from '../database/useParamDatabase';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
-import { constants } from '../constants/constants';
 import usePaymentDatabase from '../database/usePaymentDatabase';
-import { Text, Touchable, TouchableOpacity, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { colors } from '@/styles/color';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
@@ -57,7 +55,6 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
-  const { user, setIsLoading } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
   const [message, setMessage] = useState<string>("");
 
@@ -83,8 +80,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isConnected) {
       syncData();
-    } else {
-      setIsLoading(false)
     }
   }, [isConnected]);
 
@@ -136,7 +131,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     await productionDatabase.deleteOrphanProduction()
-    setIsLoading(false)
   };
 
   async function getHourValue() {

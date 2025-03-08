@@ -8,11 +8,7 @@ import { constants } from "@/src/constants/constants";
 import HomeScreen from "../login";
 
 export default function AppLayout() {
-  const { isAuthenticated, user } = useAuthContext();
-
-  if (!isAuthenticated) {
-    return <Redirect href={"/login"}/>
-  }
+  const { user } = useAuthContext();
 
   return (
     <Tabs

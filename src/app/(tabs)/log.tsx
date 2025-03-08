@@ -42,7 +42,7 @@ export default function log() {
   const { signIn, signOut, isAuthenticated } = useAuthContext()
   const database = useSQLiteContext()
 
-  async function logout() {
+  async function logOut() {
     const tables = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type='table'`);
 
     for (const table of tables) {

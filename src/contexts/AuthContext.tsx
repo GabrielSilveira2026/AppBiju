@@ -3,15 +3,10 @@ import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPeople, login } from '../httpservices/user';
 import { UserType } from '../types/types';
-import { useSQLiteContext } from 'expo-sqlite';
-import { constants } from '../constants/constants';
 
 type AuthContextType = {
-  isAuthenticated: boolean;
-  isLoading: boolean;
+  isAuthenticated: () => Promise<true | false>;
   user: UserType | null;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
   signIn: (email: string, senha: string) => Promise<any>;
   signOut: () => Promise<void>;
 };
@@ -19,44 +14,37 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserType | null>(null)
 
-  useEffect(() => {
-    async function checkUser() {
-      try {
-        const userDataLocal = await AsyncStorage.getItem('@user');
-        if (userDataLocal) {
-          const userDataLocalJson = JSON.parse(userDataLocal);
-          const response = await getPeople(userDataLocalJson.user.id_pessoa)
+  async function isAuthenticated() {
+    try {
+      const userDataLocal = await AsyncStorage.getItem('@user');
+      if (userDataLocal) {
+        const userDataLocalJson = JSON.parse(userDataLocal);
+        const response = await getPeople(userDataLocalJson.user.id_pessoa)
 
-          if (response.status === 571) {
-            console.warn('Erro ao recuperar o usuário nos base remota');
-          }
+        if (response.status === 571) {
+          console.warn('Erro ao recuperar o usuário nos base remota');
+        }
 
-          if (response?.data?.items.length) {
-            const userDataRemote = response.data.items[0]
-            setUser(userDataRemote);
-          } else {
-            setUser(userDataLocalJson.user);
-          }
-          setIsAuthenticated(true);
-          router.replace("/")
+        if (response?.data?.items.length) {
+          const userDataRemote = response.data.items[0]
+          setUser(userDataRemote);
+        } else {
+          setUser(userDataLocalJson.user);
         }
-        else {
-          router.replace("/login")
-        }
-      } catch (error) {
-        console.warn('Erro ao recuperar o usuário:', error);
+        return true
       }
+      else {
+        return false
+      }
+    } catch (error) {
+      console.warn('Erro ao recuperar o usuário:', error);
+      return false
     }
-
-    checkUser();
-  }, []);
+  }
 
   async function signIn(email: string, senha: string) {
-    setIsLoading(true)
     const response = await login(email, senha)
 
     if (response.status === 571) {
@@ -66,16 +54,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (response?.data?.items.length) {
       const userData: UserType = response.data.items[0]
       setUser(userData)
-      setIsAuthenticated(true)
       try {
         await AsyncStorage.setItem("@user", JSON.stringify({ user: userData }))
+        return { status: 200 }
       } catch (error) {
-        console.warn(error);
-      } finally {
-        router.replace("/(tabs)")
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 1000);
+        return { status: 500 }
       }
     }
     else {
@@ -84,24 +67,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function signOut() {
-    router.replace('/login');
-
-    setIsLoading(true)
     try {
-      setIsAuthenticated(false)
       setUser(null)
       await AsyncStorage.removeItem("@user")
     } catch (error) {
       console.warn(error);
-    } finally {
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1000);
     }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, signIn, signOut, user, isLoading, setIsLoading }}>
+    <AuthContext.Provider value={{ signIn, signOut, user, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

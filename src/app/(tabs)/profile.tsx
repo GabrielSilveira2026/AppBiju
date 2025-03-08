@@ -27,7 +27,6 @@ export default function ProfileForm() {
     const { signOut } = useAuthContext();
     const { user } = useAuthContext();
     const [error, setError] = useState<string>("");
-    const password = watch("password");
     const isFocused = useIsFocused();
     const database = useSQLiteContext();
 
@@ -98,7 +97,7 @@ export default function ProfileForm() {
     };
 
 
-    async function logout() {
+    async function logOut() {
         Alert.alert("Sair?", "Deseja sair da sua conta?", [
             {
                 text: "Cancelar"
@@ -106,11 +105,12 @@ export default function ProfileForm() {
             {
                 text: "Sair",
                 onPress: async () => {
+                    router.replace("/login")
+                    signOut();
                     // const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type="table"`);
                     // for (const table of tables) {
                     //     await database.execAsync(`DELETE FROM ${table.name}`);
                     // }
-                    signOut();
                 }
             }
         ])
@@ -148,7 +148,7 @@ export default function ProfileForm() {
                                     Perfil
                                 </Text>
                             </View>
-                            <TouchableOpacity onPress={logout}>
+                            <TouchableOpacity onPress={logOut}>
                                 <Ionicons name={"exit-outline"} size={30} color={colors.error} />
                             </TouchableOpacity>
                         </View>
