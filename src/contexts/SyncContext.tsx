@@ -19,8 +19,10 @@ import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
 import usePaymentDatabase from '../database/usePaymentDatabase';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/styles/color';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -77,7 +79,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (isConnected) {      
+    if (isConnected) {
       syncData();
     }
   }, [isConnected]);
@@ -495,32 +497,28 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         {children}
         {
           message &&
-          <View
-            style={{
-              position: 'absolute',
-              top: 45,
-              right: 8,
-              left: 8,
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: 16,
-                padding: 12,
-                backgroundColor: colors.backgroundSecundary,
-                borderColor: colors.text,
-                borderWidth: 1,
-                borderRadius: 8
-              }}
-            >
-              {message}
-            </Text>
+          <View style={styles.messageContainer}>
+            <View style={styles.textContainer}>
+
+              <Text style={styles.messageText}>
+                {message}
+              </Text>
+
+              <TouchableOpacity onPress={() => {
+                setMessage("")
+                syncData()
+                router.replace("/")
+              }}>
+                <Text style={[styles.messageText, { color: colors.primary }]}>recarregar o app</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => setMessage("")}>
+              <Ionicons name='close-outline' color={colors.primary} size={40} />
+            </TouchableOpacity>
           </View>
         }
       </>
-    </SyncContext.Provider>
+    </SyncContext.Provider >
   );
 };
 
@@ -531,3 +529,26 @@ export const useSync = (): SyncContextType => {
   }
   return context;
 };
+
+const styles = StyleSheet.create({
+  messageContainer: {
+    position: 'absolute',
+    top: 120,
+    right: 8,
+    left: 8,
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: colors.backgroundSecundary,
+    borderColor: colors.text,
+    borderWidth: 1,
+    borderRadius: 8,
+    flexDirection: 'row'
+  },
+  textContainer: {
+    flex: 1
+  },
+  messageText: {
+    color: colors.text,
+    fontSize: 16
+  }
+})

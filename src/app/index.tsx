@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { colors } from "@/styles/color";
 import { Redirect, router } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function Loading() {
     const { isAuthenticated } = useAuthContext()
+    const isFocused = useIsFocused();
 
     async function loading() {
         const checkUserAuthenticated = await isAuthenticated()
@@ -21,12 +23,14 @@ export default function Loading() {
 
         setTimeout(() => {
             router.replace("/(tabs)")
-        }, 1000);
+        }, 1200);
     }
 
     useEffect(() => {
-        loading()
-    }, [])
+        if (isFocused) {
+            loading()
+        }
+    }, [isFocused])
 
     return (
         <View style={globalStyles.pageContainer}>
