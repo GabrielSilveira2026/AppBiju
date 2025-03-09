@@ -90,8 +90,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function syncData() {
-    console.log("sincronizando");
-
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
@@ -129,8 +127,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     }
-    
-    console.log("sincronizado");
     await productionDatabase.deleteOrphanProduction()
   };
 

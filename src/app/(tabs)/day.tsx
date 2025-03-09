@@ -318,8 +318,15 @@ export default function DayDetails() {
                                 <View>
                                     <Text style={styles.textValue}>R${total?.toFixed(2) || '0,00'}</Text>
                                 </View>
-                                <View style={{ flex: 1, alignItems: "flex-end" }}>
-                                    <Text style={[styles.textValue, { width: "100%"}]} numberOfLines={1} ellipsizeMode="tail">{params?.pessoa}</Text>
+                                <View style={{ flex: 1, alignItems: "flex-end", padding: 8 }}>
+                                    <Text
+                                        style={[
+                                            styles.textValue,
+                                            { alignSelf: "stretch", textAlign: "right" }
+                                        ]}
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >{params?.pessoa}</Text>
                                 </View>
                             </View>
                         </View>

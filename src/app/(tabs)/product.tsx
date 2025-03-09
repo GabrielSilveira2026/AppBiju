@@ -150,6 +150,7 @@ export default function Product() {
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
+      product.modificado_por = user?.id_pessoa || product.modificado_por
       await sync.updateProduct(initialDate.toLocaleDateString(), product)
     }
 

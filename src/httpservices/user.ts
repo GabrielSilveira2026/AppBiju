@@ -35,9 +35,7 @@ export async function register(userData: Omit<UserType, "id_pessoa" | "perfil">)
   return response
 }
 
-export async function updatePeople(userData: Partial<UserType> & { id_pessoa: number }) {
-  console.log(userData, userData.id_pessoa);
-  
+export async function updatePeople(userData: Partial<UserType> & { id_pessoa: number }) {  
   const response = await axios.put(`${baseUrl}/pessoa/${userData.id_pessoa}`, userData).catch(function (error) {
     if (error.response) {
       console.log(error.response)
