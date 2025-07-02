@@ -1,22 +1,14 @@
 
 import { useAuthContext } from "../../contexts/AuthContext";
 import { Redirect, router, Tabs } from "expo-router";
-import Loading from "../../components/Loading";
+import Loading from "..";
 import { colors } from "@/styles/color";
 import { Ionicons } from "@expo/vector-icons";
 import { constants } from "@/src/constants/constants";
+import HomeScreen from "../login";
 
 export default function AppLayout() {
-  const { isLoading, isAuthenticated, user } = useAuthContext();
-
-  if (isLoading) {
-    return <Loading />
-  }
-
-  if (!isAuthenticated) {
-    return <Redirect href={"/login"} />
-  }
-
+  const { user } = useAuthContext();
 
   return (
     <Tabs

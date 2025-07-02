@@ -12,6 +12,6 @@ export const constants = {
             id_perfil: 3,
             perfil: "Funcionario"
         }
-},
-id_producao_hora: "111111"
+    },
+    id_producao_hora: "111111",
 }

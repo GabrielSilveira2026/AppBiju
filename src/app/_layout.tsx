@@ -6,7 +6,7 @@ import { ImageBackground, Text, View } from "react-native";
 import { IMAGE_PATHS } from "../../styles/constants";
 import { globalStyles } from "@/styles/styles";
 import { SQLiteProvider } from "expo-sqlite";
-import { SyncProvider, useSync } from "../contexts/SyncContext";
+import { SyncProvider } from "../contexts/SyncContext";
 
 export default function RootLayout() {
   return (

@@ -45,12 +45,18 @@ export default function Product() {
     setIsLoading(false)
   }
 
+  async function getData() {
+    setIsLoading(true)
+    await getHourValue();
+    await getProductList();
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     if (isFocused) {
       setSearch(nome_produto ? String(nome_produto) : "")
       setIsCreating(false)
-      getHourValue();
-      getProductList();
+      getData()
     } else {
       setIsCreating(false)
       setSearch("")
@@ -150,6 +156,7 @@ export default function Product() {
       setProductList((prevProductList) => prevProductList.filter(product => product.id_produto !== ""));
     }
     else {
+      product.modificado_por = user?.id_pessoa || product.modificado_por
       await sync.updateProduct(initialDate.toLocaleDateString(), product)
     }
 
@@ -177,10 +184,11 @@ export default function Product() {
               if (!isLoading) {
                 setIsCreating(false)
                 getProductList()
+                getHourValue()
                 setSearch("")
               }
             }}
-            style={{ marginBottom: isKeyboardVisible ? keyboardHeight -80 : 0 }}
+            style={{ marginBottom: isKeyboardVisible ? keyboardHeight - 80 : 0 }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => String(item.id_produto)}
             keyboardShouldPersistTaps='handled'
@@ -247,7 +255,7 @@ export default function Product() {
             }
           />
           {
-            user?.id_perfil !== constants.perfil.funcionario.id_perfil && 
+            user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
             <AddContainer
               text="Criar produto"
               disable={isCreating}

@@ -11,7 +11,6 @@ import { getPayment as getPaymentRemote } from '../httpservices/payment';
 import usePendingOperationDatabase from '../database/usePendingOperationDatabase';
 import axios from 'axios';
 import { DayType, PaymentType, ProductionType, ProductType } from '../types/types';
-import { useAuthContext } from './AuthContext';
 import { getPeople as getPeopleRemote } from '../httpservices/user';
 import usePeopleDatabase from '../database/usePeopleDatabase';
 import { getParam } from '../httpservices/paramer';
@@ -19,10 +18,11 @@ import useParamDatabase from '../database/useParamDatabase';
 import 'react-native-get-random-values'
 import { customAlphabet } from 'nanoid'
 import useProductionDatabase from '../database/useProductionDatabase';
-import { constants } from '../constants/constants';
 import usePaymentDatabase from '../database/usePaymentDatabase';
-import { Text, Touchable, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/styles/color';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const baseUrl = process.env.EXPO_PUBLIC_BASE_URL
 
@@ -57,7 +57,6 @@ const SyncContext = createContext<SyncContextType | undefined>(undefined);
 
 export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
-  const { user } = useAuthContext()
   const nanoid = customAlphabet('1234567890abcdef', 6)
   const [message, setMessage] = useState<string>("");
 
@@ -68,7 +67,6 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   const pendingOperationDatabase = usePendingOperationDatabase()
   const productionDatabase = useProductionDatabase()
   const paymentDatabase = usePaymentDatabase()
-
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -94,68 +92,44 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function syncData() {
-
     let operacoesPendentes = await pendingOperationDatabase.getPendingOperationNotSinc()
 
     for (const operacaoPendente of operacoesPendentes) {
-      if (operacaoPendente.metodo === "POST") {
-        const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null
-        await axios.post(operacaoPendente.url, body)
-          .catch(function (error) {
-            if (error.response) {
-              console.warn("Erro de resposta:", error.response.status, error.response.data);
-              return
-            } else if (error.request) {
-              console.warn("Erro de requisição:", error.request);
-              return
-            } else {
-              console.warn("Erro:", error.message);
-              return
-            }
+      try {
+        if (operacaoPendente.metodo === "POST") {
+          const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null;
+          await axios.post(operacaoPendente.url, body);
+        }
+        else if (operacaoPendente.metodo === "PUT") {
+          const body = operacaoPendente.body ? JSON.parse(operacaoPendente.body) : null;
+          await axios.put(operacaoPendente.url, body, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
           });
+        }
+        else if (operacaoPendente.metodo === "DELETE") {
+          await axios.delete(operacaoPendente.url);
+        }
+
         await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
-      }
-      else if (operacaoPendente.metodo === "PUT") {
-
-        await axios.put(operacaoPendente.url, operacaoPendente.body, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }).catch(function (error) {
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
           if (error.response) {
-            console.warn(error.response)
-            return
+            console.warn(error.response.status, error.response.data);
           } else if (error.request) {
-            console.warn(error.request)
-            return
+            console.warn(error.request);
           } else {
-            console.warn(error.message)
-            return
+            console.warn(error.message);
           }
-        });
-
-        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
-
-      } else if (operacaoPendente.metodo === "DELETE") {
-        await axios.delete(operacaoPendente.url).catch(function (error) {
-          if (error.response) {
-            console.warn(error.response)
-            return
-          } else if (error.request) {
-            console.warn(error.request)
-            return
-          } else {
-            console.warn(error.message)
-            return
-          }
-        });
-
-        await pendingOperationDatabase.brandSincPendingOperation(operacaoPendente.id_operacoes_pendentes);
+        } else if (error instanceof Error) {
+          console.warn(error.message);
+        } else {
+          console.warn(error);
+        }
       }
     }
-
-    await productionDatabase.deleteProduction()
+    await productionDatabase.deleteOrphanProduction()
   };
 
   async function getHourValue() {
@@ -300,9 +274,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await productDatabase.updateProductList(request.data.items)
 
-    const localData = await productDatabase.getProduct()
-
-    return { response: localData, origemDados: "Remoto" };
+    return { response: request.data.items, origemDados: "Remoto" };
   }
 
   async function postProduct(produto: ProductType) {
@@ -384,9 +356,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
 
     await productionDatabase.updateProductionList(requestRemote.data.items, id_dia)
 
-    const localData = await productionDatabase.getProduction(id_dia)
-
-    return { response: localData, origemDados: "Remoto" };
+    return { response: requestRemote.data.items, origemDados: "Remoto" };
   }
 
   async function postProduction(production: ProductionType) {
@@ -527,32 +497,28 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         {children}
         {
           message &&
-          <View
-            style={{
-              position: 'absolute',
-              top: 45,
-              right: 8,
-              left: 8,
-              alignItems: 'center',
-            }}
-          >
-            <Text
-              style={{
-                color: colors.text,
-                fontSize: 16,
-                padding: 12,
-                backgroundColor: colors.backgroundSecundary,
-                borderColor: colors.text,
-                borderWidth: 1,
-                borderRadius: 8
-              }}
-            >
-              {message}
-            </Text>
+          <View style={styles.messageContainer}>
+            <View style={styles.textContainer}>
+
+              <Text style={styles.messageText}>
+                {message}
+              </Text>
+
+              <TouchableOpacity onPress={() => {
+                setMessage("")
+                syncData()
+                router.replace("/")
+              }}>
+                <Text style={[styles.messageText, { color: colors.primary }]}>recarregar o app</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => setMessage("")}>
+              <Ionicons name='close-outline' color={colors.primary} size={40} />
+            </TouchableOpacity>
           </View>
         }
       </>
-    </SyncContext.Provider>
+    </SyncContext.Provider >
   );
 };
 
@@ -563,3 +529,26 @@ export const useSync = (): SyncContextType => {
   }
   return context;
 };
+
+const styles = StyleSheet.create({
+  messageContainer: {
+    position: 'absolute',
+    top: 120,
+    right: 8,
+    left: 8,
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: colors.backgroundSecundary,
+    borderColor: colors.text,
+    borderWidth: 1,
+    borderRadius: 8,
+    flexDirection: 'row'
+  },
+  textContainer: {
+    flex: 1
+  },
+  messageText: {
+    color: colors.text,
+    fontSize: 16
+  }
+})

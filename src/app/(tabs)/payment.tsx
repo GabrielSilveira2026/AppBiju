@@ -31,7 +31,7 @@ export default function Payment() {
   async function getPayment(id_pessoa?: number) {
     setIsAdding(true)
     setIsLoading(true)
-    const request = await sync.getPayment(id_pessoa)
+    const request = await sync.getPayment(id_pessoa)    
     setPaymentList(request.response)
     setIsAdding(false)
     setIsLoading(false)
@@ -178,7 +178,7 @@ export default function Payment() {
             data={filteredPaymentList}
             refreshing={false}
             onRefresh={() => {
-              getPayment()
+              getPayment(Number(id_pessoa))
             }}
             contentContainerStyle={{ gap: 8 }}
             keyExtractor={(item) => item.id_pagamento}

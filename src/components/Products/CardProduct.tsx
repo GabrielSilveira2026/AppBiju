@@ -29,11 +29,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   const [initialDate, setInitialDate] = useState<Date>(new Date());
   const localDate = new Date(initialDate.getTime() - initialDate.getTimezoneOffset() * 60000);
   const [productValues, setFormValues] = useState<ProductType>(product);
-
+  const [descriptionEditable, setDescriptionEditable] = useState(false)
   useEffect(() => {
     setModeCard(mode)
     setFormValues(product)
+    setDescriptionEditable(false);
     setInitialDate(localDate)
+
   }, [product])
 
   const handleInputChange = (field: keyof ProductType, value: string | number) => {
@@ -65,11 +67,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
 
     if (onSave) {
       setAlert("");
-      if (productValues.id_produto === "") {
-        setModeCard("view");
-        onSave(productValues, initialDate);
-      }
-      else if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
+      if (productValues.tempo_minuto !== product.tempo_minuto || productValues.preco !== product.preco) {
         Alert.alert("Alterar valor do produto?", `Deseja alterar o valor desse produto a partir do dia ${initialDate.toLocaleDateString()}? \n\nTodas as produções a partir deste dia terão seus valores atualizados!`, [
           {
             text: "Cancelar"
@@ -78,6 +76,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             text: "Confirmar",
             onPress: async () => {
               setModeCard("view");
+              setDescriptionEditable(false)
               onSave(productValues, initialDate);
             }
           }
@@ -85,6 +84,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
       }
       else {
         setModeCard("view");
+        setDescriptionEditable(false)
         onSave(productValues, initialDate);
       }
     }
@@ -132,7 +132,9 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
             </Text>
           </View>
           <View style={styles.buttonOpen}>
-            <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+            <TouchableOpacity onPress={() => setModeCard("details")}>
+              <Ionicons name={"chevron-down-outline"} size={35} color={colors.primary} />
+            </TouchableOpacity>
           </View>
         </View>
       </Pressable>
@@ -140,28 +142,52 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
   }
   else if (modeCard === "details") {
     return (
-      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: colors.text }]}>
+      <View style={[globalStyles.cardContainer, { borderWidth: 1, borderColor: descriptionEditable ? colors.primary : colors.text }]}>
         <View style={styles.cardOpened}>
           <View style={styles.line}>
+
+            <TouchableOpacity onPress={() => {
+              if (user?.id_perfil !== constants.perfil.funcionario.id_perfil) {
+                setModeCard("edit")
+              }
+              else {
+                setDescriptionEditable(!descriptionEditable)
+              }
+            }}
+              style={{ flex: 1 }}>
+              <Ionicons name={!descriptionEditable ? "create-outline" : "arrow-back-outline"} size={35} color={colors.primary} />
+            </TouchableOpacity>
             {
-              user?.id_perfil !== constants.perfil.funcionario.id_perfil &&
-              <TouchableOpacity onPress={() => setModeCard("edit")} style={{ flex: 1 }}>
-                <Ionicons name="create-outline" size={35} color={colors.primary} />
+              !descriptionEditable &&
+              <TouchableOpacity onPress={() => {
+                setFormValues(product);
+                setModeCard("view")
+              }} style={{ flex: 5, alignItems: 'flex-end' }}>
+                <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
               </TouchableOpacity>
             }
-
-            <TouchableOpacity onPress={() => setModeCard("view")} style={{ flex: 5, alignItems: 'flex-end' }}>
-              <Ionicons name="chevron-up-outline" size={35} color={colors.primary} />
-            </TouchableOpacity>
           </View>
           <View style={styles.line}>
             <Text style={[styles.textValue, { flex: 1 }]}>{productValues.nome}</Text>
             <Text style={[styles.textValue, { textAlign: "center" }]}>Cod.{`\n`}{productValues.cod_referencia}</Text>
           </View>
           <View style={styles.line}>
-            <View style={stylesCreateAndEdit.textDescription}>
-              <Text style={[styles.textValue, { fontSize: 14 }]}>{productValues.descricao}</Text>
-            </View>
+            {
+              descriptionEditable ?
+                <Input
+                  placeholder="Digite uma descrição para o produto, como por exemplo, quantidade de materiais, medidas, etc (Opcional)"
+                  value={productValues.descricao}
+                  label="Descrição"
+                  multiline
+                  style={[styles.inputValue, stylesCreateAndEdit.textDescription]}
+                  onChangeText={value => handleInputChange('descricao', value)}
+                  placeholderTextColor={colors.textInput}
+                />
+                :
+                <View style={stylesCreateAndEdit.textDescription}>
+                  <Text style={[styles.textValue, { fontSize: 14 }]}>{productValues.descricao}</Text>
+                </View>
+            }
           </View>
           <View style={styles.line}>
 
@@ -189,6 +215,13 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               </Text>
             </View>
           </View>
+          {
+            productValues !== product && descriptionEditable &&
+            <Button
+              style={{ flex: 1 }}
+              title="Salvar"
+              onPress={saveProduct} />
+          }
         </View>
       </View>
     )
@@ -235,7 +268,7 @@ export default function CardProduct({ onSave, onCancel, onDelete, hourValue, pro
               onChangeText={value => handleInputChange('cod_referencia', Number(value))}
               selectTextOnFocus={true}
               keyboardType="numeric"
-              style={[styles.inputValue,{ flex: 1 }]}
+              style={[styles.inputValue, { flex: 1 }]}
               placeholderTextColor={colors.textInput}
             />
           </View>

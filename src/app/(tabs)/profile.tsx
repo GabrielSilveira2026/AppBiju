@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, ImageBackground, TouchableOpacity, Alert, Linking } from "react-native";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { globalStyles } from "@/styles/styles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import { IMAGE_PATHS } from "@/styles/constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useSQLiteContext } from "expo-sqlite";
 import { router } from "expo-router";
+import About from "@/src/components/About";
 
 export type FormType = {
     email: string;
@@ -26,7 +27,6 @@ export default function ProfileForm() {
     const { signOut } = useAuthContext();
     const { user } = useAuthContext();
     const [error, setError] = useState<string>("");
-    const password = watch("password");
     const isFocused = useIsFocused();
     const database = useSQLiteContext();
 
@@ -97,7 +97,7 @@ export default function ProfileForm() {
     };
 
 
-    async function logout() {
+    async function logOut() {
         Alert.alert("Sair?", "Deseja sair da sua conta?", [
             {
                 text: "Cancelar"
@@ -105,11 +105,12 @@ export default function ProfileForm() {
             {
                 text: "Sair",
                 onPress: async () => {
-                    const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type="table"`);
-                    for (const table of tables) {
-                        await database.execAsync(`DELETE FROM ${table.name}`);
-                    }
+                    router.replace("/login")
                     signOut();
+                    // const tables: { name: string }[] = await database.getAllAsync(`SELECT name FROM sqlite_master WHERE type="table"`);
+                    // for (const table of tables) {
+                    //     await database.execAsync(`DELETE FROM ${table.name}`);
+                    // }
                 }
             }
         ])
@@ -129,9 +130,14 @@ export default function ProfileForm() {
                     <View style={globalStyles.container}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                             <View style={{ flexDirection: "row", gap: 8 }}>
-                                <TouchableOpacity onPress={() =>
+                                <TouchableOpacity onPress={() => {
+                                    setEditStates({
+                                        name: false,
+                                        email: false,
+                                        password: false
+                                    })
                                     router.navigate("/")
-                                }>
+                                }}>
                                     <Ionicons
                                         name="arrow-back-outline"
                                         size={35}
@@ -142,7 +148,7 @@ export default function ProfileForm() {
                                     Perfil
                                 </Text>
                             </View>
-                            <TouchableOpacity onPress={logout}>
+                            <TouchableOpacity onPress={logOut}>
                                 <Ionicons name={"exit-outline"} size={30} color={colors.error} />
                             </TouchableOpacity>
                         </View>
@@ -246,7 +252,7 @@ export default function ProfileForm() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-            <Text style={{ textAlign: "center", color: colors.text }}>V.1.0.1</Text>
+            <About />
         </ImageBackground>
     );
 }
