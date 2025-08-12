@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AppBiju",
-    "slug": "AppBiju",
+    "name": "SGP",
+    "slug": "SGP",
     "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -41,7 +41,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "a2ed2ba6-d55f-4d0b-af41-1f6e94c27e79"
+        "projectId": "38dd4711-b462-49d6-a475-346fc4c5b8c8"
       }
     }
   }
