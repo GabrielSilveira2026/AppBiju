@@ -2,7 +2,7 @@
   "expo": {
     "name": "AppBiju",
     "slug": "AppBiju",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -30,7 +30,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      "./withTargetSdk35"
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,6 +1,8 @@
 import { colors } from '@/styles/color'
 import { Ionicons } from '@expo/vector-icons'
 import { View, Text, TouchableOpacity, Linking } from 'react-native'
+import Constants from "expo-constants";
+
 export default function About() {
     return (
         <View>
@@ -15,7 +17,7 @@ export default function About() {
                     <Ionicons name="open-outline" size={20} color={colors.primary} />
                 </TouchableOpacity>
             </View>
-            <Text style={{ textAlign: "center", color: colors.text }}>v2.0.0</Text>
+            <Text style={{ textAlign: "center", color: colors.text }}>v{Constants.expoConfig?.version}</Text>
         </View>
     )
 }
